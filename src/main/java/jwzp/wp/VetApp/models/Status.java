@@ -1,4 +1,4 @@
-package jwzp.wp.VetApp.resources;
+package jwzp.wp.VetApp.models;
 
 public enum Status {
     Finished,
