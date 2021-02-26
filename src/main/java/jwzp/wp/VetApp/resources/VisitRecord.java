@@ -4,7 +4,7 @@ package jwzp.wp.VetApp.resources;
 import java.time.Duration;
 import java.time.LocalDate;
 
-public class Visits {
+public class VisitRecord {
 
     private final int id;
     public LocalDate startDate;
@@ -12,16 +12,16 @@ public class Visits {
     public Animal animalKind;
     public Status status;
 
-    public Visits(int id){
+    public VisitRecord(int id){
         this.id = id;
     }
 
     @Override
     public boolean equals(Object other){
-        if (!(other instanceof Visits)) {
+        if (!(other instanceof VisitRecord)) {
             return false;
         }
-        var otherVisit = (Visits) other;
+        var otherVisit = (VisitRecord) other;
         return this.id == otherVisit.id
                 && this.startDate == otherVisit.startDate
                 && this.duration == otherVisit.duration
