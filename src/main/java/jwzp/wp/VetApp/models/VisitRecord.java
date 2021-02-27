@@ -1,12 +1,11 @@
 package jwzp.wp.VetApp.models;
 
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.time.Duration;
 import java.time.LocalDate;
 
-@Entity(name="Visit")
+@Entity(name="visits")
 public class VisitRecord {
 
     @Id
@@ -16,8 +15,22 @@ public class VisitRecord {
     public Animal animalKind;
     public Status status;
 
-    public VisitRecord(){
+    protected VisitRecord(){
         this.id = -1;
+    }
+
+    public VisitRecord(
+            int id,
+            LocalDate startDate,
+            Duration duration,
+            Animal animalKind,
+            Status status
+    ){
+        this.id = id;
+        this.startDate = startDate;
+        this.duration = duration;
+        this.animalKind = animalKind;
+        this.status = status;
     }
 
     @Override
