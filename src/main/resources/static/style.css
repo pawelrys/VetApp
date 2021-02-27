@@ -107,3 +107,10 @@ tr {
 .status {
     width: 20%;
 }
+
+.novisits{
+    margin: 100px;
+    text-align: center;
+    font-size: 50px;
+    font-weight: bold;
+}
