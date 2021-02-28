@@ -10,14 +10,12 @@
 </head>
 <body>
 <div th:switch="${visits}"  class="container">
-  <h2 th:case="null">No Visits!</h2>
-  <h2 th:case="*">Visits!</h2>
+  <h2 th:case="null" class="novisits">No Visits!</h2>
   <div th:case="*" class="myTable">
-    <h1>Visits <span th:text="${#lists.size(visits)}">2</span></h1>
+    <h1>Number of Visits: <span th:text="${#lists.size(visits)}">2</span></h1>
     <table class="table">
       <thead>
       <tr>
-        <th class="id">ID</th>
         <th class="date">Date</th>
         <th class="duration">Duration</th>
         <th class="animal">Animal</th>
@@ -26,7 +24,6 @@
       </thead>
       <tbody>
       <tr th:each="visit : ${visits}">
-        <td th:text="${visit.id}"></td>
         <td th:text="${visit.startDate}"></td>
         <td th:text="${visit.duration}"></td>
         <td th:text="${visit.animalKind}"></td>
