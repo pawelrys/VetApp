@@ -1,4 +1,4 @@
-package jwzp.wp.VetApp.controller.api;
+package jwzp.wp.VetApp.controller.ui;
 
 import jwzp.wp.VetApp.service.VisitsService;
 import org.springframework.beans.factory.annotation.Autowired;
