@@ -5,6 +5,6 @@ public enum Animal {
     Dog,
     Cat,
     Rabbit,
-    GuanaPig,
+    GuineaPig,
     Hamster
 }
