@@ -12,8 +12,6 @@ import java.util.List;
 @Repository
 public interface VisitsRepository extends JpaRepository<VisitRecord, Integer> {
 
-    @Query("select v from visits v")
-    List<VisitRecord> getAllRecords();
 
     @Query("select v from visits v where (:start >= v.startDate and :start < (v.startDate + v.duration)) or (:duration > v.startDate and :start <= (v.startDate + v.duration))")
     List<VisitRecord> getRecordsInTime(LocalDate start, Duration duration);

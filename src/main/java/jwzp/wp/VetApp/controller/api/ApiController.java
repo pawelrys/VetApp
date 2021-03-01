@@ -60,7 +60,7 @@ public class ApiController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public boolean DeleteVisit(@PathVariable int id) {
+    public boolean deleteVisit(@PathVariable int id) {
         return service.delete(id);
     }
 }
