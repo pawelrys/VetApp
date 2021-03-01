@@ -43,24 +43,15 @@ public class VisitsService {
         }
     }
 
-    public boolean updateVisit(int id, Map<String, Object> updatedFields){
+    public boolean updateVisit(int id, VisitData newData){
         VisitRecord toUpdate = repository.findById(id).orElse(null);
         if (toUpdate == null) {
             return false;
         }
+        toUpdate.startDate = newData.startDate;
+        toUpdate.duration = newData.duration;
+        toUpdate.animalKind = newData.animalKind;
 
-        if (updatedFields.containsKey("startDate")){
-            toUpdate.startDate = (LocalDate) updatedFields.get("startDate");
-        }
-        if (updatedFields.containsKey("duration")){
-            toUpdate.duration = (Duration) updatedFields.get("duration");
-        }
-        if (updatedFields.containsKey("animalKind")){
-            toUpdate.animalKind = (Animal) updatedFields.get("animalKind");
-        }
-        if (updatedFields.containsKey("status")){
-            toUpdate.status = (Status) updatedFields.get("status");
-        }
         return true;
     }
 

@@ -30,14 +30,14 @@ public class ApiController {
         return ResponseEntity.ok().body(service.getAllVisits());
     }
 
-    @PostMapping(path="/update")
-    public ResponseEntity<?> UpdateVisit(int id, Map<String, Object> updated){
-        return service.updateVisit(id, updated)
+    @PatchMapping(path="/{id}")
+    public ResponseEntity<?> UpdateVisit(@PathVariable int id, @RequestBody VisitData newData){
+        return service.updateVisit(id, newData)
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.badRequest().build();
     }
 
-    @PostMapping(path="/add")
+    @PostMapping
     public ResponseEntity<?> AddVisit(@RequestBody VisitData visit){
         VisitRecord result = service.addVisit(visit);
         if(result != null){
