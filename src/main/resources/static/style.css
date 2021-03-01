@@ -54,8 +54,8 @@ body {
 
 .container{
     display: block;
-/*background-color: aqua;*/
-width: 100%;
+    /*background-color: aqua;*/
+    width: 100%;
     min-height: 100px;
     padding-top: 2%;
 }
@@ -80,7 +80,7 @@ td, th {
     border: 1px solid black;
     height: 55px;
     vertical-align: center;
-/*width: 10%;*/
+    /*width: 10%;*/
 }
 
 tr {
