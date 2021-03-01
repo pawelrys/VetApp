@@ -4,8 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity(name="visits")
 public class VisitRecord {
@@ -17,6 +19,7 @@ public class VisitRecord {
     public Duration duration;
     public Animal animalKind;
     public Status status;
+    public BigDecimal price;
 
     protected VisitRecord(){
         this.id = -1;
@@ -27,43 +30,55 @@ public class VisitRecord {
             LocalDate startDate,
             Duration duration,
             Animal animalKind,
-            Status status
+            Status status,
+            BigDecimal price
     ){
         this.id = id;
         this.startDate = startDate;
         this.duration = duration;
         this.animalKind = animalKind;
         this.status = status;
+        this.price = price;
     }
 
-    public VisitRecord(VisitData data){
-        this.id = -1;
-        this.startDate = data.startDate;
-        this.duration = data.duration;
-        this.animalKind = data.animalKind;
-        this.status = Status.Pending;
+    public static VisitRecord createNewVisit(VisitData data){
+        VisitRecord newVisit = new VisitRecord();
+        newVisit.startDate = data.startDate;
+        newVisit.duration = data.duration;
+        newVisit.animalKind = data.animalKind;
+        newVisit.status = Status.Pending;
+        newVisit.price = data.price;
+        return newVisit;
     }
-    
-    @Override
-    public boolean equals(Object other){
-        if (!(other instanceof VisitRecord)) {
-            return false;
+
+    public void update(VisitData data){
+        if (data.startDate != null) {
+            this.startDate = data.startDate;
         }
-        var otherVisit = (VisitRecord) other;
-        return this.id == otherVisit.id
-                && this.startDate == otherVisit.startDate
-                && this.duration == otherVisit.duration
-                && this.animalKind == otherVisit.animalKind
-                && this.status == otherVisit.status;
+        if (data.duration != null) {
+            this.duration = data.duration;
+        }
+        if (data.animalKind != null) {
+            this.animalKind = data.animalKind;
+        }
+        if (data.status != null) {
+            this.status = data.status;
+        }
+        if (data.price != null) {
+            this.price = data.price;
+        }
     }
 
     @Override
-    public int hashCode(){
-        return this.id
-                + this.startDate.hashCode()
-                + this.duration.hashCode()
-                + this.animalKind.hashCode()
-                + this.status.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VisitRecord record = (VisitRecord) o;
+        return id == record.id && startDate.equals(record.startDate) && duration.equals(record.duration) && animalKind == record.animalKind && status == record.status && price.equals(record.price);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, startDate, duration, animalKind, status, price);
+    }
 }
