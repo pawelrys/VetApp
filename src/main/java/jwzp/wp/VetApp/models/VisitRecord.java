@@ -1,5 +1,7 @@
 package jwzp.wp.VetApp.models;
 
+import lombok.Data;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,6 +11,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Data
 @Entity(name="visits")
 public class VisitRecord {
 

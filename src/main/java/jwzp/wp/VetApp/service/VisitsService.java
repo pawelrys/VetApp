@@ -49,8 +49,17 @@ public class VisitsService {
         return null;
     }
 
-    public boolean isTimeAvailable(LocalDate start, Duration duration) {
-        return true;
+    public boolean delete(int id) {
+        var visit = repository.findById(id);
+        if(visit.isPresent()) {
+            repository.deleteById(visit.get().getId());
+            return true;
+        } else {
+            return false;
+        }
     }
 
+    public boolean isTimeAvailable(LocalDate start, Duration duration) {
+        return repository.getRecordsInTime(start, duration).size() == 0;
+    }
 }
