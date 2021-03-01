@@ -1,6 +1,8 @@
 package jwzp.wp.VetApp.models;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -9,6 +11,7 @@ import java.time.LocalDate;
 public class VisitRecord {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private final int id;
     public LocalDate startDate;
     public Duration duration;
