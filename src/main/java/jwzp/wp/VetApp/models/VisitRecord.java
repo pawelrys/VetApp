@@ -33,6 +33,14 @@ public class VisitRecord {
         this.status = status;
     }
 
+    public VisitRecord(VisitData data){
+        this.id = -1;
+        this.startDate = data.startDate;
+        this.duration = data.duration;
+        this.animalKind = data.animalKind;
+        this.status = Status.Pending;
+    }
+    
     @Override
     public boolean equals(Object other){
         if (!(other instanceof VisitRecord)) {

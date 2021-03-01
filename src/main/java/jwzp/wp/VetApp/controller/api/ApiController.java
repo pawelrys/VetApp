@@ -1,6 +1,7 @@
 package jwzp.wp.VetApp.controller.api;
 
 import jwzp.wp.VetApp.models.VisitRecord;
+import jwzp.wp.VetApp.models.VisitData;
 import jwzp.wp.VetApp.service.VisitsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,10 +30,20 @@ public class ApiController {
         return ResponseEntity.ok().body(service.getAllVisits());
     }
 
-    @PostMapping
+    @PostMapping(path="/update")
     public ResponseEntity<?> UpdateVisit(int id, Map<String, Object> updated){
         return service.updateVisit(id, updated)
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping(path="/add")
+    public ResponseEntity<?> AddVisit(@RequestBody VisitData visit){
+        VisitRecord result = service.addVisit(visit);
+        if(result != null){
+            return ResponseEntity.ok(result.toString());
+        }else{
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

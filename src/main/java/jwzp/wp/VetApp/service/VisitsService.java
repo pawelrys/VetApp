@@ -1,5 +1,6 @@
 package jwzp.wp.VetApp.service;
 
+import jwzp.wp.VetApp.models.VisitData;
 import jwzp.wp.VetApp.models.Animal;
 import jwzp.wp.VetApp.models.Status;
 import jwzp.wp.VetApp.models.VisitRecord;
@@ -30,6 +31,18 @@ public class VisitsService {
         return repository.findById(id).orElse(null);
     }
 
+    public VisitRecord addVisit(VisitData requestedVisit){
+        if (!isTimeAvailable(requestedVisit.startDate, requestedVisit.duration)) {
+            return null;
+        }
+        VisitRecord visit = new VisitRecord(requestedVisit);
+        try {
+            return repository.save(visit);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
     public boolean updateVisit(int id, Map<String, Object> updatedFields){
         VisitRecord toUpdate = repository.findById(id).orElse(null);
         if (toUpdate == null) {
@@ -51,7 +64,7 @@ public class VisitsService {
         return true;
     }
 
-    public boolean isTimeAvailable() {
+    public boolean isTimeAvailable(LocalDate start, Duration duration) {
         return true;
     }
 
