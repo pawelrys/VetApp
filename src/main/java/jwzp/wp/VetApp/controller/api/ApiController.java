@@ -26,8 +26,16 @@ public class ApiController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll(){
+    public ResponseEntity<?> getAllVisits(){
         return ResponseEntity.ok().body(service.getAllVisits());
+    }
+
+    @GetMapping(path="/{id}")
+    public ResponseEntity<?> getVisit(@PathVariable int id){
+        VisitRecord visit = service.getVisit(id);
+        return visit != null
+                ? ResponseEntity.ok(visit)
+                : ResponseEntity.badRequest().body("not found visit with id: " + id);
     }
 
     @PatchMapping(path="/{id}")
@@ -44,7 +52,7 @@ public class ApiController {
     public ResponseEntity<?> AddVisit(@RequestBody VisitData visit){
         VisitRecord result = service.addVisit(visit);
         if (result != null) {
-            return ResponseEntity.ok(result.toString());
+            return ResponseEntity.ok(result);
         } else {
             return ResponseEntity.badRequest().build();
         }
