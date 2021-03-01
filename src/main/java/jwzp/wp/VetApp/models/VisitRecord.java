@@ -11,7 +11,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@Data
 @Entity(name="visits")
 public class VisitRecord {
 
@@ -83,5 +82,9 @@ public class VisitRecord {
     @Override
     public int hashCode() {
         return Objects.hash(id, startDate, duration, animalKind, status, price);
+    }
+
+    public int getId() {
+        return id;
     }
 }
