@@ -54,12 +54,11 @@ body {
 
 .container{
     display: block;
-    /*background-color: aqua;*/
-    width: 100%;
+/*background-color: aqua;*/
+width: 100%;
     min-height: 100px;
     padding-top: 2%;
 }
-
 .myTable {
     display: block;
     color: black;
@@ -69,26 +68,30 @@ body {
     margin: 10px 10%;
 }
 
+.novisits{
+    margin: 100px;
+    text-align: center;
+    font-size: 50px;
+    font-weight: bold;
+}
+
 td, th {
     text-align: center;
     border: 1px solid black;
     height: 55px;
     vertical-align: center;
-    /*width: 10%;*/
+/*width: 10%;*/
 }
 
 tr {
     text-align: center;
     vertical-align: center;
 }
+
 .table{
     text-align: center;
     margin-top: 10px;
     width: 100%;
-}
-
-.id{
-    width: 15%;
 }
 
 .date{
@@ -96,7 +99,6 @@ tr {
 }
 
 .duration{
-    vertical-align: center;
     width: 20%;
 }
 
@@ -108,9 +110,6 @@ tr {
     width: 20%;
 }
 
-.novisits{
-    margin: 100px;
-    text-align: center;
-    font-size: 50px;
-    font-weight: bold;
+.price{
+    width: 15%;
 }
