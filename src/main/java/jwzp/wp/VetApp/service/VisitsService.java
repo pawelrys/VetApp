@@ -43,16 +43,15 @@ public class VisitsService {
         }
     }
 
-    public boolean updateVisit(int id, VisitData newData){
+    public VisitRecord updateVisit(int id, VisitData newData){
         VisitRecord toUpdate = repository.findById(id).orElse(null);
         if (toUpdate == null) {
-            return false;
+            return null;
         }
         toUpdate.startDate = newData.startDate;
         toUpdate.duration = newData.duration;
         toUpdate.animalKind = newData.animalKind;
-
-        return true;
+        return repository.save(toUpdate);
     }
 
     public boolean isTimeAvailable(LocalDate start, Duration duration) {
