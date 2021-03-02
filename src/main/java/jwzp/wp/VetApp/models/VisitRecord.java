@@ -1,21 +1,23 @@
 package jwzp.wp.VetApp.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.hibernate.annotations.TypeDef;
+import com.vladmihalcea.hibernate.type.interval.PostgreSQLIntervalType;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity(name="visits")
+@TypeDef(typeClass = PostgreSQLIntervalType.class, defaultForType = Duration.class)
 public class VisitRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private final int id;
-    public LocalDate startDate;
+    public LocalDateTime startDate;
+    @Column(columnDefinition = "interval")
     public Duration duration;
     public Animal animalKind;
     public Status status;
@@ -27,7 +29,7 @@ public class VisitRecord {
 
     public VisitRecord(
             int id,
-            LocalDate startDate,
+            LocalDateTime startDate,
             Duration duration,
             Animal animalKind,
             Status status,
