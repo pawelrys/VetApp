@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RequestMapping(path="/api/visits")
 @RestController
@@ -33,16 +34,16 @@ public class ApiController {
 
     @GetMapping(path="/{id}")
     public ResponseEntity<?> getVisit(@PathVariable int id){
-        VisitRecord visit = service.getVisit(id);
-        return visit != null
+        Optional<VisitRecord> visit = service.getVisit(id);
+        return visit.isPresent()
                 ? ResponseEntity.ok(visit)
                 : ResponseEntity.badRequest().body("not found visit with id: " + id);
     }
 
     @PatchMapping(path="/{id}")
     public ResponseEntity<?> UpdateVisit(@PathVariable int id, @RequestBody VisitData newData){
-        VisitRecord updated = service.updateVisit(id, newData);
-        if (updated != null) {
+        Optional<VisitRecord> updated = service.updateVisit(id, newData);
+        if (updated.isPresent()) {
             return ResponseEntity.ok(updated);
         } else {
             return ResponseEntity.badRequest().build();
@@ -51,8 +52,8 @@ public class ApiController {
 
     @PostMapping
     public ResponseEntity<?> AddVisit(@RequestBody VisitData visit){
-        VisitRecord result = service.addVisit(visit);
-        if (result != null) {
+        Optional<VisitRecord> result = service.addVisit(visit);
+        if (result.isPresent()) {
             return ResponseEntity.ok(result);
         } else {
             return ResponseEntity.badRequest().build();
@@ -61,8 +62,8 @@ public class ApiController {
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> deleteVisit(@PathVariable int id) {
-        VisitRecord result = service.delete(id);
-        if(result != null) {
+        Optional<VisitRecord> result = service.delete(id);
+        if(result.isPresent()) {
             return ResponseEntity.ok(result);
         } else {
             return ResponseEntity.badRequest().build();
