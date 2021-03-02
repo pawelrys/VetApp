@@ -60,7 +60,12 @@ public class ApiController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public boolean deleteVisit(@PathVariable int id) {
-        return service.delete(id);
+    public ResponseEntity<?> deleteVisit(@PathVariable int id) {
+        VisitRecord result = service.delete(id);
+        if(result != null) {
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

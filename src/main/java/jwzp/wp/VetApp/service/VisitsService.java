@@ -49,13 +49,13 @@ public class VisitsService {
         return null;
     }
 
-    public boolean delete(int id) {
-        var visit = repository.findById(id);
-        if(visit.isPresent()) {
-            repository.deleteById(visit.get().getId());
-            return true;
+    public VisitRecord delete(int id) {
+        VisitRecord visit = repository.findById(id).orElse(null);
+        if(visit != null) {
+            repository.deleteById(visit.getId());
+            return visit;
         } else {
-            return false;
+            return null;
         }
     }
 
