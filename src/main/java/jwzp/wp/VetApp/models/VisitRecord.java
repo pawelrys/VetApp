@@ -81,4 +81,8 @@ public class VisitRecord {
     public int hashCode() {
         return Objects.hash(id, startDate, duration, animalKind, status, price);
     }
+
+    public int getId() {
+        return id;
+    }
 }

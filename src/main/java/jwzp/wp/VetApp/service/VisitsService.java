@@ -49,8 +49,17 @@ public class VisitsService {
         return null;
     }
 
-    public boolean isTimeAvailable(LocalDate start, Duration duration) {
-        return true;
+    public VisitRecord delete(int id) {
+        VisitRecord visit = repository.findById(id).orElse(null);
+        if(visit != null) {
+            repository.deleteById(visit.getId());
+            return visit;
+        } else {
+            return null;
+        }
     }
 
+    public boolean isTimeAvailable(LocalDate start, Duration duration) {
+        return repository.getRecordsInTime(start, duration).size() == 0;
+    }
 }

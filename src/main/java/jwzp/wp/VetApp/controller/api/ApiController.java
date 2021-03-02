@@ -3,6 +3,7 @@ package jwzp.wp.VetApp.controller.api;
 import jwzp.wp.VetApp.models.VisitRecord;
 import jwzp.wp.VetApp.models.VisitData;
 import jwzp.wp.VetApp.service.VisitsService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +53,16 @@ public class ApiController {
     public ResponseEntity<?> AddVisit(@RequestBody VisitData visit){
         VisitRecord result = service.addVisit(visit);
         if (result != null) {
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<?> deleteVisit(@PathVariable int id) {
+        VisitRecord result = service.delete(id);
+        if(result != null) {
             return ResponseEntity.ok(result);
         } else {
             return ResponseEntity.badRequest().build();
