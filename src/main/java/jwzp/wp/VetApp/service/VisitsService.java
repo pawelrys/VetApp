@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VisitsService {
@@ -24,39 +25,38 @@ public class VisitsService {
         return repository.findAll();
     }
 
-    public VisitRecord getVisit(int id){
-        return repository.findById(id).orElse(null);
+    public Optional<VisitRecord> getVisit(int id){
+        return repository.findById(id);
     }
 
-    public VisitRecord addVisit(VisitData requestedVisit){
+    public Optional<VisitRecord> addVisit(VisitData requestedVisit){
         if (!isTimeAvailable(requestedVisit.startDate, requestedVisit.duration)) {
-            return null;
+            return Optional.empty();
         }
         VisitRecord visit = VisitRecord.createNewVisit(requestedVisit);
         try {
-            return repository.save(visit);
+            return Optional.of(repository.save(visit));
         } catch (IllegalArgumentException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
-    public VisitRecord updateVisit(int id, VisitData newData){
-        VisitRecord toUpdate = repository.findById(id).orElse(null);
-        if (toUpdate != null) {
-            toUpdate.update(newData);
-            return repository.save(toUpdate);
-        }
-        return null;
+    private void empty() {
     }
 
-    public VisitRecord delete(int id) {
-        VisitRecord visit = repository.findById(id).orElse(null);
-        if(visit != null) {
-            repository.deleteById(visit.getId());
-            return visit;
-        } else {
-            return null;
+    public Optional<VisitRecord> updateVisit(int id, VisitData newData){
+        Optional<VisitRecord> toUpdate = repository.findById(id);
+        if (toUpdate.isPresent()) {
+            toUpdate.get().update(newData);
+            repository.save(toUpdate.get());
         }
+        return toUpdate;
+    }
+
+    public Optional<VisitRecord> delete(int id) {
+        Optional<VisitRecord> visit = repository.findById(id);
+        visit.ifPresent(visitRecord -> repository.deleteById(visitRecord.getId()));
+        return visit;
     }
 
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
