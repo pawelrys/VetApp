@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -59,7 +59,8 @@ public class VisitsService {
         }
     }
 
-    public boolean isTimeAvailable(LocalDate start, Duration duration) {
-        return repository.getRecordsInTime(start, duration).size() == 0;
+    public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
+        var end = start.plusMinutes(duration.toMinutes());
+        return repository.getRecordsInTime(start, end).size() == 0;
     }
 }

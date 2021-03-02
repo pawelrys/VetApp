@@ -2,18 +2,18 @@ package jwzp.wp.VetApp.models;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class VisitData {
-    public final LocalDate startDate;
+    public final LocalDateTime startDate;
     public final Duration duration;
     public final Animal animalKind;
     public final Status status;
     public BigDecimal price;
 
     public VisitData(
-            LocalDate startDate,
+            LocalDateTime startDate,
             Duration duration,
             Animal animalKind,
             Status status,
