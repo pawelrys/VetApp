@@ -46,7 +46,6 @@ public class ApiController {
         return updated.isPresent()
                 ? ResponseEntity.ok(updated)
                 : ResponseEntity.badRequest().build();
-        }
     }
 
     @PostMapping
@@ -55,7 +54,6 @@ public class ApiController {
         return result.isPresent()
                 ? ResponseEntity.ok(result)
                 : ResponseEntity.badRequest().build();
-        }
     }
 
     @DeleteMapping(path = "/{id}")
@@ -64,6 +62,5 @@ public class ApiController {
         return result.isPresent()
                 ? ResponseEntity.ok(result)
                 : ResponseEntity.badRequest().build();
-        }
     }
 }
