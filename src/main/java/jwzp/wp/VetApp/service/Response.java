@@ -1,7 +1,5 @@
 package jwzp.wp.VetApp.service;
 
-import org.springframework.http.ResponseEntity;
-
 public class Response<T> {
 
     private final T content;
