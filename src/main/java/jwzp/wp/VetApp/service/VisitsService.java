@@ -41,9 +41,6 @@ public class VisitsService {
         }
     }
 
-    private void empty() {
-    }
-
     public Optional<VisitRecord> updateVisit(int id, VisitData newData){
         Optional<VisitRecord> toUpdate = repository.findById(id);
         if (toUpdate.isPresent()) {
