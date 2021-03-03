@@ -43,30 +43,27 @@ public class ApiController {
     @PatchMapping(path="/{id}")
     public ResponseEntity<?> UpdateVisit(@PathVariable int id, @RequestBody VisitData newData){
         Optional<VisitRecord> updated = service.updateVisit(id, newData);
-        if (updated.isPresent()) {
-            return ResponseEntity.ok(updated);
-        } else {
-            return ResponseEntity.badRequest().build();
+        return updated.isPresent()
+                ? ResponseEntity.ok(updated)
+                : ResponseEntity.badRequest().build();
         }
     }
 
     @PostMapping
     public ResponseEntity<?> AddVisit(@RequestBody VisitData visit){
         Optional<VisitRecord> result = service.addVisit(visit);
-        if (result.isPresent()) {
-            return ResponseEntity.ok(result);
-        } else {
-            return ResponseEntity.badRequest().build();
+        return result.isPresent()
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.badRequest().build();
         }
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> deleteVisit(@PathVariable int id) {
         Optional<VisitRecord> result = service.delete(id);
-        if(result.isPresent()) {
-            return ResponseEntity.ok(result);
-        } else {
-            return ResponseEntity.badRequest().build();
+        return result.isPresent()
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.badRequest().build();
         }
     }
 }
