@@ -43,8 +43,15 @@ public class VisitsService {
 
     public Optional<VisitRecord> updateVisit(int id, VisitData newData){
         Optional<VisitRecord> toUpdate = repository.findById(id);
+
         if (toUpdate.isPresent()) {
             toUpdate.get().update(newData);
+            if (!isTimeAvailable(
+                    toUpdate.get().startDate,
+                    toUpdate.get().duration
+            )) {
+                return Optional.empty();
+            }
             repository.save(toUpdate.get());
         }
         return toUpdate;
