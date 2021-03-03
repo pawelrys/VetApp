@@ -3,12 +3,11 @@ package jwzp.wp.VetApp.controller.api;
 import jwzp.wp.VetApp.models.VisitRecord;
 import jwzp.wp.VetApp.models.VisitData;
 import jwzp.wp.VetApp.service.VisitsService;
-import org.apache.coyote.Response;
+import jwzp.wp.VetApp.service.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.Optional;
 
 @RequestMapping(path="/api/visits")
@@ -50,10 +49,8 @@ public class ApiController {
 
     @PostMapping
     public ResponseEntity<?> AddVisit(@RequestBody VisitData visit){
-        Optional<VisitRecord> result = service.addVisit(visit);
-        return result.isPresent()
-                ? ResponseEntity.ok(result)
-                : ResponseEntity.badRequest().build();
+        Response<VisitRecord> result = service.addVisit(visit);
+        return result.get();
     }
 
     @DeleteMapping(path = "/{id}")

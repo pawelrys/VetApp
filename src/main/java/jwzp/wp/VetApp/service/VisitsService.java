@@ -29,16 +29,23 @@ public class VisitsService {
         return repository.findById(id);
     }
 
-    public Optional<VisitRecord> addVisit(VisitData requestedVisit){
+    public Response<VisitRecord> addVisit(VisitData requestedVisit){
         if (!isTimeAvailable(requestedVisit.startDate, requestedVisit.duration)) {
-            return Optional.empty();
+            return Response.errorResponse(
+                    ResponseErrorMessage.VISIT_TIME_UNAVAILABLE
+            );
         }
         VisitRecord visit = VisitRecord.createNewVisit(requestedVisit);
         try {
-            return Optional.of(repository.save(visit));
+            return Response.succeedResponse(repository.save(visit));
         } catch (IllegalArgumentException e) {
-            return Optional.empty();
+            return Response.errorResponse(
+                    ResponseErrorMessage.WRONG_ARGUMENTS
+            );
         }
+    }
+
+    private void ErrorResponse() {
     }
 
     public Optional<VisitRecord> updateVisit(int id, VisitData newData){
