@@ -30,7 +30,7 @@ public class VisitsService {
     }
 
     public Response<?> addVisit(VisitData requestedVisit){
-        if(ableToCreateFromData(requestedVisit)) {
+        if(!ableToCreateFromData(requestedVisit)) {
             return Response.errorResponse(
                     ResponseErrorMessage.WRONG_ARGUMENTS
             );
