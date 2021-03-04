@@ -45,9 +45,6 @@ public class VisitsService {
         }
     }
 
-    private void ErrorResponse() {
-    }
-
     public Optional<VisitRecord> updateVisit(int id, VisitData newData){
         Optional<VisitRecord> toUpdate = repository.findById(id);
 
