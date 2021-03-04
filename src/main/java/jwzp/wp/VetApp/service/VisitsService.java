@@ -30,6 +30,11 @@ public class VisitsService {
     }
 
     public Response<?> addVisit(VisitData requestedVisit){
+        if(ableToCreateFromData(requestedVisit)) {
+            return Response.errorResponse(
+                    ResponseErrorMessage.WRONG_ARGUMENTS
+            );
+        }
         if (!isTimeAvailable(requestedVisit.startDate, requestedVisit.duration)) {
             return Response.errorResponse(
                     ResponseErrorMessage.VISIT_TIME_UNAVAILABLE
@@ -70,5 +75,9 @@ public class VisitsService {
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
         var end = start.plusMinutes(duration.toMinutes());
         return repository.getRecordsInTime(start, end).size() == 0;
+    }
+
+    public boolean ableToCreateFromData(VisitData visit) {
+        return visit.animalKind != null && visit.duration != null && visit.price != null && visit.startDate != null;
     }
 }
