@@ -32,7 +32,7 @@ public class VisitsService {
     }
 
     public Optional<VisitRecord> addVisit(VisitData requestedVisit) {
-        if(ableToCreateFromData(requestedVisit)) return Optional.empty();
+        if(!ableToCreateFromData(requestedVisit)) return Optional.empty();
         if (!isTimeAvailable(requestedVisit.startDate, requestedVisit.duration)) {
             return Optional.empty();
         }
