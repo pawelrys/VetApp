@@ -17,22 +17,22 @@ public class ApiController {
     private final VisitsService service;
 
     @Autowired
-    private ApiController(VisitsService service){
+    private ApiController(VisitsService service) {
         this.service = service;
     }
 
     @GetMapping(path="/test")
-    public ResponseEntity<?> test(){
+    public ResponseEntity<?> test() {
         return ResponseEntity.ok().body("OK");
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllVisits(){
+    public ResponseEntity<?> getAllVisits() {
         return ResponseEntity.ok().body(service.getAllVisits());
     }
 
     @GetMapping(path="/{id}")
-    public ResponseEntity<?> getVisit(@PathVariable int id){
+    public ResponseEntity<?> getVisit(@PathVariable int id) {
         Optional<VisitRecord> visit = service.getVisit(id);
         return visit.isPresent()
                 ? ResponseEntity.ok(visit)
@@ -40,7 +40,7 @@ public class ApiController {
     }
 
     @PatchMapping(path="/{id}")
-    public ResponseEntity<?> UpdateVisit(@PathVariable int id, @RequestBody VisitData newData){
+    public ResponseEntity<?> updateVisit(@PathVariable int id, @RequestBody VisitData newData) {
         Optional<VisitRecord> updated = service.updateVisit(id, newData);
         return updated.isPresent()
                 ? ResponseEntity.ok(updated)
