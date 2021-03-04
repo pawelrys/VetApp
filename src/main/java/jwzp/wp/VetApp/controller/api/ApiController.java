@@ -52,9 +52,6 @@ public class ApiController {
 
     @PostMapping
     public ResponseEntity<?> addVisit(@RequestBody VisitData visit) {
-        if(visit.animalKind == null || visit.duration == null || visit.price == null || visit.startDate == null || visit.status == null) {
-            return new ResponseEntity<>("Wrong parameters provided", HttpStatus.FORBIDDEN);
-        }
         Optional<VisitRecord> result = service.addVisit(visit);
         return result.isPresent()
                 ? ResponseEntity.ok(result)

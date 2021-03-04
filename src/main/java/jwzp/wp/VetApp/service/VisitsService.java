@@ -4,6 +4,8 @@ import jwzp.wp.VetApp.models.VisitData;
 import jwzp.wp.VetApp.models.VisitRecord;
 import jwzp.wp.VetApp.resources.VisitsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -29,7 +31,8 @@ public class VisitsService {
         return repository.findById(id);
     }
 
-    public Optional<VisitRecord> addVisit(VisitData requestedVisit){
+    public Optional<VisitRecord> addVisit(VisitData requestedVisit) {
+        if(ableToCreateFromData(requestedVisit)) return Optional.empty();
         if (!isTimeAvailable(requestedVisit.startDate, requestedVisit.duration)) {
             return Optional.empty();
         }
@@ -59,5 +62,9 @@ public class VisitsService {
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
         var end = start.plusMinutes(duration.toMinutes());
         return repository.getRecordsInTime(start, end).size() == 0;
+    }
+
+    public boolean ableToCreateFromData(VisitData visit) {
+        return visit.animalKind != null && visit.duration != null && visit.price != null && visit.startDate != null;
     }
 }
