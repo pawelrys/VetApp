@@ -29,7 +29,7 @@ public class VisitsService {
         return repository.findById(id);
     }
 
-    public Response<VisitRecord> addVisit(VisitData requestedVisit){
+    public Response<?> addVisit(VisitData requestedVisit){
         if (!isTimeAvailable(requestedVisit.startDate, requestedVisit.duration)) {
             return Response.errorResponse(
                     ResponseErrorMessage.VISIT_TIME_UNAVAILABLE

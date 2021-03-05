@@ -1,35 +1,31 @@
 package jwzp.wp.VetApp.service;
 
-import jwzp.wp.VetApp.models.VisitRecord;
 import org.springframework.http.ResponseEntity;
 
 public class Response<T> {
 
-    private final T resource;
-    private final ResponseErrorMessage errorMessage;
+    private final T content;
+    private final boolean succeed;
 
-    private Response(T resource){
-        this.resource = resource;
-        this.errorMessage = null;
+    private Response(T resource, boolean succeed){
+        this.content = resource;
+        this.succeed = succeed;
     }
 
-    private Response(ResponseErrorMessage errorMessage){
-        this.resource = null;
-        this.errorMessage = errorMessage;
+    public static <T> Response<T> succeedResponse(T content){
+        return new Response<T>(content, true);
     }
 
-    public static <T> Response<T> succeedResponse(T resource){
-        return new Response<T>(resource);
+    public static <T> Response<T> errorResponse(T content){
+        return new Response<T>(content, false);
     }
 
-    public static <T> Response<T> errorResponse(ResponseErrorMessage message){
-        return new Response<T>(message);
+    public boolean succeed(){
+        return succeed;
     }
 
-    public ResponseEntity<?> get(){
-        return resource != null
-                ? ResponseEntity.ok(resource)
-                : ResponseEntity.badRequest().body(errorMessage.getMessage());
+    public T get(){
+        return content;
     }
 
 }

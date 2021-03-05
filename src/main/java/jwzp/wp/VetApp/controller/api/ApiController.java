@@ -49,8 +49,10 @@ public class ApiController {
 
     @PostMapping
     public ResponseEntity<?> AddVisit(@RequestBody VisitData visit){
-        Response<VisitRecord> result = service.addVisit(visit);
-        return result.get();
+        Response<?> result = service.addVisit(visit);
+        return result.succeed()
+                ? ResponseEntity.ok(result.get())
+                : ResponseEntity.badRequest().body(result.get());
     }
 
     @DeleteMapping(path = "/{id}")
