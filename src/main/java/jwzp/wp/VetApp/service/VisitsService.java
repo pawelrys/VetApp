@@ -29,7 +29,7 @@ public class VisitsService {
         return repository.findById(id);
     }
 
-    public Response<?> addVisit(VisitData requestedVisit){
+    public Response<?> addVisit(VisitData requestedVisit) {
         if(!ableToCreateFromData(requestedVisit)) {
             return Response.errorResponse(
                     ResponseErrorMessage.WRONG_ARGUMENTS
