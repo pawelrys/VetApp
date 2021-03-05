@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RequestMapping(path="/api/visits")
@@ -48,7 +49,7 @@ public class ApiController {
     }
 
     @PostMapping
-    public ResponseEntity<?> AddVisit(@RequestBody VisitData visit){
+    public ResponseEntity<?> addVisit(@RequestBody VisitData visit) {
         Response<?> result = service.addVisit(visit);
         return result.succeed()
                 ? ResponseEntity.ok(result.get())
