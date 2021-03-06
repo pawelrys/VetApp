@@ -33,22 +33,16 @@ public class VisitsService {
 
     public Response<?> addVisit(VisitData requestedVisit) {
         if (!ableToCreateFromData(requestedVisit)) {
-            return Response.errorResponse(
-                    ResponseErrorMessage.WRONG_ARGUMENTS.getMessage()
-            );
+            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
         if (!isTimeAvailable(requestedVisit.startDate, requestedVisit.duration)) {
-            return Response.errorResponse(
-                    ResponseErrorMessage.VISIT_TIME_UNAVAILABLE.getMessage()
-            );
+            return Response.errorResponse(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
         }
         VisitRecord visit = VisitRecord.createNewVisit(requestedVisit);
         try {
             return Response.succeedResponse(repository.save(visit));
         } catch (IllegalArgumentException e) {
-            return Response.errorResponse(
-                    ResponseErrorMessage.WRONG_ARGUMENTS.getMessage()
-            );
+            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }
 
@@ -61,12 +55,12 @@ public class VisitsService {
                     toUpdate.get().startDate,
                     toUpdate.get().duration
             )) {
-                return Response.errorResponse(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE.getMessage());
+                return Response.errorResponse(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
             }
             repository.save(toUpdate.get());
             return Response.succeedResponse(toUpdate.get());
         }
-        return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND.getMessage());
+        return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
     public Response<?> delete(int id) {
@@ -75,7 +69,7 @@ public class VisitsService {
             repository.deleteById(visit.get().getId());
             return Response.succeedResponse(visit.get());
         }
-        return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND.getMessage());
+        return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
