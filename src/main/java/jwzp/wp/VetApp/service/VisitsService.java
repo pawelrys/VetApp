@@ -31,38 +31,51 @@ public class VisitsService {
         return repository.findById(id);
     }
 
-    public Optional<VisitRecord> addVisit(VisitData requestedVisit) {
-        if(!ableToCreateFromData(requestedVisit)) return Optional.empty();
+    public Response<?> addVisit(VisitData requestedVisit) {
+        if (!ableToCreateFromData(requestedVisit)) {
+            return Response.errorResponse(
+                    ResponseErrorMessage.WRONG_ARGUMENTS.getMessage()
+            );
+        }
         if (!isTimeAvailable(requestedVisit.startDate, requestedVisit.duration)) {
-            return Optional.empty();
+            return Response.errorResponse(
+                    ResponseErrorMessage.VISIT_TIME_UNAVAILABLE.getMessage()
+            );
         }
         VisitRecord visit = VisitRecord.createNewVisit(requestedVisit);
         try {
-            return Optional.of(repository.save(visit));
+            return Response.succeedResponse(repository.save(visit));
         } catch (IllegalArgumentException e) {
-            return Optional.empty();
+            return Response.errorResponse(
+                    ResponseErrorMessage.WRONG_ARGUMENTS.getMessage()
+            );
         }
     }
 
-    public Optional<VisitRecord> updateVisit(int id, VisitData newData) {
+    public Response<?> updateVisit(int id, VisitData newData){
         Optional<VisitRecord> toUpdate = repository.findById(id);
+
         if (toUpdate.isPresent()) {
             toUpdate.get().update(newData);
             if (!isTimeAvailable(
                     toUpdate.get().startDate,
                     toUpdate.get().duration
             )) {
-                return Optional.empty();
+                return Response.errorResponse(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE.getMessage());
             }
             repository.save(toUpdate.get());
+            return Response.succeedResponse(toUpdate.get());
         }
-        return toUpdate;
+        return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND.getMessage());
     }
 
-    public Optional<VisitRecord> delete(int id) {
+    public Response<?> delete(int id) {
         Optional<VisitRecord> visit = repository.findById(id);
-        visit.ifPresent(visitRecord -> repository.deleteById(visitRecord.getId()));
-        return visit;
+        if (visit.isPresent()){
+            repository.deleteById(visit.get().getId());
+            return Response.succeedResponse(visit.get());
+        }
+        return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND.getMessage());
     }
 
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
