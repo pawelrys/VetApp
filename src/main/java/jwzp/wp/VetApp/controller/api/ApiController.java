@@ -6,10 +6,10 @@ import jwzp.wp.VetApp.service.ResponseErrorMessage;
 import jwzp.wp.VetApp.service.VisitsService;
 import jwzp.wp.VetApp.service.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.Optional;
 
 @RequestMapping(path="/api/visits")
@@ -38,30 +38,26 @@ public class ApiController {
         Optional<VisitRecord> visit = service.getVisit(id);
         return visit.isPresent()
                 ? ResponseEntity.ok(visit.get())
-                : ResponseEntity.badRequest().body(ResponseErrorMessage.VISIT_NOT_FOUND.getMessage());
+                : ResponseToHttp.getFailureResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
     @PatchMapping(path="/{id}")
     public ResponseEntity<?> updateVisit(@PathVariable int id, @RequestBody VisitData newData) {
         Response<?> updated = service.updateVisit(id, newData);
-        return updated.succeed()
-                ? ResponseEntity.ok(updated.get())
-                : ResponseEntity.badRequest().body(updated.get());
+        return ResponseToHttp.getDefaultHttpResponse(updated);
     }
 
     @PostMapping
     public ResponseEntity<?> addVisit(@RequestBody VisitData visit) {
         Response<?> result = service.addVisit(visit);
         return result.succeed()
-                ? ResponseEntity.ok(result.get())
-                : ResponseEntity.badRequest().body(result.get());
+                ? ResponseEntity.status(HttpStatus.CREATED).body(result.get())
+                : ResponseToHttp.getFailureResponse(result.getError());
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> deleteVisit(@PathVariable int id) {
         Response<?> result = service.delete(id);
-        return result.succeed()
-                ? ResponseEntity.ok(result.get())
-                : ResponseEntity.badRequest().body(result.get());
+        return ResponseToHttp.getDefaultHttpResponse(result);
     }
 }
