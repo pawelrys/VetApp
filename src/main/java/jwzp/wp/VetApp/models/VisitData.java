@@ -18,7 +18,7 @@ public class VisitData {
             Animal animalKind,
             Status status,
             BigDecimal price
-    ){
+    ) {
         this.startDate = startDate;
         this.duration = duration;
         this.animalKind = animalKind;

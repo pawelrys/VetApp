@@ -19,15 +19,15 @@ public class VisitsService {
     private final VisitsRepository repository;
 
     @Autowired
-    private VisitsService(VisitsRepository repository){
+    private VisitsService(VisitsRepository repository) {
         this.repository = repository;
     }
 
-    public List<VisitRecord> getAllVisits(){
+    public List<VisitRecord> getAllVisits() {
         return repository.findAll();
     }
 
-    public Optional<VisitRecord> getVisit(int id){
+    public Optional<VisitRecord> getVisit(int id) {
         return repository.findById(id);
     }
 
@@ -46,7 +46,7 @@ public class VisitsService {
         }
     }
 
-    public Response<?> updateVisit(int id, VisitData newData){
+    public Response<?> updateVisit(int id, VisitData newData) {
         Optional<VisitRecord> toUpdate = repository.findById(id);
 
         if (toUpdate.isPresent()) {
@@ -65,7 +65,7 @@ public class VisitsService {
 
     public Response<?> delete(int id) {
         Optional<VisitRecord> visit = repository.findById(id);
-        if (visit.isPresent()){
+        if (visit.isPresent()) {
             repository.deleteById(visit.get().getId());
             return Response.succeedResponse(visit.get());
         }
