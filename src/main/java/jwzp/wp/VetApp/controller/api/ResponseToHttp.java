@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 public class ResponseToHttp {
 
-    public static HttpStatus getCode(ResponseErrorMessage errorMessage){
+    public static HttpStatus getCode(ResponseErrorMessage errorMessage) {
         switch (errorMessage) {
             case VISIT_NOT_FOUND:
                 return HttpStatus.NOT_FOUND;
@@ -20,14 +20,13 @@ public class ResponseToHttp {
         }
     }
 
-    public static ResponseEntity<?> getDefaultHttpResponse(Response<?> response){
+    public static ResponseEntity<?> getDefaultHttpResponse(Response<?> response) {
         return response.succeed()
                 ? ResponseEntity.ok(response.get())
                 : getFailureResponse(response.getError());
     }
 
-    public static ResponseEntity<?> getFailureResponse(ResponseErrorMessage err){
+    public static ResponseEntity<?> getFailureResponse(ResponseErrorMessage err) {
         return ResponseEntity.status(getCode(err)).body(err.getMessage());
     }
-
 }

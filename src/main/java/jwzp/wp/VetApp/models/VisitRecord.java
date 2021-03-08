@@ -34,7 +34,7 @@ public class VisitRecord {
             Animal animalKind,
             Status status,
             BigDecimal price
-    ){
+    ) {
         this.id = id;
         this.startDate = startDate;
         this.duration = duration;
@@ -43,7 +43,7 @@ public class VisitRecord {
         this.price = price;
     }
 
-    public static VisitRecord createNewVisit(VisitData data){
+    public static VisitRecord createNewVisit(VisitData data) {
         VisitRecord newVisit = new VisitRecord();
         newVisit.startDate = data.startDate;
         newVisit.duration = data.duration;
@@ -53,7 +53,7 @@ public class VisitRecord {
         return newVisit;
     }
 
-    public void update(VisitData data){
+    public void update(VisitData data) {
         if (data.startDate != null) {
             this.startDate = data.startDate;
         }

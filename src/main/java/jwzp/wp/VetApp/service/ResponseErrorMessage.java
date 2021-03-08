@@ -7,11 +7,11 @@ public enum ResponseErrorMessage {
 
     private final String message;
 
-    ResponseErrorMessage(String message){
+    ResponseErrorMessage(String message) {
         this.message = message;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         return message;
     }
 }

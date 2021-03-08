@@ -6,37 +6,36 @@ public class Response<T> {
     private final ResponseErrorMessage errorMessage;
     private final boolean succeed;
 
-    private Response(T resource){
+    private Response(T resource) {
         this.content = resource;
         this.errorMessage = null;
         this.succeed = true;
     }
 
-    private Response(ResponseErrorMessage errorMessage){
+    private Response(ResponseErrorMessage errorMessage) {
         this.content = null;
         this.errorMessage = errorMessage;
         this.succeed = false;
     }
 
-    public static <T> Response<T> succeedResponse(T content){
+    public static <T> Response<T> succeedResponse(T content) {
         return new Response<>(content);
     }
 
-    public static <T> Response<T> errorResponse(ResponseErrorMessage errorMessage){
+    public static <T> Response<T> errorResponse(ResponseErrorMessage errorMessage) {
         return new Response<>(errorMessage);
     }
 
-    public boolean succeed(){
+    public boolean succeed() {
         return succeed;
     }
 
-    public T get(){
+    public T get() {
         return content;
     }
 
-    public ResponseErrorMessage getError(){
+    public ResponseErrorMessage getError() {
         return errorMessage;
     }
-
 }
 
