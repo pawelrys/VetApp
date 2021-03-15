@@ -1,8 +1,0 @@
-version: "3"
-services:
-  data-source:
-    image: postgres:13
-    environment:
-      POSTGRES_PASSWORD: kokiko
-    ports:
-      - 5432:5432
