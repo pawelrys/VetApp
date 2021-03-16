@@ -4,6 +4,9 @@ image:
 stages:
     -build
 
+before-script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+
 build:
     stage: build
     scripts:
