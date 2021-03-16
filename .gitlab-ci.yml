@@ -1,13 +1,12 @@
-image:
-    gradle:alpine
 
 stages:
-    -build
+    - build
 
-before-script:
+before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
 
 build:
+    image: gradle:alpine
     stage: build
     scripts:
        ./gradlew --build-cache assemble
