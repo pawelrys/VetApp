@@ -7,4 +7,4 @@ before_script:
 build:
     image: gradle:alpine
     stage: build
-    script: ./gradlew --build-cache assemble
+    script: ./gradlew build
