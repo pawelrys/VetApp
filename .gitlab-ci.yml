@@ -1,0 +1,10 @@
+image:
+    gradle:alpine
+
+stages:
+    -build
+
+build:
+    stage: build
+    scripts:
+       ./gradlew --build-cache assemble
