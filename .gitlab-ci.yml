@@ -9,4 +9,5 @@ build:
     stage: build
     script: ./gradlew clean build
     artifacts:
-        - ./build/libs/VetApp-0.0.1-SNAPSHOT.jar
+        paths:
+            - ./build/libs/VetApp-0.0.1-SNAPSHOT.jar
