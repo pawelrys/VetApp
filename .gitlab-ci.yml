@@ -7,4 +7,6 @@ before_script:
 build:
     image: gradle:6.8.3-jdk11
     stage: build
-    script: ./gradlew build
+    script: ./gradlew clean build
+    artifacts:
+        - ./build/libs/VetApp-0.0.1-SNAPSHOT.jar
