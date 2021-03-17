@@ -1,5 +1,6 @@
 stages:
     - build
+    - deploy
 
 before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
@@ -11,3 +12,19 @@ build:
     artifacts:
         paths:
             - ./build/libs/VetApp-0.0.1-SNAPSHOT.jar
+
+deploy:
+    image: docker:stable
+    stage: deploy
+    before_script:
+        - docker login --usename=${HEROKU_USER} --password=${HEROKU_API_KEY} registry.heroku.com
+    script:
+        - docker build\\ 
+            --JAR_FILE="./build/libs/VetApp-0.0.1-SNAPSHOT.jar" \\
+            --DB_URI=${HEROKU_DB_URI}\\ 
+            --DB_USER=${HEROKU_DB_USER}\\ 
+            --DB_PASSWORD=&{HEROKU_DB_PASSWORD}\\
+            --tag registry.heroku.com/${HEROKU_APP_NAME}/web .
+        - docker push regisry.heroku.com/${HEROKU_APP_NAME}/web
+
+        
