@@ -16,6 +16,10 @@ build:
 deploy:
     image: docker:stable
     stage: deploy
+    variables:
+        - CONTAINER_IMAGE: registry.gitlab.com/${CI_PROJECT_PATH}
+        - DOCKER_HOST: TCP://docker:2375
+        - DOCKER-DRIVER: overlay2
     services:
         - docker:dind
     before_script:
@@ -28,5 +32,3 @@ deploy:
             --DB_PASSWORD=&{HEROKU_DB_PASSWORD}\\
             --tag registry.heroku.com/${HEROKU_APP_NAME}/web .
         - docker push regisry.heroku.com/${HEROKU_APP_NAME}/web
-
-        
