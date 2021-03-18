@@ -5,17 +5,12 @@ stages:
 build:
     image: gradle:6.7.1-jdk11
     stage: build
+    script: ./gradlew clean build
     before_script:
         - export GRADLE_USER_HOME=`pwd`/.gradle
-    script:
-        - gradlew clean build
     artifacts:
         paths:
             - ./build/libs/VetApp-0.0.1-SNAPSHOT.jar
-#    cache:
-#        key: gradle-cache
-#        paths:
-#            - .gradle/caches
 
 deploy:
     image: docker:stable
@@ -30,10 +25,10 @@ deploy:
         - docker login --username=$HEROKU_USER --password=$HEROKU_API_KEY registry.heroku.com
         - apk add --update curl && rm -rf /var/cache/apk/*
     script:
-        - docker build\\ 
+        - docker build\\
             --JAR_FILE="./build/libs/VetApp-0.0.1-SNAPSHOT.jar" \\
-            --DB_URI=${HEROKU_DB_URI}\\ 
-            --DB_USER=${HEROKU_DB_USER}\\ 
+            --DB_URI=${HEROKU_DB_URI}\\
+            --DB_USER=${HEROKU_DB_USER}\\
             --DB_PASSWORD=&{HEROKU_DB_PASSWORD}\\
             --tag registry.heroku.com/${HEROKU_APP_NAME}/web .
         - docker push regisry.heroku.com/${HEROKU_APP_NAME}/web
