@@ -12,10 +12,10 @@ build:
     artifacts:
         paths:
             - ./build/libs/VetApp-0.0.1-SNAPSHOT.jar
-    cache:
-        key: gradle-cache
-        paths:
-            - .gradle/caches
+#    cache:
+#        key: gradle-cache
+#        paths:
+#            - .gradle/caches
 
 deploy:
     image: docker:stable
