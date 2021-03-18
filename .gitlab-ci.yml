@@ -23,6 +23,7 @@ deploy:
         - docker:dind
     before_script:
         - echo 'pierwszy'
+        - echo $test
         - echo $CI_PROJECT_PATH
         - echo $HEROKU_USER
         - echo $HEROKU_API_KEY
