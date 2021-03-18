@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 IMAGE_ID=$(docker inspect registry.heroku.com/$1/web --format={{.Id}})
 curl \
