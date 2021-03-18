@@ -32,7 +32,7 @@ deploy:
         - curl \
             -n \
             -X PATCH https://api.heroku.com/apps/$HEROKU_APP_NAME/formation \
-            -d '{"update"%3A [{"type":"web", "docker_image":"'"$IMAGE_ID"'"}]}' \
-            -H "Content-Type%3A application/json" \
-            -H "Accept%3A application/vnd.heroku+json; version=3.docker-releases" \
-            -H "Authorization%3A Bearer $HEROKU_API_KEY"
+            -d '{"update":[{"type":"web", "docker_image":"'"$IMAGE_ID"'"}]}' \
+            -H "Content-Type:application/json" \
+            -H "Accept:application/vnd.heroku+json; version=3.docker-releases" \
+            -H "Authorization:Bearer $HEROKU_API_KEY"
