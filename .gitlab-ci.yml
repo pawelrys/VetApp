@@ -26,4 +26,4 @@ deploy:
         - apk add --update curl && rm -rf /var/cache/apk/*
     script:
         - docker build --build-arg JAR_FILE="./build/libs/VetApp-0.0.1-SNAPSHOT.jar" --build-arg DB_URI=$HEROKU_DB_URI --build-arg DB_USER=$HEROKU_DB_USER --build-arg DB_PASSWORD=$HEROKU_DB_PASSWORD --tag registry.heroku.com/$HEROKU_APP_NAME/web .
-        - docker push regisry.heroku.com/$HEROKU_APP_NAME/web
+        - docker push registry.heroku.com/$HEROKU_APP_NAME/web
