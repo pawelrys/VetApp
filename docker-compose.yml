@@ -1,8 +1,18 @@
 version: "3"
 services:
-  data-source:
+  database:
     image: postgres:13
+    container_name: database
     environment:
       POSTGRES_PASSWORD: kokiko
     ports:
       - 5432:5432
+  vetapp:
+    image: vetapp
+    container_name: vetapp
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
