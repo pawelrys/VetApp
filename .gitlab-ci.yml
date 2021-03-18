@@ -17,13 +17,13 @@ deploy:
     image: docker:stable
     stage: deploy
     variables:
-        CONTAINER_IMAGE: registry.gitlab.com/${CI_PROJECT_PATH}
+        CONTAINER_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
         DOCKER_HOST: tcp://docker:2375
         DOCKER_DRIVER: overlay2
     services:
         - docker:dind
     before_script:
-        - docker login --username=${HEROKU_USER} --password=${HEROKU_API_KEY} registry.heroku.com
+        - docker login --username=$HEROKU_USER --password=$HEROKU_API_KEY registry.heroku.com
     script:
         - docker build\\ 
             --JAR_FILE="./build/libs/VetApp-0.0.1-SNAPSHOT.jar" \\
