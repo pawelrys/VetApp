@@ -28,11 +28,4 @@ deploy:
         - docker build --build-arg JAR_FILE="./build/libs/VetApp-0.0.1-SNAPSHOT.jar" --build-arg DB_URI=$HEROKU_DB_URI --build-arg DB_USER=$HEROKU_DB_USER --build-arg DB_PASSWORD=$HEROKU_DB_PASSWORD --tag registry.heroku.com/$HEROKU_APP_NAME/web .
         - docker push registry.heroku.com/$HEROKU_APP_NAME/web
 
-        - IMAGE_ID=`docker inspect registry.heroku.com/$HEROKU_APP_NAME/web --format={{.Id}}`
-        - curl \
-            -n \
-            -X PATCH https://api.heroku.com/apps/$HEROKU_APP_NAME/formation \
-            -d '{"updates":[{"type":"web", "docker_image":"'"$IMAGE_ID"'"}]}' \
-            -H "Content-Type:application/json" \
-            -H "Accept:application/vnd.heroku+json; version=3.docker-releases" \
-            -H "Authorization:Bearer $HEROKU_API_KEY"
+        - ./heroku-deploy.sh $HEROKU_APP_NAME $HEROKU_API_KEY
