@@ -29,3 +29,5 @@ deploy:
         - docker push registry.heroku.com/$HEROKU_APP_NAME/web
 
         - ./heroku-deploy.sh $HEROKU_APP_NAME $HEROKU_API_KEY
+    only:
+        - master
