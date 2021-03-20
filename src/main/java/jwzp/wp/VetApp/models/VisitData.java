@@ -1,5 +1,8 @@
 package jwzp.wp.VetApp.models;
 
+import jwzp.wp.VetApp.models.values.Animal;
+import jwzp.wp.VetApp.models.values.Status;
+
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
