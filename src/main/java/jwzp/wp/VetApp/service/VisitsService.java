@@ -1,6 +1,6 @@
 package jwzp.wp.VetApp.service;
 
-import jwzp.wp.VetApp.models.VisitData;
+import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.resources.VisitsRepository;
 import org.springframework.beans.factory.annotation.Autowired;

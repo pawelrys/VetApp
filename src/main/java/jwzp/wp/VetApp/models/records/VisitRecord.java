@@ -1,6 +1,6 @@
 package jwzp.wp.VetApp.models.records;
 
-import jwzp.wp.VetApp.models.VisitData;
+import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.models.values.Status;
 import org.hibernate.annotations.TypeDef;

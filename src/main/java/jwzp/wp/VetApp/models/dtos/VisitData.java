@@ -1,4 +1,4 @@
-package jwzp.wp.VetApp.models;
+package jwzp.wp.VetApp.models.dtos;
 
 import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.models.values.Status;
