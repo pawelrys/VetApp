@@ -51,7 +51,7 @@ public class VisitRecord {
         newVisit.startDate = data.startDate;
         newVisit.duration = data.duration;
         newVisit.animalKind = data.animalKind;
-        newVisit.status = Status.Pending;
+        newVisit.status = Status.PENDING;
         newVisit.price = data.price;
         return newVisit;
     }
