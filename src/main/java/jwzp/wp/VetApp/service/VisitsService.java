@@ -1,11 +1,9 @@
 package jwzp.wp.VetApp.service;
 
-import jwzp.wp.VetApp.models.VisitData;
-import jwzp.wp.VetApp.models.VisitRecord;
+import jwzp.wp.VetApp.models.dtos.VisitData;
+import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.resources.VisitsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;

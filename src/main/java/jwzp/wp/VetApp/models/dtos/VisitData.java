@@ -1,4 +1,7 @@
-package jwzp.wp.VetApp.models;
+package jwzp.wp.VetApp.models.dtos;
+
+import jwzp.wp.VetApp.models.values.Animal;
+import jwzp.wp.VetApp.models.values.Status;
 
 import java.math.BigDecimal;
 import java.time.Duration;

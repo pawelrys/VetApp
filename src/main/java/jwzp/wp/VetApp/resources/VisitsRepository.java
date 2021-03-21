@@ -1,6 +1,6 @@
 package jwzp.wp.VetApp.resources;
 
-import jwzp.wp.VetApp.models.VisitRecord;
+import jwzp.wp.VetApp.models.records.VisitRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package jwzp.wp.VetApp.models;
+package jwzp.wp.VetApp.models.values;
 
 public enum Animal {
     Other,
