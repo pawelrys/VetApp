@@ -3,10 +3,9 @@ package jwzp.wp.VetApp.models.records;
 import ch.qos.logback.core.net.server.Client;
 import jwzp.wp.VetApp.models.dtos.ClientData;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity(name="clients")
@@ -17,6 +16,9 @@ public class ClientRecord {
     public final int id;
     public String name;
     public String surname;
+
+    @OneToMany(mappedBy = "owner")
+    private final List<PetRecord> pets = new ArrayList<>();
 
     protected ClientRecord(){
         this.id = -1;
