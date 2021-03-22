@@ -1,10 +1,7 @@
 package jwzp.wp.VetApp.models.records;
 
 import jwzp.wp.VetApp.models.dtos.VetData;
-import jwzp.wp.VetApp.models.values.OpeningHours;
-
 import javax.persistence.*;
-import java.awt.*;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Objects;
