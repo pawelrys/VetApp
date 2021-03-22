@@ -71,7 +71,7 @@ public class VisitsService {
     }
 
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
-        if(!isMoreThanOneHourToStartNewVisit(start)) return false;
+        if(!isTimeToVisitGreaterThan(Duration.between(LocalDateTime.now(), start))) return false;
         var end = start.plusMinutes(duration.toMinutes());
         return repository.getRecordsInTime(start, end).size() == 0;
     }
@@ -80,7 +80,7 @@ public class VisitsService {
         return visit.animalKind != null && visit.duration != null && visit.price != null && visit.startDate != null;
     }
 
-    public boolean isMoreThanOneHourToStartNewVisit(LocalDateTime start) {
-        return Math.abs(Duration.between(LocalDateTime.now(), start).getSeconds()) > 3600;
+    public boolean isTimeToVisitGreaterThan(Duration duration) {
+        return duration.getSeconds() > Duration.ofHours(1).getSeconds();
     }
 }
