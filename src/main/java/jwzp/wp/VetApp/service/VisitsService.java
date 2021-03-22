@@ -71,11 +71,17 @@ public class VisitsService {
     }
 
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
+        if(!isMoreThanOneHourToStartNewVisit(start)) return false;
         var end = start.plusMinutes(duration.toMinutes());
         return repository.getRecordsInTime(start, end).size() == 0;
     }
 
     public boolean ableToCreateFromData(VisitData visit) {
         return visit.animalKind != null && visit.duration != null && visit.price != null && visit.startDate != null;
+    }
+
+    public boolean isMoreThanOneHourToStartNewVisit(LocalDateTime start) {
+        LocalDateTime now = LocalDateTime.now();
+        return Math.abs(Duration.between(now, start).getSeconds()) > 3600;
     }
 }
