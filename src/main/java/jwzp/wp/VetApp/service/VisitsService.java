@@ -15,6 +15,7 @@ import java.util.Optional;
 public class VisitsService {
 
     private final VisitsRepository repository;
+    private final Duration TIME_TO_VISIT_GREATER_THAN = Duration.ofHours(1);
 
     @Autowired
     private VisitsService(VisitsRepository repository) {
@@ -71,11 +72,16 @@ public class VisitsService {
     }
 
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return false;
         var end = start.plusMinutes(duration.toMinutes());
         return repository.getRecordsInTime(start, end).size() == 0;
     }
 
     public boolean ableToCreateFromData(VisitData visit) {
         return visit.animalKind != null && visit.duration != null && visit.price != null && visit.startDate != null;
+    }
+
+    public boolean isTimeToVisitGreaterThan(LocalDateTime start, Duration duration) {
+        return Duration.between(LocalDateTime.now(), start).getSeconds() > duration.getSeconds();
     }
 }
