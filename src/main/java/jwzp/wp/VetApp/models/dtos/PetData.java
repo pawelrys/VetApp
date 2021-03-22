@@ -7,9 +7,9 @@ import java.util.Objects;
 
 public class PetData {
     public String name;
-    LocalDate birthday;
-    Animal animal;
-    int ownerId;
+    public LocalDate birthday;
+    public Animal animal;
+    public int ownerId;
 
     public PetData(
             String name,
