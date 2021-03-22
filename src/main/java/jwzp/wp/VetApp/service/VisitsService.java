@@ -81,7 +81,6 @@ public class VisitsService {
     }
 
     public boolean isMoreThanOneHourToStartNewVisit(LocalDateTime start) {
-        LocalDateTime now = LocalDateTime.now();
-        return Math.abs(Duration.between(now, start).getSeconds()) > 3600;
+        return Math.abs(Duration.between(LocalDateTime.now(), start).getSeconds()) > 3600;
     }
 }
