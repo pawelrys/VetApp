@@ -1,7 +1,9 @@
 package jwzp.wp.VetApp.models.values;
 
 public enum Status {
-    Finished,
-    Canceled,
-    Pending
+    PENDING,
+    CANCELED,
+    FINISHED,
+    MISSED,
+    CLOSED_AUTOMATICALLY
 }
