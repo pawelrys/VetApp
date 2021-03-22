@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Objects;
 
-@Entity(name="visits")
+@Entity(name="clients")
 public class ClientRecord {
 
     @Id
