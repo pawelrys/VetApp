@@ -15,10 +15,10 @@ public class VetRecord {
     public String name;
     public String surname;
     public byte[] photo;
-    @Column(name = "startTime", columnDefinition = "TIME")
-    public LocalTime end;
-    @Column(name = "endTime", columnDefinition = "TIME")
-    public LocalTime start;
+    @Column(name = "officeHoursEnd", columnDefinition = "TIME")
+    public LocalTime officeHoursEnd;
+    @Column(name = "officeHoursStart", columnDefinition = "TIME")
+    public LocalTime officeHoursStart;
 
     public VetRecord() {
         this.id = -1;
@@ -29,15 +29,15 @@ public class VetRecord {
             String name,
             String surname,
             byte[] photo,
-            LocalTime start,
-            LocalTime end
+            LocalTime officeHoursStart,
+            LocalTime officeHoursEnd
     ) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.photo = photo;
-        this.start = start;
-        this.end = end;
+        this.officeHoursStart = officeHoursStart;
+        this.officeHoursEnd = officeHoursEnd;
     }
 
     public VetRecord createVet(VetData data) {
@@ -45,8 +45,8 @@ public class VetRecord {
         vet.name = data.name;
         vet.surname = data.surname;
         vet.photo = data.photo;
-        vet.start = data.start;
-        vet.end = data.end;
+        vet.officeHoursStart = data.officeHoursStart;
+        vet.officeHoursEnd = data.officeHoursEnd;
         return vet;
     }
 
@@ -55,12 +55,12 @@ public class VetRecord {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VetRecord that = (VetRecord) o;
-        return id == that.id && name.equals(that.name) && surname.equals(that.surname) && start.equals(that.start) && end.equals(that.end) && Arrays.equals(photo, that.photo);
+        return id == that.id && name.equals(that.name) && surname.equals(that.surname) && officeHoursStart.equals(that.officeHoursStart) && officeHoursEnd.equals(that.officeHoursEnd) && Arrays.equals(photo, that.photo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, surname, photo, start, end);
+        return Objects.hash(id, name, surname, photo, officeHoursStart, officeHoursEnd);
     }
 }
 
