@@ -15,7 +15,7 @@ import java.util.Optional;
 public class VisitsService {
 
     private final VisitsRepository repository;
-    private final int TIME_TO_VISIT_GREATER_THAN = 1;
+    private final Duration TIME_TO_VISIT_GREATER_THAN = Duration.ofHours(1);
 
     @Autowired
     private VisitsService(VisitsRepository repository) {
@@ -72,7 +72,7 @@ public class VisitsService {
     }
 
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
-        if(!isTimeToVisitGreaterThan(start, Duration.ofHours(TIME_TO_VISIT_GREATER_THAN))) return false;
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return false;
         var end = start.plusMinutes(duration.toMinutes());
         return repository.getRecordsInTime(start, end).size() == 0;
     }
