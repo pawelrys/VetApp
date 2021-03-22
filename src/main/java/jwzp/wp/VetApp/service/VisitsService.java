@@ -1,9 +1,7 @@
 package jwzp.wp.VetApp.service;
 
 import jwzp.wp.VetApp.models.dtos.VisitData;
-import jwzp.wp.VetApp.models.records.PetRecord;
 import jwzp.wp.VetApp.models.records.VisitRecord;
-import jwzp.wp.VetApp.resources.PetsRepository;
 import jwzp.wp.VetApp.resources.VisitsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,5 +91,14 @@ public class VisitsService {
 
     public boolean isTimeToVisitGreaterThan(LocalDateTime start, Duration duration) {
         return Duration.between(LocalDateTime.now(), start).getSeconds() > duration.getSeconds();
+    }
+
+    public List<VisitRecord> updateVisitStatusTo(Status status) {
+        var records = repository.getFinishedVisitsWithPendingStatus(LocalDateTime.now(), Status.PENDING);
+        for (var visit : records) {
+            VisitData data = new VisitData(visit.startDate, visit.duration, visit.animalKind, status, visit.price);
+            updateVisit(visit.getId(), data);
+        }
+        return records;
     }
 }
