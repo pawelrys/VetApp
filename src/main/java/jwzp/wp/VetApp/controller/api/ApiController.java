@@ -1,10 +1,11 @@
 package jwzp.wp.VetApp.controller.api;
 
+import jwzp.wp.VetApp.models.dtos.ClientData;
+import jwzp.wp.VetApp.models.dtos.PetData;
+import jwzp.wp.VetApp.models.dtos.VetData;
 import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.models.dtos.VisitData;
-import jwzp.wp.VetApp.service.ResponseErrorMessage;
-import jwzp.wp.VetApp.service.VisitsService;
-import jwzp.wp.VetApp.service.Response;
+import jwzp.wp.VetApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,17 @@ import java.util.Optional;
 @RestController
 public class ApiController {
 
-    private final VisitsService service;
+    private final VisitsService visitsService;
+    private final ClientsService clientService;
+    private final VetsService vetsService;
+    private final PetsService petsService;
 
     @Autowired
-    private ApiController(VisitsService service) {
-        this.service = service;
+    private ApiController(VisitsService visitsService, ClientsService clientService, VetsService vetsService, PetsService petsService) {
+        this.visitsService = visitsService;
+        this.clientService = clientService;
+        this.vetsService = vetsService;
+        this.petsService = petsService;
     }
 
     @GetMapping(path="/test")
@@ -30,12 +37,12 @@ public class ApiController {
 
     @GetMapping
     public ResponseEntity<?> getAllVisits() {
-        return ResponseEntity.ok().body(service.getAllVisits());
+        return ResponseEntity.ok().body(visitsService.getAllVisits());
     }
 
     @GetMapping(path="/{id}")
     public ResponseEntity<?> getVisit(@PathVariable int id) {
-        Optional<VisitRecord> visit = service.getVisit(id);
+        Optional<VisitRecord> visit = visitsService.getVisit(id);
         return visit.isPresent()
                 ? ResponseEntity.ok(visit.get())
                 : ResponseToHttp.getFailureResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
@@ -43,13 +50,13 @@ public class ApiController {
 
     @PatchMapping(path="/{id}")
     public ResponseEntity<?> updateVisit(@PathVariable int id, @RequestBody VisitData newData) {
-        Response<?> updated = service.updateVisit(id, newData);
+        Response<?> updated = visitsService.updateVisit(id, newData);
         return ResponseToHttp.getDefaultHttpResponse(updated);
     }
 
     @PostMapping
     public ResponseEntity<?> addVisit(@RequestBody VisitData visit) {
-        Response<?> result = service.addVisit(visit);
+        Response<?> result = visitsService.addVisit(visit);
         return result.succeed()
                 ? ResponseEntity.status(HttpStatus.CREATED).body(result.get())
                 : ResponseToHttp.getFailureResponse(result.getError());
@@ -57,7 +64,46 @@ public class ApiController {
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> deleteVisit(@PathVariable int id) {
-        Response<?> result = service.delete(id);
+        Response<?> result = visitsService.delete(id);
         return ResponseToHttp.getDefaultHttpResponse(result);
+    }
+
+    @GetMapping(path = "/clients")
+    public ResponseEntity<?> getAllClients() {
+        return ResponseEntity.ok().body(clientService.getAllClients());
+    }
+
+    @PostMapping(path = "/clients")
+    public ResponseEntity<?> addClient(@RequestBody ClientData client) {
+        Response<?> result = clientService.addClient(client);
+        return result.succeed()
+                ? ResponseEntity.status(HttpStatus.CREATED).body(result.get())
+                : ResponseToHttp.getFailureResponse(result.getError());
+    }
+
+    @GetMapping(path = "/pets")
+    public ResponseEntity<?> getAllPets() {
+        return ResponseEntity.ok().body(petsService.getAllPets());
+    }
+
+    @PostMapping(path = "/pets")
+    public ResponseEntity<?> addPet(@RequestBody PetData pet) {
+        Response<?> result = petsService.addPet(pet);
+        return result.succeed()
+                ? ResponseEntity.status(HttpStatus.CREATED).body(result.get())
+                : ResponseToHttp.getFailureResponse(result.getError());
+    }
+
+    @GetMapping(path = "/vets")
+    public ResponseEntity<?> getAllVets() {
+        return ResponseEntity.ok().body(vetsService.getAllVets());
+    }
+
+    @PostMapping(path = "/vets")
+    public ResponseEntity<?> addVet(@RequestBody VetData vet) {
+        Response<?> result = vetsService.addVet(vet);
+        return result.succeed()
+                ? ResponseEntity.status(HttpStatus.CREATED).body(result.get())
+                : ResponseToHttp.getFailureResponse(result.getError());
     }
 }
