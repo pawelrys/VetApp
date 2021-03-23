@@ -39,7 +39,7 @@ public class PetRecord {
         this.owner = owner;
     }
 
-    public PetRecord createPetRecord(PetData data) {
+    public static PetRecord createPetRecord(PetData data) {
         var pet = new PetRecord();
         pet.name = data.name;
         pet.birthday = data.birthday;

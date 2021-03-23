@@ -34,7 +34,7 @@ public class ClientRecord {
         this.surname = surname;
     }
 
-    public ClientRecord createClientRecord(ClientData data){
+    public static ClientRecord createClientRecord(ClientData data){
         var client = new ClientRecord();
         client.name = data.name;
         client.surname = data.surname;
