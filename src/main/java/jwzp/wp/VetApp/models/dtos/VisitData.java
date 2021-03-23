@@ -1,8 +1,11 @@
 package jwzp.wp.VetApp.models.dtos;
 
-import jwzp.wp.VetApp.models.values.Animal;
+import jwzp.wp.VetApp.models.records.PetRecord;
+
 import jwzp.wp.VetApp.models.values.Status;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -11,20 +14,23 @@ import java.util.Objects;
 public class VisitData {
     public final LocalDateTime startDate;
     public final Duration duration;
-    public final Animal animalKind;
+    public final PetRecord pet;
     public final Status status;
     public BigDecimal price;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     public VisitData(
             LocalDateTime startDate,
             Duration duration,
-            Animal animalKind,
+            int petId,
             Status status,
             BigDecimal price
-    ) {
+    ) throws NullPointerException {
         this.startDate = startDate;
         this.duration = duration;
-        this.animalKind = animalKind;
+        this.pet = entityManager.find(PetRecord.class, petId);
         this.status = status;
         this.price = price;
     }
@@ -34,11 +40,11 @@ public class VisitData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VisitData visitData = (VisitData) o;
-        return Objects.equals(startDate, visitData.startDate) && Objects.equals(duration, visitData.duration) && animalKind == visitData.animalKind && status == visitData.status && Objects.equals(price, visitData.price);
+        return Objects.equals(startDate, visitData.startDate) && Objects.equals(duration, visitData.duration) && pet == visitData.pet && status == visitData.status && Objects.equals(price, visitData.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDate, duration, animalKind, status, price);
+        return Objects.hash(startDate, duration, pet, status, price);
     }
 }

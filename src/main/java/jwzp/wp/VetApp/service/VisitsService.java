@@ -78,7 +78,7 @@ public class VisitsService {
     }
 
     public boolean ableToCreateFromData(VisitData visit) {
-        return visit.animalKind != null && visit.duration != null && visit.price != null && visit.startDate != null;
+        return visit.petId != null && visit.duration != null && visit.price != null && visit.startDate != null;
     }
 
     public boolean isTimeToVisitGreaterThan(LocalDateTime start, Duration duration) {

@@ -1,5 +1,6 @@
 package jwzp.wp.VetApp.models.records;
 
+import jwzp.wp.VetApp.models.dtos.PetData;
 import jwzp.wp.VetApp.models.values.Animal;
 
 import javax.persistence.*;
@@ -38,7 +39,7 @@ public class PetRecord {
         this.owner = owner;
     }
 
-    public PetRecord createPetRecord(PetRecord data) {
+    public PetRecord createPetRecord(PetData data) {
         var pet = new PetRecord();
         pet.name = data.name;
         pet.birthday = data.birthday;
