@@ -1,6 +1,5 @@
 package jwzp.wp.VetApp.models.records;
 
-import ch.qos.logback.core.net.server.Client;
 import jwzp.wp.VetApp.models.dtos.ClientData;
 
 import javax.persistence.*;
