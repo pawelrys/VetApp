@@ -49,13 +49,18 @@ public class VisitRecord {
         this.price = price;
     }
 
-    public static VisitRecord createNewVisit(VisitData data) {
+    public static VisitRecord createNewVisit(
+            LocalDateTime startDate,
+            Duration duration,
+            PetRecord pet,
+            BigDecimal price
+    ) {
         VisitRecord newVisit = new VisitRecord();
-        newVisit.startDate = data.startDate;
-        newVisit.duration = data.duration;
-        newVisit.pet = data.pet;
+        newVisit.startDate = startDate;
+        newVisit.duration = duration;
+        newVisit.pet = pet;
         newVisit.status = Status.PENDING;
-        newVisit.price = data.price;
+        newVisit.price = price;
         return newVisit;
     }
 
@@ -65,9 +70,6 @@ public class VisitRecord {
         }
         if (data.duration != null) {
             this.duration = data.duration;
-        }
-        if (data.pet != null) {
-            this.pet = data.pet;
         }
         if (data.status != null) {
             this.status = data.status;

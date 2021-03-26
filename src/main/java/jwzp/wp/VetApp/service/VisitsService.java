@@ -1,7 +1,9 @@
 package jwzp.wp.VetApp.service;
 
 import jwzp.wp.VetApp.models.dtos.VisitData;
+import jwzp.wp.VetApp.models.records.PetRecord;
 import jwzp.wp.VetApp.models.records.VisitRecord;
+import jwzp.wp.VetApp.resources.PetsRepository;
 import jwzp.wp.VetApp.resources.VisitsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,20 +16,22 @@ import java.util.Optional;
 @Service
 public class VisitsService {
 
-    private final VisitsRepository repository;
+    private final VisitsRepository visitsRepository;
+    private final PetsRepository petsRepository;
     private final Duration TIME_TO_VISIT_GREATER_THAN = Duration.ofHours(1);
 
     @Autowired
-    private VisitsService(VisitsRepository repository) {
-        this.repository = repository;
+    private VisitsService(VisitsRepository visitsRepository, PetsRepository petsRepository) {
+        this.visitsRepository = visitsRepository;
+        this.petsRepository = petsRepository;
     }
 
     public List<VisitRecord> getAllVisits() {
-        return repository.findAll();
+        return visitsRepository.findAll();
     }
 
     public Optional<VisitRecord> getVisit(int id) {
-        return repository.findById(id);
+        return visitsRepository.findById(id);
     }
 
     public Response<?> addVisit(VisitData requestedVisit) {
@@ -37,16 +41,22 @@ public class VisitsService {
         if (!isTimeAvailable(requestedVisit.startDate, requestedVisit.duration)) {
             return Response.errorResponse(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
         }
-        VisitRecord visit = VisitRecord.createNewVisit(requestedVisit);
         try {
-            return Response.succeedResponse(repository.save(visit));
+            PetRecord pet = petsRepository.findById(requestedVisit.petId).orElseThrow();
+            VisitRecord visit = VisitRecord.createNewVisit(
+                    requestedVisit.startDate,
+                    requestedVisit.duration,
+                    pet,
+                    requestedVisit.price
+            );
+            return Response.succeedResponse(visitsRepository.save(visit));
         } catch (IllegalArgumentException e) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }
 
     public Response<?> updateVisit(int id, VisitData newData) {
-        Optional<VisitRecord> toUpdate = repository.findById(id);
+        Optional<VisitRecord> toUpdate = visitsRepository.findById(id);
 
         if (toUpdate.isPresent()) {
             toUpdate.get().update(newData);
@@ -56,16 +66,16 @@ public class VisitsService {
             )) {
                 return Response.errorResponse(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
             }
-            repository.save(toUpdate.get());
+            visitsRepository.save(toUpdate.get());
             return Response.succeedResponse(toUpdate.get());
         }
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
     public Response<?> delete(int id) {
-        Optional<VisitRecord> visit = repository.findById(id);
+        Optional<VisitRecord> visit = visitsRepository.findById(id);
         if (visit.isPresent()) {
-            repository.deleteById(visit.get().getId());
+            visitsRepository.deleteById(visit.get().getId());
             return Response.succeedResponse(visit.get());
         }
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
@@ -74,11 +84,11 @@ public class VisitsService {
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
         if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return false;
         var end = start.plusMinutes(duration.toMinutes());
-        return repository.getRecordsInTime(start, end).size() == 0;
+        return visitsRepository.getRecordsInTime(start, end).size() == 0;
     }
 
     public boolean ableToCreateFromData(VisitData visit) {
-        return visit.pet != null && visit.duration != null && visit.price != null && visit.startDate != null;
+        return visit.petId != null && visit.duration != null && visit.price != null && visit.startDate != null;
     }
 
     public boolean isTimeToVisitGreaterThan(LocalDateTime start, Duration duration) {
