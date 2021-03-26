@@ -1,6 +1,5 @@
 package jwzp.wp.VetApp.models.dtos;
 
-import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.models.values.Animal;
 
 import javax.persistence.EntityManager;
@@ -12,7 +11,7 @@ public class PetData {
     public String name;
     public LocalDate birthday;
     public Animal animal;
-    public ClientRecord owner;
+    public Integer ownerId;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -21,12 +20,12 @@ public class PetData {
             String name,
             LocalDate birthday,
             Animal animal,
-            int ownerId
+            Integer ownerId
     ) {
         this.name = name;
         this.birthday = birthday;
         this.animal = animal;
-        this.owner = entityManager.find(ClientRecord.class, ownerId);
+        this.ownerId = ownerId;
     }
 
     @Override
@@ -34,11 +33,11 @@ public class PetData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PetData that = (PetData) o;
-        return Objects.equals(name, that.name) && Objects.equals(birthday, that.birthday) && Objects.equals(animal, that.animal) && Objects.equals(owner, that.owner);
+        return Objects.equals(name, that.name) && Objects.equals(birthday, that.birthday) && Objects.equals(animal, that.animal) && Objects.equals(ownerId, that.ownerId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, birthday, animal, owner);
+        return Objects.hash(name, birthday, animal, ownerId);
     }
 }
