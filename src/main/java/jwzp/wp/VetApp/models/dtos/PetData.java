@@ -2,8 +2,6 @@ package jwzp.wp.VetApp.models.dtos;
 
 import jwzp.wp.VetApp.models.values.Animal;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -12,9 +10,6 @@ public class PetData {
     public LocalDate birthday;
     public Animal animal;
     public Integer ownerId;
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     public PetData(
             String name,
