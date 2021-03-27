@@ -22,7 +22,10 @@ public class VisitRecord {
     public LocalDateTime startDate;
     @Column(columnDefinition = "interval")
     public Duration duration;
-    public Animal animalKind;
+
+    @OneToOne
+    @JoinTable(name="pet")
+    public PetRecord pet;
     public Status status;
     public BigDecimal price;
 
@@ -34,25 +37,30 @@ public class VisitRecord {
             int id,
             LocalDateTime startDate,
             Duration duration,
-            Animal animalKind,
+            PetRecord pet,
             Status status,
             BigDecimal price
     ) {
         this.id = id;
         this.startDate = startDate;
         this.duration = duration;
-        this.animalKind = animalKind;
+        this.pet = pet;
         this.status = status;
         this.price = price;
     }
 
-    public static VisitRecord createNewVisit(VisitData data) {
+    public static VisitRecord createNewVisit(
+            LocalDateTime startDate,
+            Duration duration,
+            PetRecord pet,
+            BigDecimal price
+    ) {
         VisitRecord newVisit = new VisitRecord();
-        newVisit.startDate = data.startDate;
-        newVisit.duration = data.duration;
-        newVisit.animalKind = data.animalKind;
+        newVisit.startDate = startDate;
+        newVisit.duration = duration;
+        newVisit.pet = pet;
         newVisit.status = Status.PENDING;
-        newVisit.price = data.price;
+        newVisit.price = price;
         return newVisit;
     }
 
@@ -62,9 +70,6 @@ public class VisitRecord {
         }
         if (data.duration != null) {
             this.duration = data.duration;
-        }
-        if (data.animalKind != null) {
-            this.animalKind = data.animalKind;
         }
         if (data.status != null) {
             this.status = data.status;
@@ -79,12 +84,12 @@ public class VisitRecord {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VisitRecord record = (VisitRecord) o;
-        return id == record.id && startDate.equals(record.startDate) && duration.equals(record.duration) && animalKind == record.animalKind && status == record.status && price.equals(record.price);
+        return id == record.id && startDate.equals(record.startDate) && duration.equals(record.duration) && pet == record.pet && status == record.status && price.equals(record.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, startDate, duration, animalKind, status, price);
+        return Objects.hash(id, startDate, duration, pet, status, price);
     }
 
     public int getId() {

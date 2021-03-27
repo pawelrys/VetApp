@@ -40,7 +40,7 @@ public class VetRecord {
         this.officeHoursEnd = officeHoursEnd;
     }
 
-    public VetRecord createVet(VetData data) {
+    public static VetRecord createVet(VetData data) {
         var vet = new VetRecord();
         vet.name = data.name;
         vet.surname = data.surname;

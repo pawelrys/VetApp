@@ -18,7 +18,7 @@ public class PetRecord {
 
     @ManyToOne
     @JoinColumn(name = "ownerId")
-    private ClientRecord owner;
+    public ClientRecord owner;
 
     protected PetRecord(){
         this.id = -1;
@@ -38,12 +38,12 @@ public class PetRecord {
         this.owner = owner;
     }
 
-    public PetRecord createPetRecord(PetRecord data) {
+    public static PetRecord createPetRecord(String name, LocalDate birthday, Animal animal, ClientRecord owner) {
         var pet = new PetRecord();
-        pet.name = data.name;
-        pet.birthday = data.birthday;
-        pet.animal = data.animal;
-        pet.owner = data.owner;
+        pet.name = name;
+        pet.birthday = birthday;
+        pet.animal = animal;
+        pet.owner = owner;
         return pet;
     }
 

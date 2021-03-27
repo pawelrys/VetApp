@@ -9,13 +9,13 @@ public class PetData {
     public String name;
     public LocalDate birthday;
     public Animal animal;
-    public int ownerId;
+    public Integer ownerId;
 
     public PetData(
             String name,
             LocalDate birthday,
             Animal animal,
-            int ownerId
+            Integer ownerId
     ) {
         this.name = name;
         this.birthday = birthday;

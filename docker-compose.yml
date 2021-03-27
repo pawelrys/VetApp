@@ -11,6 +11,11 @@ services:
     image: vetapp
     container_name: vetapp
     build:
+      args:
+        DB_URI: "jdbc:postgresql://database:5432/postgres"
+        DB_USER: "postgres"
+        DB_PASSWORD: "kokiko"
+        PORT: 8080
       context: .
     ports:
       - 8080:8080
