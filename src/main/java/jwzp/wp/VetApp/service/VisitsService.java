@@ -85,7 +85,7 @@ public class VisitsService {
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
         if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return false;
         var end = start.plusMinutes(duration.toMinutes());
-        return visitsRepository.getRecordsInTime(start, end).size() == 0;
+        return visitsRepository.getRecordsInTime(start, end).size() == 1;
     }
 
     public boolean ableToCreateFromData(VisitData visit) {

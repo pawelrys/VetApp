@@ -36,5 +36,4 @@ public class ClientsController {
                 ? ResponseEntity.status(HttpStatus.CREATED).body(result.get())
                 : ResponseToHttp.getFailureResponse(result.getError());
     }
-
 }

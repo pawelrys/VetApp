@@ -23,7 +23,6 @@ public class VisitsController {
     @Autowired
     private VisitsController(VisitsService visitsService) {
         this.visitsService = visitsService;
-
     }
 
     @GetMapping(path="/test")
