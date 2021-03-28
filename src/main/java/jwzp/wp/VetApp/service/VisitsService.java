@@ -93,8 +93,8 @@ public class VisitsService {
         return Duration.between(LocalDateTime.now(), start).getSeconds() > duration.getSeconds();
     }
 
-    public List<VisitRecord> updateVisitStatusTo(Status status) {
-        var records = repository.getFinishedVisitsWithStatus(LocalDateTime.now(), Status.PENDING);
+    public List<VisitRecord> updatePastVisitsStatusTo(Status status) {
+        var records = repository.getPastVisitsWithStatus(LocalDateTime.now(), Status.PENDING);
         for (var visit : records) {
             changeStatusTo(visit, status);
         }

@@ -16,5 +16,5 @@ public interface VisitsRepository extends JpaRepository<VisitRecord, Integer> {
     List<VisitRecord> getRecordsInTime(LocalDateTime start, LocalDateTime end);
 
     @Query("select v from visits v where :now > v.startDate and :status = v.status")
-    List<VisitRecord> getFinishedVisitsWithStatus(LocalDateTime now, Status status);
+    List<VisitRecord> getPastVisitsWithStatus(LocalDateTime now, Status status);
 }
