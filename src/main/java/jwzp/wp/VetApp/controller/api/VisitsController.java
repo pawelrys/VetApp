@@ -2,16 +2,20 @@ package jwzp.wp.VetApp.controller.api;
 
 import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.models.dtos.VisitData;
+import jwzp.wp.VetApp.models.values.Status;
 import jwzp.wp.VetApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RequestMapping(path="/api/visits")
 @RestController
+@Component
 public class VisitsController {
 
     private final VisitsService visitsService;
@@ -58,5 +62,11 @@ public class VisitsController {
     public ResponseEntity<?> deleteVisit(@PathVariable int id) {
         Response<?> result = visitsService.delete(id);
         return ResponseToHttp.getDefaultHttpResponse(result);
+    }
+
+    @Scheduled(cron = "0 0 * * * *")
+    public void automaticallyClosePastVisits() {
+        var result = visitsService.updatePastVisitsStatusTo(Status.CLOSED_AUTOMATICALLY);
+        ResponseEntity.ok().body(result);
     }
 }
