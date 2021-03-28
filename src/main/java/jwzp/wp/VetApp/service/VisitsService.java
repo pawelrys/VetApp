@@ -63,7 +63,8 @@ public class VisitsService {
             toUpdate.get().update(newData);
             if (!isTimeAvailable(
                     toUpdate.get().startDate,
-                    toUpdate.get().duration
+                    toUpdate.get().duration,
+                    id
             )) {
                 return Response.errorResponse(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
             }
@@ -80,6 +81,13 @@ public class VisitsService {
             return Response.succeedResponse(visit.get());
         }
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
+    }
+
+    public boolean isTimeAvailable(LocalDateTime start, Duration duration, int id) {
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return false;
+        var end = start.plusMinutes(duration.toMinutes());
+        var visits = visitsRepository.getRecordsInTime(start, end);
+        return visits.size() == 1 && id == visits.get(0).getId();
     }
 
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {

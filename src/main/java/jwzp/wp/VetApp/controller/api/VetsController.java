@@ -31,5 +31,4 @@ public class VetsController {
                 ? ResponseEntity.status(HttpStatus.CREATED).body(result.get())
                 : ResponseToHttp.getFailureResponse(result.getError());
     }
-
 }
