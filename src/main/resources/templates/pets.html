@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="VetApp" />
+    <meta name="keywords" content="VetApp, Vet, App" />
+    <link rel="stylesheet" href="petsStyle.css" type="text/css" />
+    <title>VetApp</title>
+</head>
+<body>
+<div th:switch="${pets}"  class="container">
+    <h2 th:case="null" class="novisits">No Visits!</h2>
+    <div th:case="*" class="myTable">
+        <h1>Number of Pets: <span th:text="${#lists.size(pets)}">2</span></h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="petName">Pet Name</th>
+                <th class="petBirthday">Pet Birthday</th>
+                <th class="petType">Pet Type</th>
+                <th class="ownerName">Pet Owner Name</th>
+                <th class="ownerSurname">Pet Owner Surname</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="pet : ${pets}">
+                <td th:text="${pet.name}"></td>
+                <td th:text="${pet.birthday}"></td>
+                <td th:text="${pet.animal}"></td>
+                <td th:text="${pet.owner.name}"></td>
+                <td th:text="${pet.owner.surname}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
