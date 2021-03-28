@@ -94,11 +94,15 @@ public class VisitsService {
     }
 
     public List<VisitRecord> updateVisitStatusTo(Status status) {
-        var records = repository.getFinishedVisitsWithPendingStatus(LocalDateTime.now(), Status.PENDING);
+        var records = repository.getFinishedVisitsWithStatus(LocalDateTime.now(), Status.PENDING);
         for (var visit : records) {
-            VisitData data = new VisitData(visit.startDate, visit.duration, visit.animalKind, status, visit.price);
-            updateVisit(visit.getId(), data);
+            changeStatusTo(visit, status);
         }
         return records;
+    }
+
+    public void changeStatusTo(VisitRecord visit, Status status) {
+        VisitData data = new VisitData(visit.startDate, visit.duration, visit.animalKind, status, visit.price);
+        updateVisit(visit.getId(), data);
     }
 }
