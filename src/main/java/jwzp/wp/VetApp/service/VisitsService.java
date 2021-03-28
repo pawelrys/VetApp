@@ -96,7 +96,6 @@ public class VisitsService {
         return visitsRepository.getRecordsInTime(start, end).size() == 0;
     }
 
-
     public boolean ableToCreateFromData(VisitData visit) {
         return visit.petId != null && visit.duration != null && visit.price != null && visit.startDate != null;
     }
