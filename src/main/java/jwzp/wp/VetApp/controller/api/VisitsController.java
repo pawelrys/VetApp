@@ -64,7 +64,7 @@ public class VisitsController {
 
     @Scheduled(cron = "0 0 * * * *")
     public void automaticallyClosePastVisits() {
-        var result = service.updatePastVisitsStatusTo(Status.CLOSED_AUTOMATICALLY);
+        var result = visitsService.updatePastVisitsStatusTo(Status.CLOSED_AUTOMATICALLY);
         ResponseEntity.ok().body(result);
     }
 }

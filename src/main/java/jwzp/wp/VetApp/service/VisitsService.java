@@ -1,7 +1,10 @@
 package jwzp.wp.VetApp.service;
 
 import jwzp.wp.VetApp.models.dtos.VisitData;
+import jwzp.wp.VetApp.models.records.PetRecord;
 import jwzp.wp.VetApp.models.records.VisitRecord;
+import jwzp.wp.VetApp.models.values.Status;
+import jwzp.wp.VetApp.resources.PetsRepository;
 import jwzp.wp.VetApp.resources.VisitsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,7 +97,7 @@ public class VisitsService {
     }
 
     public List<VisitRecord> updatePastVisitsStatusTo(Status status) {
-        var records = repository.getPastVisitsWithStatus(LocalDateTime.now(), Status.PENDING);
+        var records = visitsRepository.getPastVisitsWithStatus(LocalDateTime.now(), Status.PENDING);
         for (var visit : records) {
             changeStatusTo(visit, status);
         }
@@ -102,7 +105,7 @@ public class VisitsService {
     }
 
     public void changeStatusTo(VisitRecord visit, Status status) {
-        VisitData data = new VisitData(visit.startDate, visit.duration, visit.animalKind, status, visit.price);
+        VisitData data = new VisitData(visit.startDate, visit.duration, visit.pet.id, status, visit.price);
         updateVisit(visit.getId(), data);
     }
 }
