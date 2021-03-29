@@ -83,6 +83,10 @@ td, th {
     /*width: 10%;*/
 }
 
+th{
+    font-weight: bold;
+}
+
 tr {
     text-align: center;
     vertical-align: center;
@@ -94,22 +98,10 @@ tr {
     width: 100%;
 }
 
-.date{
-    width: 25%;
+.name{
+    width: 50%;
 }
 
-.duration{
-    width: 20%;
-}
-
-.animal{
-    width: 20%;
-}
-
-.status {
-    width: 20%;
-}
-
-.price{
-    width: 15%;
+.surname{
+    width: 50%;
 }

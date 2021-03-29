@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="VetApp" />
+    <meta name="keywords" content="VetApp, Vet, App" />
+    <link rel="stylesheet" href="clientsStyle.css" type="text/css" />
+    <title>VetApp</title>
+</head>
+<body>
+<div th:switch="${clients}"  class="container">
+    <h2 th:case="null" class="novisits">No Clients!</h2>
+    <div th:case="*" class="myTable">
+        <h1>Number of Clients: <span th:text="${#lists.size(clients)}">2</span></h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="name">Name</th>
+                <th class="surname">Surname</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="client : ${clients}">
+                <td th:text="${client.name}"></td>
+                <td th:text="${client.surname}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
