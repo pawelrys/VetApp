@@ -10,7 +10,7 @@
 </head>
 <body>
 <div th:switch="${clients}"  class="container">
-    <h2 th:case="null" class="novisits">No Visits!</h2>
+    <h2 th:case="null" class="novisits">No Clients!</h2>
     <div th:case="*" class="myTable">
         <h1>Number of Clients: <span th:text="${#lists.size(clients)}">2</span></h1>
         <table class="table">
