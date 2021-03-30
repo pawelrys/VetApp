@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -51,7 +52,7 @@ public class VisitsService {
                     requestedVisit.price
             );
             return Response.succeedResponse(visitsRepository.save(visit));
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NoSuchElementException e) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }
