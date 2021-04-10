@@ -6,6 +6,8 @@ public enum ResponseErrorMessage {
 
     CLIENT_NOT_FOUND("Client not found"),
 
+    PET_NOT_FOUND("Pet not found"),
+
     WRONG_ARGUMENTS("Wrong arguments provided");
 
     private final String message;

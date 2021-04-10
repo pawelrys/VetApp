@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class PetsService {
@@ -24,6 +25,10 @@ public class PetsService {
 
     public List<PetRecord> getAllPets() {
         return petsRepository.findAll();
+    }
+
+    public Optional<PetRecord> getPet(int id) {
+        return petsRepository.findById(id);
     }
 
     public Response<?> addPet(PetData requestedPet) {
