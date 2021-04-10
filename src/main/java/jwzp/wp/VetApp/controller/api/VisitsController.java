@@ -5,13 +5,19 @@ import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.values.Status;
 import jwzp.wp.VetApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RequestMapping(path="/api/visits")
 @RestController
@@ -32,15 +38,29 @@ public class VisitsController {
 
     @GetMapping
     public ResponseEntity<?> getAllVisits() {
-        return ResponseEntity.ok().body(visitsService.getAllVisits());
+        List<VisitRecord> visits = visitsService.getAllVisits();
+        for(var visit : visits){
+            visit.add(linkTo(VisitsController.class).slash(visit.getId()).withSelfRel());
+            visit.add(linkTo(PetsController.class).slash(visit.pet.id).withRel("pet"));
+            visit.add(linkTo(ClientsController.class).slash(visit.pet.owner.id).withRel("client"));
+        }
+        Link self = linkTo(VisitsController.class).withSelfRel();
+        CollectionModel<VisitRecord> result = CollectionModel.of(visits, self);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping(path="/{id}")
     public ResponseEntity<?> getVisit(@PathVariable int id) {
         Optional<VisitRecord> visit = visitsService.getVisit(id);
-        return visit.isPresent()
-                ? ResponseEntity.ok(visit.get())
-                : ResponseToHttp.getFailureResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
+        if (visit.isPresent()){
+            Link self = linkTo(VisitsController.class).slash(visit.get().getId()).withSelfRel();
+            Link pet = linkTo(PetsController.class).slash(visit.get().pet.id).withRel("pet");
+            Link client = linkTo(ClientsController.class).slash(visit.get().pet.owner.id).withRel("client");
+            EntityModel<VisitRecord> result = EntityModel.of(visit.get(), List.of(self, pet, client));
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseToHttp.getFailureResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
+        }
     }
 
     @PatchMapping(path="/{id}")
