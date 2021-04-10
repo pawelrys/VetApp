@@ -8,6 +8,8 @@ public enum ResponseErrorMessage {
 
     PET_NOT_FOUND("Pet not found"),
 
+    VET_NOT_FOUND("Vet not found"),
+
     WRONG_ARGUMENTS("Wrong arguments provided");
 
     private final String message;
