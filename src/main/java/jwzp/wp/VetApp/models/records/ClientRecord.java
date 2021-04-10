@@ -1,6 +1,7 @@
 package jwzp.wp.VetApp.models.records;
 
 import jwzp.wp.VetApp.models.dtos.ClientData;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity(name="clients")
-public class ClientRecord {
+public class ClientRecord extends RepresentationModel<ClientRecord> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -10,6 +10,7 @@ public class ResponseToHttp {
     public static HttpStatus getCode(ResponseErrorMessage errorMessage) {
         switch (errorMessage) {
             case VISIT_NOT_FOUND:
+            case CLIENT_NOT_FOUND:
                 return HttpStatus.NOT_FOUND;
             case WRONG_ARGUMENTS:
                 return HttpStatus.NOT_ACCEPTABLE;

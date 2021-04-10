@@ -27,6 +27,7 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'com.vladmihalcea:hibernate-types-52:2.10.2'
+	compile 'org.springframework.boot:spring-boot-starter-hateoas'
 }
 
 test {
