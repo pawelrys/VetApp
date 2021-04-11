@@ -87,8 +87,8 @@ public class VisitsService {
     public boolean isTimeAvailable(LocalDateTime start, Duration duration, int id) {
         if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return false;
         var end = start.plusMinutes(duration.toMinutes());
-        var visits = visitsRepository.getRecordsInTime(start, end);
-        return visits.size() == 1 && id == visits.get(0).getId();
+        var overlappedVisits = visitsRepository.getRecordsInTime(start, end);
+        return overlappedVisits.size() == 0 || (overlappedVisits.size() == 1 && id == overlappedVisits.get(0).getId());
     }
 
     public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
