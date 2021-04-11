@@ -40,9 +40,7 @@ public class VisitsController {
     public ResponseEntity<?> getAllVisits() {
         List<VisitRecord> visits = visitsService.getAllVisits();
         for(var visit : visits){
-            visit.add(linkTo(VisitsController.class).slash(visit.getId()).withSelfRel());
-            visit.add(linkTo(PetsController.class).slash(visit.pet.id).withRel("pet"));
-            visit.add(linkTo(ClientsController.class).slash(visit.pet.owner.id).withRel("client"));
+            addLinksToEntity(visit);
         }
         Link self = linkTo(VisitsController.class).withSelfRel();
         CollectionModel<VisitRecord> result = CollectionModel.of(visits, self);
@@ -53,11 +51,7 @@ public class VisitsController {
     public ResponseEntity<?> getVisit(@PathVariable int id) {
         Optional<VisitRecord> visit = visitsService.getVisit(id);
         if (visit.isPresent()){
-            Link self = linkTo(VisitsController.class).slash(visit.get().getId()).withSelfRel();
-            Link pet = linkTo(PetsController.class).slash(visit.get().pet.id).withRel("pet");
-            Link client = linkTo(ClientsController.class).slash(visit.get().pet.owner.id).withRel("client");
-            EntityModel<VisitRecord> result = EntityModel.of(visit.get(), List.of(self, pet, client));
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(addLinksToEntity(visit.get()));
         } else {
             return ResponseToHttp.getFailureResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
         }
@@ -65,27 +59,38 @@ public class VisitsController {
 
     @PatchMapping(path="/{id}")
     public ResponseEntity<?> updateVisit(@PathVariable int id, @RequestBody VisitData newData) {
-        Response<?> updated = visitsService.updateVisit(id, newData);
-        return ResponseToHttp.getDefaultHttpResponse(updated);
+        Response<VisitRecord> updated = visitsService.updateVisit(id, newData);
+        return updated.succeed()
+                ? ResponseEntity.ok(addLinksToEntity(updated.get()))
+                : ResponseToHttp.getFailureResponse(updated.getError());
     }
 
     @PostMapping
     public ResponseEntity<?> addVisit(@RequestBody VisitData visit) {
-        Response<?> result = visitsService.addVisit(visit);
+        Response<VisitRecord> result = visitsService.addVisit(visit);
         return result.succeed()
-                ? ResponseEntity.status(HttpStatus.CREATED).body(result.get())
+                ? ResponseEntity.status(HttpStatus.CREATED).body(addLinksToEntity(result.get()))
                 : ResponseToHttp.getFailureResponse(result.getError());
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> deleteVisit(@PathVariable int id) {
-        Response<?> result = visitsService.delete(id);
-        return ResponseToHttp.getDefaultHttpResponse(result);
+        Response<VisitRecord> result = visitsService.delete(id);
+        return result.succeed()
+                ? ResponseEntity.ok(addLinksToEntity(result.get()))
+                : ResponseToHttp.getFailureResponse(result.getError());
     }
 
     @Scheduled(cron = "0 0 * * * *")
     public void automaticallyClosePastVisits() {
         var result = visitsService.updatePastVisitsStatusTo(Status.CLOSED_AUTOMATICALLY);
         ResponseEntity.ok().body(result);
+    }
+
+    private VisitRecord addLinksToEntity(VisitRecord visit) {
+        visit.add(linkTo(VisitsController.class).slash(visit.getId()).withSelfRel());
+        visit.add(linkTo(PetsController.class).slash(visit.pet.id).withRel("pet"));
+        visit.add(linkTo(ClientsController.class).slash(visit.pet.owner.id).withRel("client"));
+        return visit;
     }
 }

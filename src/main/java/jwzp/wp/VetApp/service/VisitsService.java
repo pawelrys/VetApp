@@ -36,7 +36,7 @@ public class VisitsService {
         return visitsRepository.findById(id);
     }
 
-    public Response<?> addVisit(VisitData requestedVisit) {
+    public Response<VisitRecord> addVisit(VisitData requestedVisit) {
         if (!ableToCreateFromData(requestedVisit)) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
@@ -57,7 +57,7 @@ public class VisitsService {
         }
     }
 
-    public Response<?> updateVisit(int id, VisitData newData) {
+    public Response<VisitRecord> updateVisit(int id, VisitData newData) {
         Optional<VisitRecord> toUpdate = visitsRepository.findById(id);
 
         if (toUpdate.isPresent()) {
@@ -75,7 +75,7 @@ public class VisitsService {
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
-    public Response<?> delete(int id) {
+    public Response<VisitRecord> delete(int id) {
         Optional<VisitRecord> visit = visitsRepository.findById(id);
         if (visit.isPresent()) {
             visitsRepository.deleteById(visit.get().getId());
