@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="VetApp" />
+  <meta name="keywords" content="VetApp, Vet, App" />
+  <link rel="stylesheet" href="officesStyle.css" type="text/css" />
+  <title>VetApp</title>
+</head>
+<body>
+<div th:switch="${office}"  class="container">
+  <h2 th:case="null" class="nooffices">No Offices!</h2>
+  <div th:case="*" class="myTable">
+    <h1>Number of Offices: <span th:text="${#lists.size(office)}">2</span></h1>
+    <table class="table">
+      <thead>
+      <tr>
+        <th class="name">Name</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="office : ${office}">
+        <td th:text="${office.name}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>
