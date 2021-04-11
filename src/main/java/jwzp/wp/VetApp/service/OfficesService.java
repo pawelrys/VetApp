@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OfficesService {
@@ -32,6 +33,10 @@ public class OfficesService {
         } catch (IllegalArgumentException e) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
+    }
+
+    public Optional<OfficeRecord> getOffice(int id) {
+        return repository.findById(id);
     }
 
     public boolean ableToCreateFromData(OfficeData office) {
