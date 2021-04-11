@@ -26,7 +26,7 @@ public class ClientsService {
         return repository.findById(id);
     }
 
-    public Response<?> addClient(ClientData requestedClient) {
+    public Response<ClientRecord> addClient(ClientData requestedClient) {
         if (!ableToCreateFromData(requestedClient)) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }

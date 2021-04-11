@@ -27,7 +27,7 @@ public class VetsService {
         return repository.findById(id);
     }
 
-    public Response<?> addVet(VetData requestedVet) {
+    public Response<VetRecord> addVet(VetData requestedVet) {
         if (!ableToCreateFromData(requestedVet)) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }

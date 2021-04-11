@@ -38,7 +38,7 @@ public class ClientsController {
     public ResponseEntity<?> getAllClients() {
         List<ClientRecord> clients = clientsService.getAllClients();
         for(var client : clients){
-            client.add(linkTo(ClientsController.class).slash(client.id).withSelfRel());
+            addLinksToEntity(client);
         }
         Link link = linkTo(ClientsController.class).withSelfRel();
         CollectionModel<ClientRecord> result = CollectionModel.of(clients, link);
@@ -48,20 +48,20 @@ public class ClientsController {
     @GetMapping(path="/{id}")
     public ResponseEntity<?> getClient(@PathVariable int id) {
         Optional<ClientRecord> client = clientsService.getClient(id);
-        if (client.isPresent()) {
-            Link link = linkTo(ClientsController.class).slash(client.get().id).withSelfRel();
-            EntityModel<ClientRecord> result = EntityModel.of(client.get(), link);
-            return ResponseEntity.ok().body(result);
-        } else {
-            return ResponseToHttp.getFailureResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
-        }
+        return client.isPresent()
+                ? ResponseEntity.ok().body(addLinksToEntity(client.get()))
+                : ResponseToHttp.getFailureResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
     }
 
     @PostMapping
     public ResponseEntity<?> addClient(@RequestBody ClientData client) {
-        Response<?> result = clientsService.addClient(client);
+        Response<ClientRecord> result = clientsService.addClient(client);
         return result.succeed()
-                ? ResponseEntity.status(HttpStatus.CREATED).body(result.get())
+                ? ResponseEntity.status(HttpStatus.CREATED).body(addLinksToEntity(result.get()))
                 : ResponseToHttp.getFailureResponse(result.getError());
+    }
+
+    private ClientRecord addLinksToEntity(ClientRecord client) {
+        return client.add(linkTo(ClientsController.class).slash(client.id).withSelfRel());
     }
 }

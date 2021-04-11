@@ -33,7 +33,7 @@ public class VetsController {
     public ResponseEntity<?> getAllVets() {
         List<VetRecord> vets = vetsService.getAllVets();
         for(var vet : vets){
-            vet.add(linkTo(VetsController.class).slash(vet.id).withSelfRel());
+            addLinksToEntity(vet);
         }
         Link self = linkTo(VetsController.class).withSelfRel();
         CollectionModel<VetRecord> result = CollectionModel.of(vets, self);
@@ -43,20 +43,21 @@ public class VetsController {
     @GetMapping(path="/{id}")
     public ResponseEntity<?> getVet(@PathVariable int id){
         Optional<VetRecord> vet = vetsService.getVet(id);
-        if(vet.isPresent()){
-            Link self = linkTo(VetsController.class).slash(vet.get().id).withSelfRel();
-            EntityModel<VetRecord> result = EntityModel.of(vet.get(), self);
-            return ResponseEntity.ok(result);
-        } else {
-            return ResponseToHttp.getFailureResponse(ResponseErrorMessage.VET_NOT_FOUND);
-        }
+        return vet.isPresent()
+                ? ResponseEntity.ok(addLinksToEntity(vet.get()))
+                : ResponseToHttp.getFailureResponse(ResponseErrorMessage.VET_NOT_FOUND);
+
     }
 
     @PostMapping
     public ResponseEntity<?> addVet(@RequestBody VetData vet) {
-        Response<?> result = vetsService.addVet(vet);
+        Response<VetRecord> result = vetsService.addVet(vet);
         return result.succeed()
-                ? ResponseEntity.status(HttpStatus.CREATED).body(result.get())
+                ? ResponseEntity.status(HttpStatus.CREATED).body(addLinksToEntity(result.get()))
                 : ResponseToHttp.getFailureResponse(result.getError());
+    }
+
+    private VetRecord addLinksToEntity(VetRecord vet) {
+        return vet.add(linkTo(VetsController.class).slash(vet.id).withSelfRel());
     }
 }

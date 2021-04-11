@@ -31,7 +31,7 @@ public class PetsService {
         return petsRepository.findById(id);
     }
 
-    public Response<?> addPet(PetData requestedPet) {
+    public Response<PetRecord> addPet(PetData requestedPet) {
         if (!ableToCreateFromData(requestedPet)) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
