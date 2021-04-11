@@ -1,13 +1,12 @@
 package jwzp.wp.VetApp.service;
 
 import jwzp.wp.VetApp.models.dtos.ClientData;
-import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
-import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.resources.ClientsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClientsService {
@@ -23,7 +22,11 @@ public class ClientsService {
         return repository.findAll();
     }
 
-    public Response<?> addClient(ClientData requestedClient) {
+    public Optional<ClientRecord> getClient(int id) {
+        return repository.findById(id);
+    }
+
+    public Response<ClientRecord> addClient(ClientData requestedClient) {
         if (!ableToCreateFromData(requestedClient)) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }

@@ -1,13 +1,13 @@
 package jwzp.wp.VetApp.service;
 
-import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.dtos.VetData;
-import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.models.records.VetRecord;
 import jwzp.wp.VetApp.resources.VetsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VetsService {
@@ -23,7 +23,11 @@ public class VetsService {
         return repository.findAll();
     }
 
-    public Response<?> addVet(VetData requestedVet) {
+    public Optional<VetRecord> getVet(int id){
+        return repository.findById(id);
+    }
+
+    public Response<VetRecord> addVet(VetData requestedVet) {
         if (!ableToCreateFromData(requestedVet)) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }

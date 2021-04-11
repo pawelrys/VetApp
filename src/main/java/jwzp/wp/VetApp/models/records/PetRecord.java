@@ -1,13 +1,14 @@
 package jwzp.wp.VetApp.models.records;
 
 import jwzp.wp.VetApp.models.values.Animal;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity(name="pets")
-public class PetRecord {
+public class PetRecord extends RepresentationModel<PetRecord> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

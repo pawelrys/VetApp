@@ -1,10 +1,10 @@
 package jwzp.wp.VetApp.models.records;
 
 import jwzp.wp.VetApp.models.dtos.VisitData;
-import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.models.values.Status;
 import org.hibernate.annotations.TypeDef;
 import com.vladmihalcea.hibernate.type.interval.PostgreSQLIntervalType;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Entity(name="visits")
 @TypeDef(typeClass = PostgreSQLIntervalType.class, defaultForType = Duration.class)
-public class VisitRecord {
+public class VisitRecord extends RepresentationModel<VisitRecord> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
