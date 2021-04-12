@@ -12,6 +12,10 @@ public enum ResponseErrorMessage {
 
     OFFICE_NOT_FOUND("Office not found"),
 
+    BUSY_VET("Then this vet is busy"),
+
+    BUSY_OFFICE("Then this office is occupied"),
+
     WRONG_ARGUMENTS("Wrong arguments provided");
 
     private final String message;
