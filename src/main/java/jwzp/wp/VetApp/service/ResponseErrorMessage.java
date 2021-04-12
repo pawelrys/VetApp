@@ -10,6 +10,8 @@ public enum ResponseErrorMessage {
 
     VET_NOT_FOUND("Vet not found"),
 
+    OFFICE_NOT_FOUND("Office not found"),
+
     WRONG_ARGUMENTS("Wrong arguments provided");
 
     private final String message;
