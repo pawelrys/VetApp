@@ -28,9 +28,11 @@ public class VisitRecord extends RepresentationModel<VisitRecord> {
     public PetRecord pet;
     public Status status;
     public BigDecimal price;
+
     @OneToOne
     @JoinTable(name = "office")
     public OfficeRecord office;
+
     @OneToOne
     @JoinTable(name = "vet")
     public VetRecord vet;

@@ -2,7 +2,8 @@ package jwzp.wp.VetApp.service;
 
 public enum ResponseErrorMessage {
     VISIT_NOT_FOUND("Visit not found"),
-    VISIT_TIME_UNAVAILABLE("Time of visit is unavailable"),
+
+    VISIT_TIME_UNAVAILABLE("It's too late to make an appointment"),
 
     CLIENT_NOT_FOUND("Client not found"),
 
@@ -16,7 +17,9 @@ public enum ResponseErrorMessage {
 
     BUSY_OFFICE("Then this office is occupied"),
 
-    WRONG_ARGUMENTS("Wrong arguments provided");
+    WRONG_ARGUMENTS("Wrong arguments provided"),
+
+    OK("Time is good");
 
     private final String message;
 
