@@ -2,6 +2,7 @@ package jwzp.wp.VetApp.models.records;
 
 
 import jwzp.wp.VetApp.models.dtos.OfficeData;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +11,7 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity(name = "offices")
-public class OfficeRecord {
+public class OfficeRecord extends RepresentationModel<OfficeRecord> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

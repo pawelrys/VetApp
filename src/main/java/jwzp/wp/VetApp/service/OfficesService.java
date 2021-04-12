@@ -23,7 +23,7 @@ public class OfficesService {
         return repository.findAll();
     }
 
-    public Response<?> addOffice(OfficeData requestedOffice) {
+    public Response<OfficeRecord> addOffice(OfficeData requestedOffice) {
         if(!ableToCreateFromData(requestedOffice)) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
