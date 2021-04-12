@@ -1,5 +1,6 @@
 package jwzp.wp.VetApp.service;
 
+import jwzp.wp.VetApp.models.utils.TimeIntervalData;
 import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.records.PetRecord;
 import jwzp.wp.VetApp.models.records.VisitRecord;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VisitsService {
@@ -116,5 +118,14 @@ public class VisitsService {
     public void changeStatusTo(VisitRecord visit, Status status) {
         VisitData data = new VisitData(visit.startDate, visit.duration, visit.pet.id, status, visit.price);
         updateVisit(visit.getId(), data);
+    }
+
+    public Response<List<TimeIntervalData>> availableTimeSlots(LocalDateTime start, LocalDateTime end){
+        if (start == null || end == null || start.isAfter(end)){
+            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+        }
+        return Response.succeedResponse(visitsRepository.getAvailableTimeSlots(start, end).stream()
+                .map(t -> new TimeIntervalData(t[0].toLocalDateTime(), t[1].toLocalDateTime()))
+                .collect(Collectors.toList()));
     }
 }
