@@ -15,6 +15,7 @@ public class VisitData {
     public final Status status;
     public BigDecimal price;
     public Integer officeId;
+    public Integer vetId;
 
     public VisitData(
             LocalDateTime startDate,
@@ -22,7 +23,8 @@ public class VisitData {
             int petId,
             Status status,
             BigDecimal price,
-            Integer officeId
+            Integer officeId,
+            Integer vetId
     ) throws NullPointerException {
         this.startDate = startDate;
         this.duration = duration;
@@ -30,6 +32,7 @@ public class VisitData {
         this.status = status;
         this.price = price;
         this.officeId = officeId;
+        this.vetId = vetId;
     }
 
     @Override
@@ -37,11 +40,11 @@ public class VisitData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VisitData visitData = (VisitData) o;
-        return Objects.equals(startDate, visitData.startDate) && Objects.equals(duration, visitData.duration) && Objects.equals(petId, visitData.petId) && status == visitData.status && Objects.equals(price, visitData.price) && Objects.equals(officeId, visitData.officeId);
+        return Objects.equals(startDate, visitData.startDate) && Objects.equals(duration, visitData.duration) && Objects.equals(petId, visitData.petId) && status == visitData.status && Objects.equals(price, visitData.price) && Objects.equals(officeId, visitData.officeId) && Objects.equals(vetId, visitData.vetId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDate, duration, petId, status, price, officeId);
+        return Objects.hash(startDate, duration, petId, status, price, officeId, vetId);
     }
 }
