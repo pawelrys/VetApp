@@ -13,8 +13,8 @@ import java.util.List;
 @Repository
 public interface VisitsRepository extends JpaRepository<VisitRecord, Integer> {
 
-    @Query("select v from visits v where ((:start >= v.startDate and :start < (v.startDate + v.duration)) or (:start < v.startDate and :end > v.startDate))")
-    List<VisitRecord> getRecordsInTime(LocalDateTime start, LocalDateTime end);
+    @Query("select v from visits v where (((:start >= v.startDate and :start < (v.startDate + v.duration)) or (:start < v.startDate and :end > v.startDate)) and (:officeId = v.office.id or :vetId = v.vet.id))")
+    List<VisitRecord> getRegisteredVisitsInTime(LocalDateTime start, LocalDateTime end, Integer officeId, Integer vetId);
 
     @Query(value = "with slots as (\n" +
             "   select generate_series as start, generate_series + cast('15 minutes' as interval) as \"end\" " +

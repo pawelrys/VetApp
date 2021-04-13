@@ -29,6 +29,14 @@ public class VisitRecord extends RepresentationModel<VisitRecord> {
     public Status status;
     public BigDecimal price;
 
+    @OneToOne
+    @JoinTable(name = "office")
+    public OfficeRecord office;
+
+    @OneToOne
+    @JoinTable(name = "vet")
+    public VetRecord vet;
+
     protected VisitRecord(){
         this.id = -1;
     }
@@ -39,7 +47,9 @@ public class VisitRecord extends RepresentationModel<VisitRecord> {
             Duration duration,
             PetRecord pet,
             Status status,
-            BigDecimal price
+            BigDecimal price,
+            OfficeRecord office,
+            VetRecord vet
     ) {
         this.id = id;
         this.startDate = startDate;
@@ -47,13 +57,17 @@ public class VisitRecord extends RepresentationModel<VisitRecord> {
         this.pet = pet;
         this.status = status;
         this.price = price;
+        this.office = office;
+        this.vet = vet;
     }
 
     public static VisitRecord createNewVisit(
             LocalDateTime startDate,
             Duration duration,
             PetRecord pet,
-            BigDecimal price
+            BigDecimal price,
+            OfficeRecord office,
+            VetRecord vet
     ) {
         VisitRecord newVisit = new VisitRecord();
         newVisit.startDate = startDate;
@@ -61,6 +75,8 @@ public class VisitRecord extends RepresentationModel<VisitRecord> {
         newVisit.pet = pet;
         newVisit.status = Status.PENDING;
         newVisit.price = price;
+        newVisit.office = office;
+        newVisit.vet = vet;
         return newVisit;
     }
 
@@ -84,12 +100,12 @@ public class VisitRecord extends RepresentationModel<VisitRecord> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VisitRecord record = (VisitRecord) o;
-        return id == record.id && startDate.equals(record.startDate) && duration.equals(record.duration) && pet == record.pet && status == record.status && price.equals(record.price);
+        return id == record.id && startDate.equals(record.startDate) && duration.equals(record.duration) && pet == record.pet && status == record.status && price.equals(record.price) && office == record.office && vet == record.vet;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, startDate, duration, pet, status, price);
+        return Objects.hash(id, startDate, duration, pet, status, price, office, vet);
     }
 
     public int getId() {

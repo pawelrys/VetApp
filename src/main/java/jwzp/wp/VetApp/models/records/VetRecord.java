@@ -8,7 +8,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Objects;
 
-@Entity(name="vet")
+@Entity(name="vets")
 public class VetRecord extends RepresentationModel<VetRecord> {
 
     @Id

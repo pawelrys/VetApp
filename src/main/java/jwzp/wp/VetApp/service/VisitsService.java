@@ -2,10 +2,14 @@ package jwzp.wp.VetApp.service;
 
 import jwzp.wp.VetApp.models.utils.TimeIntervalData;
 import jwzp.wp.VetApp.models.dtos.VisitData;
+import jwzp.wp.VetApp.models.records.OfficeRecord;
 import jwzp.wp.VetApp.models.records.PetRecord;
+import jwzp.wp.VetApp.models.records.VetRecord;
 import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.models.values.Status;
+import jwzp.wp.VetApp.resources.OfficesRepository;
 import jwzp.wp.VetApp.resources.PetsRepository;
+import jwzp.wp.VetApp.resources.VetsRepository;
 import jwzp.wp.VetApp.resources.VisitsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,12 +26,16 @@ public class VisitsService {
 
     private final VisitsRepository visitsRepository;
     private final PetsRepository petsRepository;
+    private final OfficesRepository officesRepository;
+    private final VetsRepository vetsRepository;
     private final Duration TIME_TO_VISIT_GREATER_THAN = Duration.ofHours(1);
 
     @Autowired
-    private VisitsService(VisitsRepository visitsRepository, PetsRepository petsRepository) {
+    private VisitsService(VisitsRepository visitsRepository, PetsRepository petsRepository, OfficesRepository officesRepository, VetsRepository vetsRepository) {
         this.visitsRepository = visitsRepository;
         this.petsRepository = petsRepository;
+        this.officesRepository = officesRepository;
+        this.vetsRepository = vetsRepository;
     }
 
     public List<VisitRecord> getAllVisits() {
@@ -42,16 +50,21 @@ public class VisitsService {
         if (!ableToCreateFromData(requestedVisit)) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
-        if (!isTimeAvailable(requestedVisit.startDate, requestedVisit.duration)) {
-            return Response.errorResponse(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
+        Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(requestedVisit.startDate, requestedVisit.duration, requestedVisit.officeId, requestedVisit.vetId);
+        if (result.isPresent()) {
+            return Response.errorResponse(result.get());
         }
         try {
             PetRecord pet = petsRepository.findById(requestedVisit.petId).orElseThrow();
+            OfficeRecord office = officesRepository.findById(requestedVisit.officeId).orElseThrow();
+            VetRecord vet = vetsRepository.findById(requestedVisit.vetId).orElseThrow();
             VisitRecord visit = VisitRecord.createNewVisit(
                     requestedVisit.startDate,
                     requestedVisit.duration,
                     pet,
-                    requestedVisit.price
+                    requestedVisit.price,
+                    office,
+                    vet
             );
             return Response.succeedResponse(visitsRepository.save(visit));
         } catch (IllegalArgumentException | NoSuchElementException e) {
@@ -64,12 +77,9 @@ public class VisitsService {
 
         if (toUpdate.isPresent()) {
             toUpdate.get().update(newData);
-            if (!isTimeAvailable(
-                    toUpdate.get().startDate,
-                    toUpdate.get().duration,
-                    id
-            )) {
-                return Response.errorResponse(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
+            Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(toUpdate.get().startDate, toUpdate.get().duration, toUpdate.get().office.id, toUpdate.get().vet.id, id);
+            if (result.isPresent()) {
+                return Response.errorResponse(result.get());
             }
             visitsRepository.save(toUpdate.get());
             return Response.succeedResponse(toUpdate.get());
@@ -86,17 +96,40 @@ public class VisitsService {
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
-    public boolean isTimeAvailable(LocalDateTime start, Duration duration, int id) {
-        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return false;
+    public Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId, int id) {
+        VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
+        if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
+            return Optional.of(ResponseErrorMessage.BUSY_VET);
+        }
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
         var end = start.plusMinutes(duration.toMinutes());
-        var overlappedVisits = visitsRepository.getRecordsInTime(start, end);
-        return overlappedVisits.size() == 0 || (overlappedVisits.size() == 1 && id == overlappedVisits.get(0).getId());
+        var overlappedVisits = visitsRepository.getRegisteredVisitsInTime(start, end, officeId, vetId);
+        if(overlappedVisits.size() == 0 || (overlappedVisits.size() == 1 && id == overlappedVisits.get(0).getId())) {
+            return Optional.empty();
+        }
+        VisitRecord record = overlappedVisits.get(0);
+        if(record.getId() == id) {
+            record = overlappedVisits.get(1);
+        }
+        return record.vet.id == vetId
+                ? Optional.of(ResponseErrorMessage.BUSY_VET)
+                : Optional.of(ResponseErrorMessage.BUSY_OFFICE);
     }
 
-    public boolean isTimeAvailable(LocalDateTime start, Duration duration) {
-        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return false;
+    public Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId) {
+        VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
+        if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
+            return Optional.of(ResponseErrorMessage.BUSY_VET);
+        }
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
         var end = start.plusMinutes(duration.toMinutes());
-        return visitsRepository.getRecordsInTime(start, end).size() == 0;
+        var overlappedVisits = visitsRepository.getRegisteredVisitsInTime(start, end, officeId, vetId);
+        if(overlappedVisits.size() == 0) {
+            return Optional.empty();
+        }
+        return overlappedVisits.get(0).vet.id == vetId
+                ? Optional.of(ResponseErrorMessage.BUSY_VET)
+                : Optional.of(ResponseErrorMessage.BUSY_OFFICE);
     }
 
     public boolean ableToCreateFromData(VisitData visit) {
@@ -116,7 +149,7 @@ public class VisitsService {
     }
 
     public void changeStatusTo(VisitRecord visit, Status status) {
-        VisitData data = new VisitData(visit.startDate, visit.duration, visit.pet.id, status, visit.price);
+        VisitData data = new VisitData(visit.startDate, visit.duration, visit.pet.id, status, visit.price, visit.office.id, visit.vet.id);
         updateVisit(visit.getId(), data);
     }
 
