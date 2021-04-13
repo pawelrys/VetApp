@@ -48,9 +48,9 @@ public class VisitsService {
         if (!ableToCreateFromData(requestedVisit)) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
-        ResponseErrorMessage timeMessage = isTimeAvailable(requestedVisit.startDate, requestedVisit.duration, requestedVisit.officeId, requestedVisit.vetId);
-        if (timeMessage != ResponseErrorMessage.OK) {
-            return Response.errorResponse(timeMessage);
+        Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(requestedVisit.startDate, requestedVisit.duration, requestedVisit.officeId, requestedVisit.vetId);
+        if (result.isPresent()) {
+            return Response.errorResponse(result.get());
         }
         try {
             PetRecord pet = petsRepository.findById(requestedVisit.petId).orElseThrow();
@@ -75,9 +75,9 @@ public class VisitsService {
 
         if (toUpdate.isPresent()) {
             toUpdate.get().update(newData);
-            ResponseErrorMessage timeMessage = isTimeAvailable(toUpdate.get().startDate, toUpdate.get().duration, toUpdate.get().office.id, toUpdate.get().vet.id, id);
-            if (timeMessage != ResponseErrorMessage.OK) {
-                return Response.errorResponse(timeMessage);
+            Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(toUpdate.get().startDate, toUpdate.get().duration, toUpdate.get().office.id, toUpdate.get().vet.id, id);
+            if (result.isPresent()) {
+                return Response.errorResponse(result.get());
             }
             visitsRepository.save(toUpdate.get());
             return Response.succeedResponse(toUpdate.get());
@@ -94,27 +94,27 @@ public class VisitsService {
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
-    public ResponseErrorMessage isTimeAvailable(LocalDateTime start, Duration duration, Integer officeId, Integer vetId, int id) {
-        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return ResponseErrorMessage.VISIT_TIME_UNAVAILABLE;
+    public Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId, int id) {
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
         var end = start.plusMinutes(duration.toMinutes());
         var overlappedVisits = visitsRepository.getRecordsInTimeOfficeVet(start, end, officeId, vetId);
-        if(overlappedVisits.size() == 0 || (overlappedVisits.size() == 1 && id == overlappedVisits.get(0).getId())) return ResponseErrorMessage.OK;
+        if(overlappedVisits.size() == 0 || (overlappedVisits.size() == 1 && id == overlappedVisits.get(0).getId())) return Optional.empty();
         else {
             VisitRecord record = overlappedVisits.get(0);
             if(record.getId() == id) record = overlappedVisits.get(1);
-            if(record.vet.id == vetId) return ResponseErrorMessage.BUSY_VET;
-            return ResponseErrorMessage.BUSY_OFFICE;
+            if(record.vet.id == vetId) return Optional.of(ResponseErrorMessage.BUSY_VET);
+            return Optional.of(ResponseErrorMessage.BUSY_OFFICE);
         }
     }
 
-    public ResponseErrorMessage isTimeAvailable(LocalDateTime start, Duration duration, Integer officeId, Integer vetId) {
-        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return ResponseErrorMessage.VISIT_TIME_UNAVAILABLE;
+    public Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId) {
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
         var end = start.plusMinutes(duration.toMinutes());
         var overlappedVisits = visitsRepository.getRecordsInTimeOfficeVet(start, end, officeId, vetId);
-        if(overlappedVisits.size() == 0) return ResponseErrorMessage.OK;
+        if(overlappedVisits.size() == 0) return Optional.empty();
         else {
-            if(overlappedVisits.get(0).vet.id == vetId) return ResponseErrorMessage.BUSY_VET;
-            return ResponseErrorMessage.BUSY_OFFICE;
+            if(overlappedVisits.get(0).vet.id == vetId) return Optional.of(ResponseErrorMessage.BUSY_VET);
+            return Optional.of(ResponseErrorMessage.BUSY_OFFICE);
         }
     }
 

@@ -17,9 +17,7 @@ public enum ResponseErrorMessage {
 
     BUSY_OFFICE("Then this office is occupied"),
 
-    WRONG_ARGUMENTS("Wrong arguments provided"),
-
-    OK("Time is good");
+    WRONG_ARGUMENTS("Wrong arguments provided");
 
     private final String message;
 
