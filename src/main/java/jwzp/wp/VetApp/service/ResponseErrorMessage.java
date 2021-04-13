@@ -13,9 +13,9 @@ public enum ResponseErrorMessage {
 
     OFFICE_NOT_FOUND("Office not found"),
 
-    BUSY_VET("Then this vet is busy"),
+    BUSY_VET("Vet is not available at this time"),
 
-    BUSY_OFFICE("Then this office is occupied"),
+    BUSY_OFFICE("Office is not available at this time"),
 
     WRONG_ARGUMENTS("Wrong arguments provided");
 

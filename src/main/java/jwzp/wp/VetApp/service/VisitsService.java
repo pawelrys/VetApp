@@ -95,9 +95,13 @@ public class VisitsService {
     }
 
     public Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId, int id) {
+        VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
+        if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
+            return Optional.of(ResponseErrorMessage.BUSY_VET);
+        }
         if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
         var end = start.plusMinutes(duration.toMinutes());
-        var overlappedVisits = visitsRepository.getRecordsInTimeOfficeVet(start, end, officeId, vetId);
+        var overlappedVisits = visitsRepository.getRegisteredVisitsInTime(start, end, officeId, vetId);
         if(overlappedVisits.size() == 0 || (overlappedVisits.size() == 1 && id == overlappedVisits.get(0).getId())) return Optional.empty();
         else {
             VisitRecord record = overlappedVisits.get(0);
@@ -108,9 +112,13 @@ public class VisitsService {
     }
 
     public Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId) {
+        VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
+        if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
+            return Optional.of(ResponseErrorMessage.BUSY_VET);
+        }
         if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
         var end = start.plusMinutes(duration.toMinutes());
-        var overlappedVisits = visitsRepository.getRecordsInTimeOfficeVet(start, end, officeId, vetId);
+        var overlappedVisits = visitsRepository.getRegisteredVisitsInTime(start, end, officeId, vetId);
         if(overlappedVisits.size() == 0) return Optional.empty();
         else {
             if(overlappedVisits.get(0).vet.id == vetId) return Optional.of(ResponseErrorMessage.BUSY_VET);
