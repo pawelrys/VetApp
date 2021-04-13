@@ -128,7 +128,6 @@ public class VisitsService {
         return overlappedVisits.get(0).vet.id == vetId
                 ? Optional.of(ResponseErrorMessage.BUSY_VET)
                 : Optional.of(ResponseErrorMessage.BUSY_OFFICE);
-        }
     }
 
     public boolean ableToCreateFromData(VisitData visit) {
