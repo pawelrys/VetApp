@@ -1,24 +1,24 @@
 package jwzp.wp.VetApp.service;
 
-import jwzp.wp.VetApp.models.utils.TimeIntervalData;
 import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.records.OfficeRecord;
 import jwzp.wp.VetApp.models.records.PetRecord;
 import jwzp.wp.VetApp.models.records.VetRecord;
 import jwzp.wp.VetApp.models.records.VisitRecord;
+import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
 import jwzp.wp.VetApp.models.values.Status;
 import jwzp.wp.VetApp.resources.OfficesRepository;
 import jwzp.wp.VetApp.resources.PetsRepository;
 import jwzp.wp.VetApp.resources.VetsRepository;
 import jwzp.wp.VetApp.resources.VisitsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -153,12 +153,28 @@ public class VisitsService {
         updateVisit(visit.getId(), data);
     }
 
-    public Response<List<TimeIntervalData>> availableTimeSlots(LocalDateTime start, LocalDateTime end){
-        if (start == null || end == null || start.isAfter(end)){
+    public Response<List<VetsTimeInterval>> availableTimeSlots(VetsTimeInterval input){
+        if (input.begin == null || input.end == null || input.begin.isAfter(input.end)){
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
-        return Response.succeedResponse(visitsRepository.getAvailableTimeSlots(start, end).stream()
-                .map(t -> new TimeIntervalData(t[0].toLocalDateTime(), t[1].toLocalDateTime()))
-                .collect(Collectors.toList()));
+        List<Object[]> availableSlots = visitsRepository.getAvailableTimeSlots(input.begin, input.end);
+        Map<Pair<LocalDateTime, LocalDateTime>, List<Object[]>> slotsMapped = availableSlots.stream()
+                .filter(t -> input.vetIds.contains((Integer)t[2]))
+                .collect(Collectors.groupingBy(
+                        t -> Pair.of(
+                                ((Timestamp)t[0]).toLocalDateTime(),
+                                ((Timestamp)t[1]).toLocalDateTime()
+                        )
+                ));
+        List<VetsTimeInterval> timeSlots = slotsMapped.entrySet().stream()
+                .map(t -> new VetsTimeInterval(
+                        t.getKey().getFirst(),
+                        t.getKey().getSecond(),
+                        t.getValue().stream().map(v -> (Integer)v[2]).collect(Collectors.toList())
+                ))
+                .sorted(Comparator.comparing(a -> a.begin))
+                .collect(Collectors.toList());
+
+        return Response.succeedResponse(timeSlots);
     }
 }

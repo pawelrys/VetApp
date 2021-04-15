@@ -1,8 +1,8 @@
 package jwzp.wp.VetApp.controller.api;
 
-import jwzp.wp.VetApp.models.utils.TimeIntervalData;
 import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.models.dtos.VisitData;
+import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
 import jwzp.wp.VetApp.models.values.Status;
 import jwzp.wp.VetApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,8 +82,8 @@ public class VisitsController {
     }
 
     @GetMapping(path = "available-time-slots")
-    public ResponseEntity<?> getAvailableTimeSlots(@RequestBody TimeIntervalData interval){
-        Response<List<TimeIntervalData>> slots = visitsService.availableTimeSlots(interval.begin, interval.end);
+    public ResponseEntity<?> getAvailableTimeSlots(@RequestBody VetsTimeInterval interval){
+        Response<List<VetsTimeInterval>> slots = visitsService.availableTimeSlots(interval);
         return slots.succeed()
                 ? ResponseEntity.ok(slots.get())
                 : ResponseToHttp.getFailureResponse(slots.getError());
