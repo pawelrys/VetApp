@@ -28,7 +28,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'com.vladmihalcea:hibernate-types-52:2.10.2'
 	compile 'org.springframework.boot:spring-boot-starter-hateoas'
-	compile 'org.flywaydb:flyway-core'
+	compile 'org.flywaydb:flyway-core:7.8.0'
 }
 
 test {
