@@ -1,0 +1,5 @@
+test_case_name, name, surname, result
+correct_data, Thomas, Cormen, True
+missing_name, , Cormen, False
+missing_surname, Thomas, , False
+missing_both_arguments, , , False

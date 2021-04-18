@@ -5,6 +5,8 @@ import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.resources.ClientsRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -26,5 +28,15 @@ public class ClientServiceTest {
         var result = uut.addClient(requested);
 
         assert result.equals(expected);
+    }
+
+    @ParameterizedTest(name="{0}")
+    @CsvFileSource(resources = "/jwzp.wp.VetApp.service/ableToCreateFromDataTestInput.csv", numLinesToSkip = 1)
+    public void testAbleToCreateFromData(String testCaseName, String name, String surname, boolean result) throws Exception {
+        var requested = new ClientData(name, surname);
+
+        var uut = new ClientsService(clientsRepository);
+
+        assert uut.ableToCreateFromData(requested) == result;
     }
 }
