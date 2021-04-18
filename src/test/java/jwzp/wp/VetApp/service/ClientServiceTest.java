@@ -19,13 +19,12 @@ public class ClientServiceTest {
     @Test
     public void testAddClient() throws Exception {
         ClientData requested = new ClientData("Marcus", "Aurelius");
-        ClientRecord expected = new ClientRecord(1, "Marcus", "Aurelius");
-        Mockito.when(clientsRepository.save(Mockito.any())).thenReturn(expected);
+        Response<ClientRecord> expected = Response.succeedResponse(new ClientRecord(1, "Marcus", "Aurelius"));
+        Mockito.when(clientsRepository.save(Mockito.any())).thenReturn(expected.get());
 
         var uut = new ClientsService(clientsRepository);
         var result = uut.addClient(requested);
 
-        assert result.get().equals(expected);
+        assert result.equals(expected);
     }
-
 }
