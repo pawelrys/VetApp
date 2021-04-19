@@ -2,8 +2,10 @@ package jwzp.wp.VetApp.controller;
 
 import jwzp.wp.VetApp.controller.api.ClientsController;
 import jwzp.wp.VetApp.controller.api.ResponseToHttp;
+import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.service.ClientsService;
+import jwzp.wp.VetApp.service.Response;
 import jwzp.wp.VetApp.service.ResponseErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
@@ -91,5 +94,37 @@ public class ClientsControllerTest {
 
         assert result.equals(expected);
         Mockito.verify(clientsService, Mockito.timeout(1)).getClient(request);
+    }
+
+    @Test
+    public void testAddClientPositive(){
+        ClientData requested = new ClientData("Emanuel", "Kant");
+        var client = ClientRecord.createClientRecord(requested);
+        Mockito.when(clientsService.addClient(requested)).thenReturn(Response.succeedResponse(client));
+        var expected = ResponseEntity.status(HttpStatus.CREATED).body(
+                client.add(linkTo(ClientsController.class).slash(client.id).withSelfRel())
+        );
+        var uut = new ClientsController(clientsService);
+
+        var result = uut.addClient(requested);
+
+        assert result.equals(expected);
+        Mockito.verify(clientsService, Mockito.times(1)).addClient(requested);
+    }
+
+    @Test
+    public void testAddClientMissedData(){
+        ClientData requested = new ClientData(null, null);
+        Mockito.when(clientsService.addClient(requested))
+                .thenReturn(Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS));
+        var expected = ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .body(ResponseErrorMessage.WRONG_ARGUMENTS.getMessage());
+        var uut = new ClientsController(clientsService);
+
+        var result = uut.addClient(requested);
+
+        assert result.equals(expected);
+        Mockito.verify(clientsService, Mockito.times(1)).addClient(requested);
     }
 }
