@@ -7,7 +7,6 @@ import jwzp.wp.VetApp.service.Response;
 import jwzp.wp.VetApp.service.ResponseErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +26,6 @@ public class ClientsController {
     @Autowired
     public ClientsController(ClientsService clientsService){
         this.clientsService = clientsService;
-    }
-
-    @GetMapping(path="/test")
-    public ResponseEntity<?> test() {
-        return ResponseEntity.ok().body("OK");
     }
 
     @GetMapping
