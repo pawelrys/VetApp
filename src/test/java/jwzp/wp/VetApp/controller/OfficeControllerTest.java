@@ -48,7 +48,7 @@ public class OfficeControllerTest {
         var result = uut.getAllOffices();
 
         assert result.equals(expected);
-        Mockito.verify(officesService, Mockito.timeout(1)).getAllOffices();
+        Mockito.verify(officesService, Mockito.times(1)).getAllOffices();
     }
 
     @Test
@@ -63,7 +63,7 @@ public class OfficeControllerTest {
         var result = uut.getAllOffices();
 
         assert result.equals(expected);
-        Mockito.verify(officesService, Mockito.timeout(1)).getAllOffices();
+        Mockito.verify(officesService, Mockito.times(1)).getAllOffices();
     }
 
     @Test
@@ -79,7 +79,7 @@ public class OfficeControllerTest {
         var result = uut.getOffice(request);
 
         assert result.equals(expected);
-        Mockito.verify(officesService, Mockito.timeout(1)).getOffice(request);
+        Mockito.verify(officesService, Mockito.times(1)).getOffice(request);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class OfficeControllerTest {
         var result = uut.getOffice(request);
 
         assert result.equals(expected);
-        Mockito.verify(officesService, Mockito.timeout(1)).getOffice(request);
+        Mockito.verify(officesService, Mockito.times(1)).getOffice(request);
     }
 
     @Test
