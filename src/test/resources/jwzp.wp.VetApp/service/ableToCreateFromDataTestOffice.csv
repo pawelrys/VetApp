@@ -1,0 +1,3 @@
+test_case_name, name, result
+testAbleToCreateFromDataPositive(), Pinokio, True
+testAbleToCreateDataMissingName(), , False
