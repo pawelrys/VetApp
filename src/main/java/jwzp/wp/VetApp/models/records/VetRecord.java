@@ -42,7 +42,7 @@ public class VetRecord extends RepresentationModel<VetRecord> {
         this.officeHoursEnd = officeHoursEnd;
     }
 
-    public static VetRecord createVet(VetData data) {
+    public static VetRecord createVetRecord(VetData data) {
         var vet = new VetRecord();
         vet.name = data.name;
         vet.surname = data.surname;

@@ -1,0 +1,7 @@
+test_case_name, name, surname, photo, start, end, result
+testAbleToCreateFromDataPositive(), Jan, Kowalski, c, 08:00:00, 18:00:00, True
+testAbleToCreateDataMissingName(), , Kowalski, c, 08:00:00, 18:00:00, False
+testAbleToCreateDataMissSurname(), Jan, , c, 08:00:00, 18:00:00, False
+testAbleToCreateDataMissPhoto(), Jan, Kowalski, , 08:00:00, 18:00:00, False
+testAbleToCreateDataMissStart(), Jan, Kowalski, c, , 18:00:00, False
+testAbleToCreateDataMissEnd(), Jan, Kowalski, c, 08:00:00, , False
