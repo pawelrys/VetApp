@@ -31,7 +31,7 @@ public class VetsService {
         if (!ableToCreateFromData(requestedVet)) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
-        VetRecord vet = VetRecord.createVet(requestedVet);
+        VetRecord vet = VetRecord.createVetRecord(requestedVet);
         try {
             return Response.succeedResponse(repository.save(vet));
         } catch (IllegalArgumentException e) {
