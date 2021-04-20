@@ -69,7 +69,7 @@ public class OfficeControllerTest {
     @Test
     public void testGetOfficePositive() throws Exception {
         int request = 0;
-        OfficeRecord office = new OfficeRecord(request,  "Pinokio");
+        OfficeRecord office = new OfficeRecord(request, "Pinokio");
         Mockito.when(officesService.getOffice(request)).thenReturn(Optional.of(office));
         var expected = ResponseEntity.ok(
                 office.add(linkTo(OfficesController.class).slash(office.id).withSelfRel())
