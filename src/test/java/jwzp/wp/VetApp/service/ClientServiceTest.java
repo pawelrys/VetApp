@@ -57,7 +57,7 @@ public class ClientServiceTest {
     }
 
     @ParameterizedTest(name="{0}")
-    @CsvFileSource(resources = "/jwzp.wp.VetApp.service/ableToCreateFromDataTestInput.csv", numLinesToSkip = 1)
+    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/ableToCreateFromDataTestInput.csv", numLinesToSkip = 1)
     public void testAbleToCreateFromData(String testCaseName, String name, String surname, boolean result) throws Exception {
         var requested = new ClientData(name, surname);
         var uut = new ClientsService(clientsRepository);
