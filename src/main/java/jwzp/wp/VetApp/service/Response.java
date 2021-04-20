@@ -1,5 +1,7 @@
 package jwzp.wp.VetApp.service;
 
+import java.util.Objects;
+
 public class Response<T> {
 
     private final T content;
@@ -36,6 +38,19 @@ public class Response<T> {
 
     public ResponseErrorMessage getError() {
         return errorMessage;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Response<?> response = (Response<?>) o;
+        return succeed == response.succeed && Objects.equals(content, response.content) && errorMessage == response.errorMessage;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(content, errorMessage, succeed);
     }
 }
 

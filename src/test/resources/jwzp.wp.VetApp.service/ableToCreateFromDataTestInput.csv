@@ -1,0 +1,5 @@
+test_case_name, name, surname, result
+testAbleToCreateFromDataPositive(), Thomas, Cormen, True
+testAbleToCreateDataMissingName(), , Cormen, False
+testAbleToCreateMissingSurname(), Thomas, , False
+testAbleToCreateMissingBothArguments(), , , False
