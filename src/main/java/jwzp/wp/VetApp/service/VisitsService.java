@@ -16,6 +16,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -28,14 +29,22 @@ public class VisitsService {
     private final PetsRepository petsRepository;
     private final OfficesRepository officesRepository;
     private final VetsRepository vetsRepository;
+    private final Clock clock;
     private final Duration TIME_TO_VISIT_GREATER_THAN = Duration.ofHours(1);
 
     @Autowired
-    private VisitsService(VisitsRepository visitsRepository, PetsRepository petsRepository, OfficesRepository officesRepository, VetsRepository vetsRepository) {
+    public VisitsService(
+            VisitsRepository visitsRepository,
+            PetsRepository petsRepository,
+            OfficesRepository officesRepository,
+            VetsRepository vetsRepository,
+            Clock clock
+    ) {
         this.visitsRepository = visitsRepository;
         this.petsRepository = petsRepository;
         this.officesRepository = officesRepository;
         this.vetsRepository = vetsRepository;
+        this.clock = clock;
     }
 
     public List<VisitRecord> getAllVisits() {
@@ -96,7 +105,7 @@ public class VisitsService {
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
-    public Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId, int id) {
+    private Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId, int id) {
         VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
         if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
             return Optional.of(ResponseErrorMessage.BUSY_VET);
@@ -116,7 +125,7 @@ public class VisitsService {
                 : Optional.of(ResponseErrorMessage.BUSY_OFFICE);
     }
 
-    public Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId) {
+    private Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId) {
         VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
         if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
             return Optional.of(ResponseErrorMessage.BUSY_VET);
@@ -133,22 +142,27 @@ public class VisitsService {
     }
 
     public boolean ableToCreateFromData(VisitData visit) {
-        return visit.petId != null && visit.duration != null && visit.price != null && visit.startDate != null;
+        return visit.petId != null
+                && visit.duration != null
+                && visit.price != null
+                && visit.startDate != null
+                && visit.officeId != null
+                && visit.vetId != null;
     }
 
-    public boolean isTimeToVisitGreaterThan(LocalDateTime start, Duration duration) {
-        return Duration.between(LocalDateTime.now(), start).getSeconds() > duration.getSeconds();
+    private boolean isTimeToVisitGreaterThan(LocalDateTime start, Duration duration) {
+        return Duration.between(LocalDateTime.now(clock), start).getSeconds() > duration.getSeconds();
     }
 
     public List<VisitRecord> updatePastVisitsStatusTo(Status status) {
-        var records = visitsRepository.getPastVisitsWithStatus(LocalDateTime.now(), Status.PENDING);
+        var records = visitsRepository.getPastVisitsWithStatus(LocalDateTime.now(clock), Status.PENDING);
         for (var visit : records) {
             changeStatusTo(visit, status);
         }
         return records;
     }
 
-    public void changeStatusTo(VisitRecord visit, Status status) {
+    private void changeStatusTo(VisitRecord visit, Status status) {
         VisitData data = new VisitData(visit.startDate, visit.duration, visit.pet.id, status, visit.price, visit.office.id, visit.vet.id);
         updateVisit(visit.getId(), data);
     }
