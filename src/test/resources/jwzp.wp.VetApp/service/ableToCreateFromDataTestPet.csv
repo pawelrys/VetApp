@@ -1,0 +1,7 @@
+test_case_name, name, surname, photo, start, end, result
+testAbleToCreateFromDataPositive(), Reksio, 2020-01-01, Dog, 1, True
+testAbleToCreateDataMissingName(), , 2020-01-01, Dog, 1, False
+testAbleToCreateDataMissingBirthday(), Reksio, , Dog, 1, False
+testAbleToCreateDataMissingAnimal(), Reksio, 2020-01-01, , 1, False
+testAbleToCreateDataMissingOwnerId(), Reksio, 2020-01-01, Dog, , False
+testAbleToCreateDataMissingAll(), , , , , False
