@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @ExtendWith(MockitoExtension.class)
-public class OfficeControllerTest {
+public class OfficesControllerTest {
 
     @Mock
     OfficesService officesService;
