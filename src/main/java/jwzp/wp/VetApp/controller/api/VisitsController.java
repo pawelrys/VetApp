@@ -31,11 +31,6 @@ public class VisitsController {
         this.visitsService = visitsService;
     }
 
-    @GetMapping(path="/test")
-    public ResponseEntity<?> test() {
-        return ResponseEntity.ok().body("OK");
-    }
-
     @GetMapping
     public ResponseEntity<?> getAllVisits() {
         List<VisitRecord> visits = visitsService.getAllVisits();
