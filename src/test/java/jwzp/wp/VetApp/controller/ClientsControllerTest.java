@@ -1,6 +1,5 @@
 package jwzp.wp.VetApp.controller;
 
-import ch.qos.logback.core.net.server.Client;
 import jwzp.wp.VetApp.controller.api.ClientsController;
 import jwzp.wp.VetApp.controller.api.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.ClientData;
@@ -31,7 +30,7 @@ public class ClientsControllerTest {
     ClientsService clientsService;
 
     @Test
-    public void testGetAllClientsPositive() throws Exception {
+    public void testGetAllClientsPositive() {
         List<ClientRecord> clients = List.of(
                 new ClientRecord(0,  "Emanuel", "Kant"),
                 new ClientRecord(1,  "Stephen", "King")
@@ -53,7 +52,7 @@ public class ClientsControllerTest {
     }
 
     @Test
-    public void testGetAllClientsEmpty() throws Exception {
+    public void testGetAllClientsEmpty() {
         List<ClientRecord> noClients = Collections.emptyList();
         Mockito.when(clientsService.getAllClients()).thenReturn(noClients);
         var expected = ResponseEntity.ok(
@@ -68,7 +67,7 @@ public class ClientsControllerTest {
     }
 
     @Test
-    public void testGetClientPositive() throws Exception {
+    public void testGetClientPositive() {
         int request = 0;
         ClientRecord client = new ClientRecord(request,  "Emanuel", "Kant");
         Mockito.when(clientsService.getClient(Mockito.any(Integer.class))).thenReturn(Optional.of(client));
@@ -84,9 +83,8 @@ public class ClientsControllerTest {
     }
 
     @Test
-    public void testGetClientClientNotFound() throws Exception {
+    public void testGetClientClientNotFound() {
         int request = 0;
-        ClientRecord client = new ClientRecord(1,  "Emanuel", "Kant");
         Mockito.when(clientsService.getClient(Mockito.any(Integer.class))).thenReturn(Optional.empty());
         var expected = ResponseToHttp.getFailureResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
         var uut = new ClientsController(clientsService);
