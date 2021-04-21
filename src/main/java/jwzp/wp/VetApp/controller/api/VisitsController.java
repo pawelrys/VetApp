@@ -27,7 +27,7 @@ public class VisitsController {
     private final VisitsService visitsService;
 
     @Autowired
-    private VisitsController(VisitsService visitsService) {
+    public VisitsController(VisitsService visitsService) {
         this.visitsService = visitsService;
     }
 
@@ -86,14 +86,16 @@ public class VisitsController {
 
     @Scheduled(cron = "0 0 * * * *")
     public void automaticallyClosePastVisits() {
+        // TODO log result
         var result = visitsService.updatePastVisitsStatusTo(Status.CLOSED_AUTOMATICALLY);
-        ResponseEntity.ok().body(result);
     }
 
     private VisitRecord addLinksToEntity(VisitRecord visit) {
         visit.add(linkTo(VisitsController.class).slash(visit.getId()).withSelfRel());
         visit.add(linkTo(PetsController.class).slash(visit.pet.id).withRel("pet"));
         visit.add(linkTo(ClientsController.class).slash(visit.pet.owner.id).withRel("client"));
+        visit.add(linkTo(VetsController.class).slash(visit.vet.id).withRel("vet"));
+        visit.add(linkTo(OfficesController.class).slash(visit.office.id).withRel("office"));
         return visit;
     }
 }

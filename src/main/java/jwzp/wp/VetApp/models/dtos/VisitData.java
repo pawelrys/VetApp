@@ -20,7 +20,7 @@ public class VisitData {
     public VisitData(
             LocalDateTime startDate,
             Duration duration,
-            int petId,
+            Integer petId,
             Status status,
             BigDecimal price,
             Integer officeId,
