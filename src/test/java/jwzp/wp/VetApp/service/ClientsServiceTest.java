@@ -13,13 +13,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 
 @ExtendWith(MockitoExtension.class)
-public class ClientServiceTest {
+public class ClientsServiceTest {
 
     @Mock
     ClientsRepository clientsRepository;
 
     @Test
-    public void testAddClientPositive() throws Exception {
+    public void testAddClientPositive() {
         ClientData requested = new ClientData("Marcus", "Aurelius");
         Response<ClientRecord> expected = Response.succeedResponse(new ClientRecord(1, "Marcus", "Aurelius"));
         Mockito.when(clientsRepository.save(Mockito.any(ClientRecord.class))).thenReturn(expected.get());
@@ -32,7 +32,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    public void testAddClientMissingData() throws Exception {
+    public void testAddClientMissingData() {
         ClientData requested = new ClientData(null, null);
         Response<?> expected = Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         var uut = new ClientsService(clientsRepository);
@@ -44,7 +44,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    public void testAddClientRepositoryException() throws Exception {
+    public void testAddClientRepositoryException() {
         ClientData requested = new ClientData("Marcus", "Aurelius");
         Response<ClientRecord> expected = Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         Mockito.when(clientsRepository.save(Mockito.any(ClientRecord.class))).thenThrow(new IllegalArgumentException());
@@ -58,7 +58,7 @@ public class ClientServiceTest {
 
     @ParameterizedTest(name="{0}")
     @CsvFileSource(resources = "/jwzp.wp.VetApp/service/ableToCreateFromDataTestInput.csv", numLinesToSkip = 1)
-    public void testAbleToCreateFromData(String testCaseName, String name, String surname, boolean result) throws Exception {
+    public void testAbleToCreateFromData(String testCaseName, String name, String surname, boolean result) {
         var requested = new ClientData(name, surname);
         var uut = new ClientsService(clientsRepository);
 
