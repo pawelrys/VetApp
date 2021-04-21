@@ -30,7 +30,7 @@ public class ClientsControllerTest {
     ClientsService clientsService;
 
     @Test
-    public void testGetAllClientsPositive() throws Exception {
+    public void testGetAllClientsPositive() {
         List<ClientRecord> clients = List.of(
                 new ClientRecord(0,  "Emanuel", "Kant"),
                 new ClientRecord(1,  "Stephen", "King")
@@ -48,11 +48,11 @@ public class ClientsControllerTest {
         var result = uut.getAllClients();
 
         assert result.equals(expected);
-        Mockito.verify(clientsService, Mockito.timeout(1)).getAllClients();
+        Mockito.verify(clientsService, Mockito.times(1)).getAllClients();
     }
 
     @Test
-    public void testGetAllClientsEmpty() throws Exception {
+    public void testGetAllClientsEmpty() {
         List<ClientRecord> noClients = Collections.emptyList();
         Mockito.when(clientsService.getAllClients()).thenReturn(noClients);
         var expected = ResponseEntity.ok(
@@ -63,14 +63,14 @@ public class ClientsControllerTest {
         var result = uut.getAllClients();
 
         assert result.equals(expected);
-        Mockito.verify(clientsService, Mockito.timeout(1)).getAllClients();
+        Mockito.verify(clientsService, Mockito.times(1)).getAllClients();
     }
 
     @Test
-    public void testGetClientPositive() throws Exception {
+    public void testGetClientPositive() {
         int request = 0;
         ClientRecord client = new ClientRecord(request,  "Emanuel", "Kant");
-        Mockito.when(clientsService.getClient(request)).thenReturn(Optional.of(client));
+        Mockito.when(clientsService.getClient(Mockito.any(Integer.class))).thenReturn(Optional.of(client));
         var expected = ResponseEntity.ok(
                 client.add(linkTo(ClientsController.class).slash(client.id).withSelfRel())
         );
@@ -79,28 +79,27 @@ public class ClientsControllerTest {
         var result = uut.getClient(request);
 
         assert result.equals(expected);
-        Mockito.verify(clientsService, Mockito.timeout(1)).getClient(request);
+        Mockito.verify(clientsService, Mockito.times(1)).getClient(request);
     }
 
     @Test
-    public void testGetClientClientNotFound() throws Exception {
+    public void testGetClientClientNotFound() {
         int request = 0;
-        ClientRecord client = new ClientRecord(1,  "Emanuel", "Kant");
-        Mockito.when(clientsService.getClient(request)).thenReturn(Optional.empty());
+        Mockito.when(clientsService.getClient(Mockito.any(Integer.class))).thenReturn(Optional.empty());
         var expected = ResponseToHttp.getFailureResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
         var uut = new ClientsController(clientsService);
 
         var result = uut.getClient(request);
 
         assert result.equals(expected);
-        Mockito.verify(clientsService, Mockito.timeout(1)).getClient(request);
+        Mockito.verify(clientsService, Mockito.times(1)).getClient(request);
     }
 
     @Test
     public void testAddClientPositive(){
         ClientData requested = new ClientData("Emanuel", "Kant");
         var client = ClientRecord.createClientRecord(requested);
-        Mockito.when(clientsService.addClient(requested)).thenReturn(Response.succeedResponse(client));
+        Mockito.when(clientsService.addClient(Mockito.any(ClientData.class))).thenReturn(Response.succeedResponse(client));
         var expected = ResponseEntity.status(HttpStatus.CREATED).body(
                 client.add(linkTo(ClientsController.class).slash(client.id).withSelfRel())
         );
@@ -115,7 +114,7 @@ public class ClientsControllerTest {
     @Test
     public void testAddClientMissedData(){
         ClientData requested = new ClientData(null, null);
-        Mockito.when(clientsService.addClient(requested))
+        Mockito.when(clientsService.addClient(Mockito.any(ClientData.class)))
                 .thenReturn(Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS));
         var expected = ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
