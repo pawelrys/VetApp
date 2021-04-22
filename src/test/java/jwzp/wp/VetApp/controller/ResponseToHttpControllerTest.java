@@ -21,7 +21,7 @@ public class ResponseToHttpControllerTest {
     public void testGetSucceedHttpResponse() {
         ClientRecord clientRecord = new ClientRecord(0, "Jan", "Kowalski");
         var response = Response.succeedResponse(clientRecord);
-        var expected = ResponseEntity.ok(response.get());
+        var expected = ResponseEntity.ok(clientRecord);
 
         var result = ResponseToHttp.getDefaultHttpResponse(response);
 
@@ -62,6 +62,16 @@ public class ResponseToHttpControllerTest {
     public void testGetVisitTimeUnaHttpResponse() {
         var response = Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
         var expected = ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseErrorMessage.VISIT_NOT_FOUND.getMessage());
+
+        var result = ResponseToHttp.getDefaultHttpResponse(response);
+
+        assert Objects.equals(result, expected);
+    }
+
+    @Test
+    public void testGetDifferentHttpResponse() {
+        var response = Response.errorResponse(ResponseErrorMessage.BUSY_VET);
+        var expected = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseErrorMessage.BUSY_VET.getMessage());
 
         var result = ResponseToHttp.getDefaultHttpResponse(response);
 
