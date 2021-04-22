@@ -1,0 +1,8 @@
+testCaseName, startDate, duration, petId, price, officeId, vetId, result
+testAbleToCreateVisitsFromDataPositive, 2022-04-26T10:57:00, PT10M, 1, 120, 2, 3, True
+testAbleToCreateVisitsFromDataMissingDate, , PT10M, 1, 120, 2, 3, False
+testAbleToCreateVisitsFromDataMissingDuration, 2022-04-26T10:57:00, , 1, 120, 2, 3, False
+testAbleToCreateVisitsFromDataMissingPetId, 2022-04-26T10:57:00, PT10M, , 120, 2, 3, False
+testAbleToCreateVisitsFromDataMissingPrice, 2022-04-26T10:57:00, PT10M, 1, , 2, 3, False
+testAbleToCreateVisitsFromDataMissingOfficeId, 2022-04-26T10:57:00, PT10M, 1, 120, , 3, False
+testAbleToCreateVisitsFromDataMissingVetId, 2022-04-26T10:57:00, PT10M, 1, 120, 2, , False
