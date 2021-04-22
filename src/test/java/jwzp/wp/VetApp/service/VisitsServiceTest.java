@@ -2,6 +2,7 @@ package jwzp.wp.VetApp.service;
 
 import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.records.*;
+import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
 import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.models.values.Status;
 import jwzp.wp.VetApp.resources.*;
@@ -15,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
@@ -329,6 +331,63 @@ public class VisitsServiceTest {
         assert uut.ableToCreateFromData(requested) == result;
     }
 
-    // TODO test updatePastVisitsStatusTo
-    // TODO test availableTimeSlots
+    @Test
+    public void testAvailableTimeSlots() {
+        var requested = new VetsTimeInterval(
+                LocalDateTime.parse("2022-04-26T09:00:00"),
+                LocalDateTime.parse("2022-04-26T10:00:00"),
+                List.of(1, 3)
+        );
+        List<Object[]> freeSlots = List.of(
+                new Object[] {
+                        Timestamp.valueOf("2022-04-26 09:00:00"),
+                        Timestamp.valueOf("2022-04-26 09:15:00"),
+                        3
+                },
+                new Object[] {
+                        Timestamp.valueOf("2022-04-26 09:15:00"),
+                        Timestamp.valueOf("2022-04-26 09:30:00"),
+                        1
+                },
+                new Object[] {
+                        Timestamp.valueOf("2022-04-26 09:45:00"),
+                        Timestamp.valueOf("2022-04-26 10:00:00"),
+                        1
+                },
+                new Object[] {
+                        Timestamp.valueOf("2022-04-26 09:45:00"),
+                        Timestamp.valueOf("2022-04-26 10:00:00"),
+                        3
+                }
+        );
+        var expected = Response.succeedResponse(List.of(
+                new VetsTimeInterval(
+                        LocalDateTime.parse("2022-04-26T09:00:00"),
+                        LocalDateTime.parse("2022-04-26T09:15:00"),
+                        List.of(3)
+                ),
+                new VetsTimeInterval(
+                        LocalDateTime.parse("2022-04-26T09:15:00"),
+                        LocalDateTime.parse("2022-04-26T09:30:00"),
+                        List.of(1)
+                ),
+                new VetsTimeInterval(
+                        LocalDateTime.parse("2022-04-26T09:45:00"),
+                        LocalDateTime.parse("2022-04-26T10:00:00"),
+                        List.of(1, 3)
+                )
+        ));
+        Mockito.when(visitsRepository.getAvailableTimeSlots(
+                Mockito.any(LocalDateTime.class),
+                Mockito.any(LocalDateTime.class)))
+                .thenReturn(freeSlots);
+
+        var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
+
+        var result = uut.availableTimeSlots(requested);
+
+        assertThat(result).isEqualTo(expected);
+        Mockito.verify(visitsRepository, Mockito.times(1))
+                .getAvailableTimeSlots(requested.begin, requested.end);
+    }
 }
