@@ -85,12 +85,6 @@ public class VisitsController {
                 : ResponseToHttp.getFailureResponse(slots.getError());
     }
 
-    @Scheduled(cron = "0 0 * * * *")
-    public void automaticallyClosePastVisits() {
-        // TODO log result
-        var result = visitsService.updatePastVisitsStatusTo(Status.CLOSED_AUTOMATICALLY);
-    }
-
     private VisitRecord addLinksToEntity(VisitRecord visit) {
         visit.add(linkTo(VisitsController.class).slash(visit.getId()).withSelfRel());
         visit.add(linkTo(PetsController.class).slash(visit.pet.id).withRel("pet"));
