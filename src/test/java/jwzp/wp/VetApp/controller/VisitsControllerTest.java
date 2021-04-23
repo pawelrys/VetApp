@@ -379,7 +379,7 @@ public class VisitsControllerTest {
         Mockito.when(visitsService.updatePastVisitsStatusTo(Mockito.any(Status.class))).thenReturn(visits);
         var uut = new VisitsController(visitsService);
 
-        uut.automaticallyClosePastVisits();
+        visitsService.automaticallyClosePastVisits();
 
         Mockito.verify(visitsService, Mockito.times(1))
                 .updatePastVisitsStatusTo(Status.CLOSED_AUTOMATICALLY);

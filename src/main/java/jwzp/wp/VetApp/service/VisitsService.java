@@ -13,6 +13,7 @@ import jwzp.wp.VetApp.resources.VetsRepository;
 import jwzp.wp.VetApp.resources.VisitsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -45,6 +46,12 @@ public class VisitsService {
         this.officesRepository = officesRepository;
         this.vetsRepository = vetsRepository;
         this.clock = clock;
+    }
+
+    @Scheduled(cron = "0 0 * * * *")
+    public void automaticallyClosePastVisits() {
+        // TODO log result
+        var result = updatePastVisitsStatusTo(Status.CLOSED_AUTOMATICALLY);
     }
 
     public List<VisitRecord> getAllVisits() {
