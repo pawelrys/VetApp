@@ -30,6 +30,10 @@ dependencies {
 	implementation 'com.vladmihalcea:hibernate-types-52:2.10.2'
 	compile 'org.springframework.boot:spring-boot-starter-hateoas'
 	compile 'org.flywaydb:flyway-core:7.8.0'
+	compile group: 'com.lmax', name: 'disruptor', version: '3.4.2'
+	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.0.1'
+	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.0.1'
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.3'
 }
 
 test {
