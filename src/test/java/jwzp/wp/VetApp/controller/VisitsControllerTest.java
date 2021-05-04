@@ -373,18 +373,6 @@ public class VisitsControllerTest {
         Mockito.verify(visitsService, Mockito.times(1)).availableTimeSlots(requested);
     }
 
-    @Test
-    public void testAutomaticallyClosePastVisits(){
-        List<VisitRecord> visits = Collections.emptyList();
-        Mockito.when(visitsService.updatePastVisitsStatusTo(Mockito.any(Status.class))).thenReturn(visits);
-        var uut = new VisitsController(visitsService);
-
-        uut.automaticallyClosePastVisits();
-
-        Mockito.verify(visitsService, Mockito.times(1))
-                .updatePastVisitsStatusTo(Status.CLOSED_AUTOMATICALLY);
-    }
-
     private VisitRecord addLinksToVisitComponents(VisitRecord v){
         v.add(linkTo(VisitsController.class).slash(v.getId()).withSelfRel());
         v.add(linkTo(PetsController.class).slash(v.pet.id).withRel("pet"));

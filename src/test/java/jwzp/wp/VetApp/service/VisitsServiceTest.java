@@ -390,4 +390,16 @@ public class VisitsServiceTest {
         Mockito.verify(visitsRepository, Mockito.times(1))
                 .getAvailableTimeSlots(requested.begin, requested.end);
     }
+
+    @Test
+    public void testAutomaticallyClosePastVisits(){
+        List<VisitRecord> visits = Collections.emptyList();
+        Mockito.when(visitsRepository.getPastVisitsWithStatus(Mockito.any(LocalDateTime.class), Mockito.any(Status.class))).thenReturn(visits);
+        var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
+
+        uut.automaticallyClosePastVisits();
+
+        Mockito.verify(visitsRepository, Mockito.times(1))
+                .getPastVisitsWithStatus(LocalDateTime.now(clock), Status.PENDING);
+    }
 }
