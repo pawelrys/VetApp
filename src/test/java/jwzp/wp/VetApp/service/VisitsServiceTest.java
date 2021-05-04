@@ -3,6 +3,7 @@ package jwzp.wp.VetApp.service;
 import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.records.*;
 import jwzp.wp.VetApp.models.values.Animal;
+import jwzp.wp.VetApp.models.values.Status;
 import jwzp.wp.VetApp.resources.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -168,4 +171,17 @@ public class VisitsServiceTest {
         Mockito.verify(officesRepository, Mockito.times(0)).findById(Mockito.any(Integer.class));
         Mockito.verify(vetsRepository, Mockito.times(1)).findById(vet.id);
     }
+
+    @Test
+    public void testAutomaticallyClosePastVisits(){
+        List<VisitRecord> visits = Collections.emptyList();
+        Mockito.when(visitsRepository.getPastVisitsWithStatus(Mockito.any(LocalDateTime.class), Mockito.any(Status.class))).thenReturn(visits);
+        var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
+
+        uut.automaticallyClosePastVisits();
+
+        Mockito.verify(visitsRepository, Mockito.times(1))
+                .getPastVisitsWithStatus(LocalDateTime.now(clock), Status.PENDING);
+    }
+
 }
