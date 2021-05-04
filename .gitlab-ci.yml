@@ -5,12 +5,15 @@ stages:
 build:
     image: gradle:6.7.1-jdk11
     stage: build
-    script: ./gradlew clean build
     before_script:
         - export GRADLE_USER_HOME=`pwd`/.gradle
+    script:
+        - ./gradlew clean build
     artifacts:
         paths:
             - ./build/libs/VetApp-0.0.1-SNAPSHOT.jar
+        reports:
+            junit: ./build/test-results/test/**/TEST-*.xml
 
 deploy:
     image: docker:stable
