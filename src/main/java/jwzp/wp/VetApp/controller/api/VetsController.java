@@ -1,5 +1,6 @@
 package jwzp.wp.VetApp.controller.api;
 
+import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.VetData;
 import jwzp.wp.VetApp.models.records.VetRecord;
 import jwzp.wp.VetApp.service.Response;
@@ -7,7 +8,6 @@ import jwzp.wp.VetApp.service.ResponseErrorMessage;
 import jwzp.wp.VetApp.service.VetsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

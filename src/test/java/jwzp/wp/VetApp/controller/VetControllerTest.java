@@ -1,13 +1,8 @@
 package jwzp.wp.VetApp.controller;
 
-import jwzp.wp.VetApp.controller.api.*;
 import jwzp.wp.VetApp.controller.api.VetsController;
-import jwzp.wp.VetApp.controller.api.VetsController;
+import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.VetData;
-import jwzp.wp.VetApp.models.dtos.VetData;
-import jwzp.wp.VetApp.models.records.*;
-import jwzp.wp.VetApp.models.records.VetRecord;
-import jwzp.wp.VetApp.models.records.VetRecord;
 import jwzp.wp.VetApp.models.records.VetRecord;
 import jwzp.wp.VetApp.service.Response;
 import jwzp.wp.VetApp.service.ResponseErrorMessage;

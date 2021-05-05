@@ -1,4 +1,4 @@
-package jwzp.wp.VetApp.controller.api;
+package jwzp.wp.VetApp.controller.api.utils;
 
 import jwzp.wp.VetApp.service.ResponseErrorMessage;
 import jwzp.wp.VetApp.service.Response;

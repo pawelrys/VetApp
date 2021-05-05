@@ -1,5 +1,6 @@
 package jwzp.wp.VetApp.controller.api;
 
+import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
