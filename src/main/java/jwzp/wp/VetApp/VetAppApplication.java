@@ -28,21 +28,7 @@ public class VetAppApplication implements CommandLineRunner {
 	private JdbcTemplate jdbcTemplate;
 
 	public static void main(String[] args) {
-		LOGGER.info("Starting app");
-		LOGGER.warn("Starting app");
-		LOGGER.trace("ELO");
-		LOGGER.error("ELO");
-		LOGGER.error("ELO");
-		LOGGER.error("ELO");
-		LOGGER.error("ELO");
-		LOGGER.error("ELO");
-
-		int i = 10;
-		while (i-- > 0) {
-			LOGGER.debug(i);
-		}
-//		return;
-//		SpringApplication.run(VetAppApplication.class, args);
+		SpringApplication.run(VetAppApplication.class, args);
 	}
 
 	@Override
