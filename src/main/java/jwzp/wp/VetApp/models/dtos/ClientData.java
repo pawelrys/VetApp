@@ -7,6 +7,8 @@ public class ClientData {
     public String name;
     public String surname;
 
+    public ClientData() {}
+
     public ClientData(
             String name,
             String surname

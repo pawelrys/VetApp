@@ -1,7 +1,7 @@
 package jwzp.wp.VetApp.controller.api.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -12,7 +12,7 @@ import java.io.IOException;
 @Component
 public class LoggingInterceptor implements HandlerInterceptor {
 
-    private final Logger logger = LoggerFactory.getLogger(LoggingInterceptor.class);
+    private final Logger logger = LogManager.getLogger(LoggingInterceptor.class);
 
     @Override
     public boolean preHandle(
