@@ -32,6 +32,7 @@ public class ClientsService {
 
     public Response<ClientRecord> addClient(ClientData requestedClient) {
         if (!ableToCreateFromData(requestedClient)) {
+            logger.info(LogsUtils.logMissingData(requestedClient));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
         ClientRecord client = ClientRecord.createClientRecord(requestedClient);
@@ -40,6 +41,7 @@ public class ClientsService {
             logger.info(LogsUtils.logSaved(savedClient, savedClient.id));
             return Response.succeedResponse(savedClient);
         } catch (IllegalArgumentException e) {
+            logger.error(e);
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }

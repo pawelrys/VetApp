@@ -29,6 +29,7 @@ public class OfficesService {
 
     public Response<OfficeRecord> addOffice(OfficeData requestedOffice) {
         if(!ableToCreateFromData(requestedOffice)) {
+            logger.info(LogsUtils.logMissingData(requestedOffice));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
         OfficeRecord office = OfficeRecord.createOfficeRecord(requestedOffice);
@@ -38,6 +39,7 @@ public class OfficesService {
             return Response.succeedResponse(savedOffice);
 
         } catch (IllegalArgumentException e) {
+            logger.error(e);
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }
