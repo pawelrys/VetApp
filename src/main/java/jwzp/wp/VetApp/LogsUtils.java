@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 
 public class LogsUtils {
 
-    static public void logSaved(Logger logger, Object saved, int id) {
-        logger.info("Saved: " + saved.getClass() + " id: " + id);
+    static public String logSaved(Object saved, int id) {
+        return "Saved: " + saved.getClass() + " id: " + id;
     }
 
 }

@@ -37,8 +37,7 @@ public class ClientsService {
         ClientRecord client = ClientRecord.createClientRecord(requestedClient);
         try {
             var savedClient = repository.save(client);
-            logger.info("Saved: " + savedClient.getClass() + " id: " + savedClient.id);
-            LogsUtils.logSaved(logger, savedClient, savedClient.id);
+            logger.info(LogsUtils.logSaved(savedClient, savedClient.id));
             return Response.succeedResponse(savedClient);
         } catch (IllegalArgumentException e) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);

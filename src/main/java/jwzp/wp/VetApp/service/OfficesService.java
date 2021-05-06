@@ -34,7 +34,7 @@ public class OfficesService {
         OfficeRecord office = OfficeRecord.createOfficeRecord(requestedOffice);
         try {
             var savedOffice = repository.save(office);
-            LogsUtils.logSaved(logger, savedOffice, savedOffice.id);
+            logger.info(LogsUtils.logSaved(savedOffice, savedOffice.id));
             return Response.succeedResponse(savedOffice);
 
         } catch (IllegalArgumentException e) {
