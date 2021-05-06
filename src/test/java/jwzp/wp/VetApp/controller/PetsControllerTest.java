@@ -2,7 +2,7 @@ package jwzp.wp.VetApp.controller;
 
 
 import jwzp.wp.VetApp.controller.api.PetsController;
-import jwzp.wp.VetApp.controller.api.ResponseToHttp;
+import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.PetData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.models.records.PetRecord;
