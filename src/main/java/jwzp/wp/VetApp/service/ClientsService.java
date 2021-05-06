@@ -1,8 +1,11 @@
 package jwzp.wp.VetApp.service;
 
+import jwzp.wp.VetApp.LogsUtils;
 import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.resources.ClientsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -11,6 +14,7 @@ import java.util.Optional;
 @Service
 public class ClientsService {
 
+    private final Logger logger = LoggerFactory.getLogger(ClientsService.class);
     private final ClientsRepository repository;
 
     @Autowired
@@ -32,7 +36,9 @@ public class ClientsService {
         }
         ClientRecord client = ClientRecord.createClientRecord(requestedClient);
         try {
-            return Response.succeedResponse(repository.save(client));
+            var savedClient = repository.save(client);
+            logger.info(LogsUtils.logSaved(savedClient, savedClient.id));
+            return Response.succeedResponse(savedClient);
         } catch (IllegalArgumentException e) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }

@@ -1,10 +1,13 @@
 package jwzp.wp.VetApp.service;
 
+import jwzp.wp.VetApp.LogsUtils;
 import jwzp.wp.VetApp.models.dtos.PetData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.models.records.PetRecord;
 import jwzp.wp.VetApp.resources.ClientsRepository;
 import jwzp.wp.VetApp.resources.PetsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.Optional;
 @Service
 public class PetsService {
 
+    public final Logger logger = LoggerFactory.getLogger(PetsService.class);
     private final PetsRepository petsRepository;
     private final ClientsRepository ownersRepository;
 
@@ -44,7 +48,9 @@ public class PetsService {
                     requestedPet.animal,
                     owner
             );
-            return Response.succeedResponse(petsRepository.save(pet));
+            var savedPet = petsRepository.save(pet);
+            logger.info(LogsUtils.logSaved(savedPet, savedPet.id));
+            return Response.succeedResponse(savedPet);
         } catch (IllegalArgumentException | NoSuchElementException e) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
