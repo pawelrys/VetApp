@@ -24,4 +24,14 @@ public class LoggingInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    @Override
+    public void afterCompletion(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Object handler,
+            Exception ex
+    ) throws IOException {
+        logger.info("Response <" + response.getStatus() + "> " + response.getContentType() + " for request [" + request.getMethod() + "] " + request.getRequestURI());
+    }
+
 }
