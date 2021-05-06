@@ -1,8 +1,11 @@
 package jwzp.wp.VetApp.service;
 
+import jwzp.wp.VetApp.LogsUtils;
 import jwzp.wp.VetApp.models.dtos.OfficeData;
 import jwzp.wp.VetApp.models.records.OfficeRecord;
 import jwzp.wp.VetApp.resources.OfficesRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,7 @@ import java.util.Optional;
 @Service
 public class OfficesService {
 
+    private final Logger logger = LoggerFactory.getLogger(OfficesService.class);
     private final OfficesRepository repository;
 
     @Autowired
@@ -29,7 +33,10 @@ public class OfficesService {
         }
         OfficeRecord office = OfficeRecord.createOfficeRecord(requestedOffice);
         try {
-            return Response.succeedResponse(repository.save(office));
+            var savedOffice = repository.save(office);
+            LogsUtils.logSaved(logger, savedOffice, savedOffice.id);
+            return Response.succeedResponse(savedOffice);
+
         } catch (IllegalArgumentException e) {
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
