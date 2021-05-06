@@ -4,8 +4,8 @@ import jwzp.wp.VetApp.LogsUtils;
 import jwzp.wp.VetApp.models.dtos.OfficeData;
 import jwzp.wp.VetApp.models.records.OfficeRecord;
 import jwzp.wp.VetApp.resources.OfficesRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 public class OfficesService {
 
-    private final Logger logger = LoggerFactory.getLogger(OfficesService.class);
+    private final Logger logger = LogManager.getLogger(OfficesService.class);
     private final OfficesRepository repository;
 
     @Autowired
