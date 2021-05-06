@@ -46,6 +46,29 @@ public class ClientsService {
         }
     }
 
+    public Response<ClientRecord> updateClient(int id, ClientData newData) {
+        Optional<ClientRecord> toUpdate = repository.findById(id);
+
+        if (toUpdate.isPresent()) {
+            toUpdate.get().update(newData);
+            var saved = repository.save(toUpdate.get());
+            logger.info(LogsUtils.logUpdated(saved, saved.id));
+            return Response.succeedResponse(toUpdate.get());
+        }
+        return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
+    }
+
+    public Response<ClientRecord> delete(int id) {
+        Optional<ClientRecord> clientOpt = repository.findById(id);
+        if (clientOpt.isPresent()) {
+            ClientRecord client = clientOpt.get();
+            repository.deleteById(client.id);
+            logger.info(LogsUtils.logDeleted(client, client.id));
+            return Response.succeedResponse(client);
+        }
+        return Response.errorResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
+    }
+
     public boolean ableToCreateFromData(ClientData client) {
         return client.name != null && client.surname != null;
     }
