@@ -20,7 +20,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
             HttpServletResponse response,
             Object handler
     ) throws IOException {
-        logger.info(String.valueOf(request));
+        logger.info("Incoming request [" + request.getMethod() + "] " + request.getRequestURI());
         return true;
     }
 
