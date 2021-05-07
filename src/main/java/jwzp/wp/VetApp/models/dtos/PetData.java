@@ -11,6 +11,8 @@ public class PetData {
     public Animal animal;
     public Integer ownerId;
 
+    public PetData() {}
+
     public PetData(
             String name,
             LocalDate birthday,
