@@ -22,8 +22,8 @@ public class LogsUtils {
         return "Request data don't match with constraints";
     }
 
-    static public String logNotFoundObject(Object obj) {
-        return "Object: " + obj.getClass() + " not found";
+    static public String logNotFoundObject(Class type, int id) {
+        return "Object: " + type + " with id: " + id + " not found";
     }
 
     static public String logException(Exception e) {

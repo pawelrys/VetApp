@@ -37,6 +37,7 @@ public class PetsService {
 
     public Response<PetRecord> addPet(PetData requestedPet) {
         if (!ableToCreateFromData(requestedPet)) {
+            logger.info(LogsUtils.logMissingData(requestedPet));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
 
@@ -52,6 +53,7 @@ public class PetsService {
             logger.info(LogsUtils.logSaved(savedPet, savedPet.id));
             return Response.succeedResponse(savedPet);
         } catch (IllegalArgumentException | NoSuchElementException e) {
+            logger.info(LogsUtils.logException(e));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }
