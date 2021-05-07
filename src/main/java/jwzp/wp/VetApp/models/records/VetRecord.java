@@ -1,6 +1,5 @@
 package jwzp.wp.VetApp.models.records;
 
-import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.dtos.VetData;
 import org.springframework.hateoas.RepresentationModel;
 
