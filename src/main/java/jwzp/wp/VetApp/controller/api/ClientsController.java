@@ -3,6 +3,7 @@ package jwzp.wp.VetApp.controller.api;
 import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
+import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.service.ClientsService;
 import jwzp.wp.VetApp.service.Response;
 import jwzp.wp.VetApp.service.ResponseErrorMessage;
@@ -54,6 +55,22 @@ public class ClientsController {
         Response<ClientRecord> result = clientsService.addClient(client);
         return result.succeed()
                 ? ResponseEntity.status(HttpStatus.CREATED).body(addLinksToEntity(result.get()))
+                : ResponseToHttp.getFailureResponse(result.getError());
+    }
+
+    @PatchMapping(path="/{id}")
+    public ResponseEntity<?> updateClient(@PathVariable int id, @RequestBody ClientData newData) {
+        Response<ClientRecord> updated = clientsService.updateClient(id, newData);
+        return updated.succeed()
+                ? ResponseEntity.ok(addLinksToEntity(updated.get()))
+                : ResponseToHttp.getFailureResponse(updated.getError());
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<?> deleteClient(@PathVariable int id) {
+        Response<ClientRecord> result = clientsService.delete(id);
+        return result.succeed()
+                ? ResponseEntity.ok(addLinksToEntity(result.get()))
                 : ResponseToHttp.getFailureResponse(result.getError());
     }
 
