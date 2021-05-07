@@ -60,7 +60,7 @@ public class VetsService {
             return Response.succeedResponse(toUpdate.get());
         }
         logger.info(LogsUtils.logNotFoundObject(VetRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
+        return Response.errorResponse(ResponseErrorMessage.VET_NOT_FOUND);
     }
 
     public Response<VetRecord> deleteVet(int id) {
@@ -72,7 +72,7 @@ public class VetsService {
             return Response.succeedResponse(vet);
         }
         logger.info(LogsUtils.logNotFoundObject(VetRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
+        return Response.errorResponse(ResponseErrorMessage.VET_NOT_FOUND);
     }
 
     public boolean ableToCreateFromData(VetData vet) {
