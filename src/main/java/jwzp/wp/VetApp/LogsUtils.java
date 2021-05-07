@@ -17,4 +17,16 @@ public class LogsUtils {
     static public String logMissingData(Object obj) {
         return "Missing data in DTO: " + obj.getClass();
     }
+
+    static public String logTimeUnavailability() {
+        return "Request data don't match with constraints";
+    }
+
+    static public String logNotFoundObject(Object obj) {
+        return "Object: " + obj.getClass() + " not found";
+    }
+
+    static public String logException(Exception e) {
+        return "Exception occurred: " + e.getClass() + " message: " + e.getMessage();
+    }
 }
