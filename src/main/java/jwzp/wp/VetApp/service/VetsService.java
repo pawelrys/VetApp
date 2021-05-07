@@ -33,7 +33,7 @@ public class VetsService {
 
     public Response<VetRecord> addVet(VetData requestedVet) {
         if (!ableToCreateFromData(requestedVet)) {
-            logger.error(LogsUtils.logMissingData(requestedVet));
+            logger.info(LogsUtils.logMissingData(requestedVet));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
         VetRecord vet = VetRecord.createVetRecord(requestedVet);
@@ -42,7 +42,7 @@ public class VetsService {
             logger.info(LogsUtils.logSaved(savedVet, savedVet.id));
             return Response.succeedResponse(savedVet);
         } catch (IllegalArgumentException e) {
-            logger.error(LogsUtils.logMissingData(vet));
+            logger.info(LogsUtils.logException(e));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }

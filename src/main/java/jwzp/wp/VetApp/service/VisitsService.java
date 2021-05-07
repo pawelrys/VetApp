@@ -1,5 +1,6 @@
 package jwzp.wp.VetApp.service;
 
+import jwzp.wp.VetApp.LogsUtils;
 import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.records.OfficeRecord;
 import jwzp.wp.VetApp.models.records.PetRecord;
@@ -11,6 +12,8 @@ import jwzp.wp.VetApp.resources.OfficesRepository;
 import jwzp.wp.VetApp.resources.PetsRepository;
 import jwzp.wp.VetApp.resources.VetsRepository;
 import jwzp.wp.VetApp.resources.VisitsRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 @Service
 public class VisitsService {
 
+    private final Logger logger = LogManager.getLogger(VisitsService.class);
     private final VisitsRepository visitsRepository;
     private final PetsRepository petsRepository;
     private final OfficesRepository officesRepository;
@@ -50,8 +54,10 @@ public class VisitsService {
 
     @Scheduled(cron = "0 0 * * * *")
     public void automaticallyClosePastVisits() {
-        // TODO log result
         var result = updatePastVisitsStatusTo(Status.CLOSED_AUTOMATICALLY);
+        result.forEach( visitRecord -> {
+                logger.info("Automatically closed: " + visitRecord.getClass() + " id: " + visitRecord.getId());
+        });
     }
 
     public List<VisitRecord> getAllVisits() {
@@ -64,10 +70,12 @@ public class VisitsService {
 
     public Response<VisitRecord> addVisit(VisitData requestedVisit) {
         if (!ableToCreateFromData(requestedVisit)) {
+            logger.info(LogsUtils.logMissingData(requestedVisit));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
         Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(requestedVisit.startDate, requestedVisit.duration, requestedVisit.officeId, requestedVisit.vetId);
         if (result.isPresent()) {
+            logger.info(LogsUtils.logTimeUnavailability());
             return Response.errorResponse(result.get());
         }
         try {
@@ -82,8 +90,11 @@ public class VisitsService {
                     office,
                     vet
             );
-            return Response.succeedResponse(visitsRepository.save(visit));
+            var savedVisit = visitsRepository.save(visit);
+            logger.info(LogsUtils.logSaved(savedVisit, savedVisit.getId()));
+            return Response.succeedResponse(savedVisit);
         } catch (IllegalArgumentException | NoSuchElementException e) {
+            logger.info(LogsUtils.logException(e));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }
@@ -95,20 +106,25 @@ public class VisitsService {
             toUpdate.get().update(newData);
             Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(toUpdate.get().startDate, toUpdate.get().duration, toUpdate.get().office.id, toUpdate.get().vet.id, id);
             if (result.isPresent()) {
+                logger.info(LogsUtils.logTimeUnavailability());
                 return Response.errorResponse(result.get());
             }
-            visitsRepository.save(toUpdate.get());
+            var updatedVisit = visitsRepository.save(toUpdate.get());
+            logger.info(LogsUtils.logUpdated(updatedVisit, updatedVisit.getId()));
             return Response.succeedResponse(toUpdate.get());
         }
+        logger.info(LogsUtils.logNotFoundObject(VisitRecord.class));
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
     public Response<VisitRecord> delete(int id) {
         Optional<VisitRecord> visit = visitsRepository.findById(id);
         if (visit.isPresent()) {
+            logger.info(LogsUtils.logDeleted(visit, id));
             visitsRepository.deleteById(visit.get().getId());
             return Response.succeedResponse(visit.get());
         }
+        logger.info(LogsUtils.logNotFoundObject(VisitRecord.class));
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
@@ -175,7 +191,8 @@ public class VisitsService {
     }
 
     public Response<List<VetsTimeInterval>> availableTimeSlots(VetsTimeInterval input){
-        if (input.begin == null || input.end == null || input.begin.isAfter(input.end)){
+        if (input.begin == null || input.end == null || input.begin.isAfter(input.end)) {
+            logger.info(LogsUtils.logMissingData(input));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
         List<Object[]> availableSlots = visitsRepository.getAvailableTimeSlots(input.begin, input.end);
