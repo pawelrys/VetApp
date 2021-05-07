@@ -58,6 +58,31 @@ public class PetsService {
         }
     }
 
+    public Response<PetRecord> updatePet(int id, PetData newData) {
+        Optional<PetRecord> toUpdate = petsRepository.findById(id);
+
+        if (toUpdate.isPresent()) {
+            toUpdate.get().update(newData);
+            var saved = petsRepository.save(toUpdate.get());
+            logger.info(LogsUtils.logUpdated(saved, saved.id));
+            return Response.succeedResponse(toUpdate.get());
+        }
+        logger.info(LogsUtils.logNotFoundObject(PetRecord.class, id));
+        return Response.errorResponse(ResponseErrorMessage.PET_NOT_FOUND);
+    }
+
+    public Response<PetRecord> delete(int id) {
+        Optional<PetRecord> petOpt = petsRepository.findById(id);
+        if (petOpt.isPresent()) {
+            PetRecord pet = petOpt.get();
+            petsRepository.deleteById(pet.id);
+            logger.info(LogsUtils.logDeleted(pet, pet.id));
+            return Response.succeedResponse(pet);
+        }
+        logger.info(LogsUtils.logNotFoundObject(PetRecord.class, id));
+        return Response.errorResponse(ResponseErrorMessage.PET_NOT_FOUND);
+    }
+
     public boolean ableToCreateFromData(PetData pet) {
         return pet.name != null && pet.ownerId != null && pet.birthday != null && pet.animal != null;
     }

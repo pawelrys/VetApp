@@ -1,5 +1,6 @@
 package jwzp.wp.VetApp.models.records;
 
+import jwzp.wp.VetApp.models.dtos.PetData;
 import jwzp.wp.VetApp.models.values.Animal;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -46,6 +47,18 @@ public class PetRecord extends RepresentationModel<PetRecord> {
         pet.animal = animal;
         pet.owner = owner;
         return pet;
+    }
+
+    public void update(PetData data) {
+        if(data.name != null) {
+            name = data.name;
+        }
+        if(data.birthday != null) {
+            birthday = data.birthday;
+        }
+        if(data.birthday != null) {
+            animal = data.animal;
+        }
     }
 
     @Override

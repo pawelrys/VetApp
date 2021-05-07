@@ -42,8 +42,12 @@ public class ClientRecord extends RepresentationModel<ClientRecord> {
     }
 
     public void update(ClientData data) {
-        name = data.name;
-        surname = data.surname;
+        if (data.name != null) {
+            name = data.name;
+        }
+        if (data.surname != null) {
+            surname = data.surname;
+        }
     }
 
     @Override

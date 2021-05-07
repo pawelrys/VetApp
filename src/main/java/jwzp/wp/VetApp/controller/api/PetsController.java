@@ -33,7 +33,7 @@ public class PetsController {
     public ResponseEntity<?> getAllPets() {
         List<PetRecord> pets = petsService.getAllPets();
         for (PetRecord pet : pets) {
-            addLinkToEntity(pet);
+            addLinksToEntity(pet);
         }
         Link link = linkTo(PetsController.class).withSelfRel();
         CollectionModel<PetRecord> result = CollectionModel.of(pets, link);
@@ -44,7 +44,7 @@ public class PetsController {
     public ResponseEntity<?> getPet(@PathVariable int id){
         Optional<PetRecord> pet = petsService.getPet(id);
         return pet.isPresent()
-                ? ResponseEntity.ok(addLinkToEntity(pet.get()))
+                ? ResponseEntity.ok(addLinksToEntity(pet.get()))
                 : ResponseToHttp.getFailureResponse(ResponseErrorMessage.PET_NOT_FOUND);
     }
 
@@ -52,11 +52,27 @@ public class PetsController {
     public ResponseEntity<?> addPet(@RequestBody PetData pet) {
         Response<PetRecord> result = petsService.addPet(pet);
         return result.succeed()
-                ? ResponseEntity.status(HttpStatus.CREATED).body(addLinkToEntity(result.get()))
+                ? ResponseEntity.status(HttpStatus.CREATED).body(addLinksToEntity(result.get()))
                 : ResponseToHttp.getFailureResponse(result.getError());
     }
 
-    private PetRecord addLinkToEntity(PetRecord pet) {
+    @PatchMapping(path="/{id}")
+    public ResponseEntity<?> updatePet(@PathVariable int id, @RequestBody PetData newData) {
+        Response<PetRecord> updated = petsService.updatePet(id, newData);
+        return updated.succeed()
+                ? ResponseEntity.ok(addLinksToEntity(updated.get()))
+                : ResponseToHttp.getFailureResponse(updated.getError());
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<?> deletePet(@PathVariable int id) {
+        Response<PetRecord> result = petsService.delete(id);
+        return result.succeed()
+                ? ResponseEntity.ok(addLinksToEntity(result.get()))
+                : ResponseToHttp.getFailureResponse(result.getError());
+    }
+
+    private PetRecord addLinksToEntity(PetRecord pet) {
         pet.add(linkTo(PetsController.class).slash(pet.id).withSelfRel());
         pet.add(linkTo(ClientsController.class).slash(pet.owner.id).withRel("owner"));
         return pet;
