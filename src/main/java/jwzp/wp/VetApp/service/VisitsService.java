@@ -113,7 +113,7 @@ public class VisitsService {
             logger.info(LogsUtils.logUpdated(updatedVisit, updatedVisit.getId()));
             return Response.succeedResponse(toUpdate.get());
         }
-        logger.info(LogsUtils.logNotFoundObject(VisitRecord.class));
+        logger.info(LogsUtils.logNotFoundObject(VisitRecord.class, id));
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
@@ -124,7 +124,7 @@ public class VisitsService {
             visitsRepository.deleteById(visit.get().getId());
             return Response.succeedResponse(visit.get());
         }
-        logger.info(LogsUtils.logNotFoundObject(VisitRecord.class));
+        logger.info(LogsUtils.logNotFoundObject(VisitRecord.class, id));
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
