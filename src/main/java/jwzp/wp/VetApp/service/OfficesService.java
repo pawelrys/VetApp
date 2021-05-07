@@ -44,6 +44,31 @@ public class OfficesService {
         }
     }
 
+    public Response<OfficeRecord> updateOffice(int id, OfficeData newData) {
+        Optional<OfficeRecord> toUpdate = repository.findById(id);
+
+        if (toUpdate.isPresent()) {
+            toUpdate.get().update(newData);
+            var saved = repository.save(toUpdate.get());
+            logger.info(LogsUtils.logUpdated(saved, saved.id));
+            return Response.succeedResponse(toUpdate.get());
+        }
+        logger.info(LogsUtils.logNotFoundObject(OfficeRecord.class, id));
+        return Response.errorResponse(ResponseErrorMessage.OFFICE_NOT_FOUND);
+    }
+
+    public Response<OfficeRecord> delete(int id) {
+        Optional<OfficeRecord> officeOpt = repository.findById(id);
+        if (officeOpt.isPresent()) {
+            OfficeRecord office = officeOpt.get();
+            repository.deleteById(office.id);
+            logger.info(LogsUtils.logDeleted(office, office.id));
+            return Response.succeedResponse(office);
+    }
+        logger.info(LogsUtils.logNotFoundObject(OfficeRecord.class, id));
+        return Response.errorResponse(ResponseErrorMessage.OFFICE_NOT_FOUND);
+    }
+
     public Optional<OfficeRecord> getOffice(int id) {
         return repository.findById(id);
     }

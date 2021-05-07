@@ -36,6 +36,10 @@ public class OfficeRecord extends RepresentationModel<OfficeRecord> {
         return office;
     }
 
+    public void update(OfficeData data) {
+        name = data.name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
