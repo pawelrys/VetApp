@@ -53,11 +53,21 @@ public class VetRecord extends RepresentationModel<VetRecord> {
     }
 
     public void update(VetData data) {
-        name = data.name;
-        surname = data.surname;
-        photo = data.photo;
-        officeHoursStart = data.officeHoursStart;
-        officeHoursEnd = data.officeHoursEnd;
+        if(data.name != null) {
+            name = data.name;
+        }
+        if(data.surname != null) {
+            surname = data.surname;
+        }
+        if(data.photo != null) {
+            photo = data.photo;
+        }
+        if(data.officeHoursStart != null) {
+            officeHoursStart = data.officeHoursStart;
+        }
+        if(data.officeHoursEnd != null) {
+            officeHoursEnd = data.officeHoursEnd;
+        }
     }
 
     @Override
