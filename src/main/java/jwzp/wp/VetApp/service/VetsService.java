@@ -1,11 +1,8 @@
 package jwzp.wp.VetApp.service;
 
 import jwzp.wp.VetApp.LogsUtils;
-import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.dtos.VetData;
-import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.models.records.VetRecord;
-import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.resources.VetsRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

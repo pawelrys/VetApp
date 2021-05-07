@@ -2,9 +2,7 @@ package jwzp.wp.VetApp.controller.api;
 
 import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.VetData;
-import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.records.VetRecord;
-import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.service.Response;
 import jwzp.wp.VetApp.service.ResponseErrorMessage;
 import jwzp.wp.VetApp.service.VetsService;
@@ -39,14 +37,14 @@ public class VetsController {
         }
         Link self = linkTo(VetsController.class).withSelfRel();
         CollectionModel<VetRecord> result = CollectionModel.of(vets, self);
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping(path="/{id}")
     public ResponseEntity<?> getVet(@PathVariable int id){
         Optional<VetRecord> vet = vetsService.getVet(id);
         return vet.isPresent()
-                ? ResponseEntity.ok().body(addLinksToEntity(vet.get()))
+                ? ResponseEntity.ok(addLinksToEntity(vet.get()))
                 : ResponseToHttp.getFailureResponse(ResponseErrorMessage.VET_NOT_FOUND);
 
     }

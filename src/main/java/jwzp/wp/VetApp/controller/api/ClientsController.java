@@ -3,7 +3,6 @@ package jwzp.wp.VetApp.controller.api;
 import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
-import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.service.ClientsService;
 import jwzp.wp.VetApp.service.Response;
 import jwzp.wp.VetApp.service.ResponseErrorMessage;
@@ -39,14 +38,14 @@ public class ClientsController {
         }
         Link link = linkTo(ClientsController.class).withSelfRel();
         CollectionModel<ClientRecord> result = CollectionModel.of(clients, link);
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping(path="/{id}")
     public ResponseEntity<?> getClient(@PathVariable int id) {
         Optional<ClientRecord> client = clientsService.getClient(id);
         return client.isPresent()
-                ? ResponseEntity.ok().body(addLinksToEntity(client.get()))
+                ? ResponseEntity.ok(addLinksToEntity(client.get()))
                 : ResponseToHttp.getFailureResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
     }
 
