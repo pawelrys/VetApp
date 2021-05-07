@@ -213,7 +213,6 @@ public class VisitsService {
                 .sorted(Comparator.comparing(a -> a.begin))
                 .collect(Collectors.toList());
 
-        logger.info("Available time slots correctly returned");
         return Response.succeedResponse(timeSlots);
     }
 }
