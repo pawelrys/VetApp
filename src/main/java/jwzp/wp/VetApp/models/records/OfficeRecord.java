@@ -37,7 +37,9 @@ public class OfficeRecord extends RepresentationModel<OfficeRecord> {
     }
 
     public void update(OfficeData data) {
-        name = data.name;
+        if (data.name != null) {
+            name = data.name;
+        }
     }
 
     @Override
