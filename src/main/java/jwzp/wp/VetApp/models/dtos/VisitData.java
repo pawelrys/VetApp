@@ -9,13 +9,15 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class VisitData {
-    public final LocalDateTime startDate;
-    public final Duration duration;
-    public final Integer petId;
-    public final Status status;
+    public LocalDateTime startDate;
+    public Duration duration;
+    public Integer petId;
+    public Status status;
     public BigDecimal price;
     public Integer officeId;
     public Integer vetId;
+
+    public VisitData() {}
 
     public VisitData(
             LocalDateTime startDate,

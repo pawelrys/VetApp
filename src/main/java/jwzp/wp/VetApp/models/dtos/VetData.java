@@ -11,6 +11,8 @@ public class VetData {
     public LocalTime officeHoursStart;
     public LocalTime officeHoursEnd;
 
+    public VetData() {}
+
     public VetData(
             String name,
             String surname,

@@ -3,6 +3,7 @@ package jwzp.wp.VetApp.controller.api;
 import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
+import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.service.ClientsService;
 import jwzp.wp.VetApp.service.Response;
 import jwzp.wp.VetApp.service.ResponseErrorMessage;

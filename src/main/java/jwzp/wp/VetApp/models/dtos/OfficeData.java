@@ -5,7 +5,7 @@ import java.util.Objects;
 public class OfficeData {
     public String name;
 
-    public OfficeData(){}
+    public OfficeData() {}
 
     public OfficeData(
             String name
