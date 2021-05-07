@@ -26,7 +26,7 @@ public class LogsUtils {
         return "Object: " + obj.getClass() + " not found";
     }
 
-    static public String logException(Object obj, String message) {
-        return "Exception occurred: " + obj.getClass() + " message: " + message;
+    static public String logException(Exception e) {
+        return "Exception occurred: " + e.getClass() + " message: " + e.getMessage();
     }
 }
