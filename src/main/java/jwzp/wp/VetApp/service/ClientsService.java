@@ -41,7 +41,7 @@ public class ClientsService {
             logger.info(LogsUtils.logSaved(savedClient, savedClient.id));
             return Response.succeedResponse(savedClient);
         } catch (IllegalArgumentException e) {
-            logger.error(e);
+            logger.info(LogsUtils.logException(e));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }
@@ -55,6 +55,7 @@ public class ClientsService {
             logger.info(LogsUtils.logUpdated(saved, saved.id));
             return Response.succeedResponse(toUpdate.get());
         }
+        logger.info(LogsUtils.logNotFoundObject(ClientRecord.class, id));
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
@@ -66,6 +67,7 @@ public class ClientsService {
             logger.info(LogsUtils.logDeleted(client, client.id));
             return Response.succeedResponse(client);
         }
+        logger.info(LogsUtils.logNotFoundObject(ClientRecord.class, id));
         return Response.errorResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
     }
 
