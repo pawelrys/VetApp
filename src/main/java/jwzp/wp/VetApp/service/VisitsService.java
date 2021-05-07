@@ -94,7 +94,7 @@ public class VisitsService {
             logger.info(LogsUtils.logSaved(savedVisit, savedVisit.getId()));
             return Response.succeedResponse(savedVisit);
         } catch (IllegalArgumentException | NoSuchElementException e) {
-            logger.info(LogsUtils.logException(e, e.getMessage()));
+            logger.info(LogsUtils.logException(e));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }
