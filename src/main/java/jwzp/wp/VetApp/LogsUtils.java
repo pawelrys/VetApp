@@ -25,4 +25,8 @@ public class LogsUtils {
     static public String logNotFoundObject(Object obj) {
         return "Object: " + obj.getClass() + " not found";
     }
+
+    static public String logException(Object obj, String message) {
+        return "Exception occurred: " + obj.getClass() + " message: " + message;
+    }
 }

@@ -70,12 +70,12 @@ public class VisitsService {
 
     public Response<VisitRecord> addVisit(VisitData requestedVisit) {
         if (!ableToCreateFromData(requestedVisit)) {
-            logger.error(LogsUtils.logMissingData(requestedVisit));
+            logger.info(LogsUtils.logMissingData(requestedVisit));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
         Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(requestedVisit.startDate, requestedVisit.duration, requestedVisit.officeId, requestedVisit.vetId);
         if (result.isPresent()) {
-            logger.error(LogsUtils.logTimeUnavailability());
+            logger.info(LogsUtils.logTimeUnavailability());
             return Response.errorResponse(result.get());
         }
         try {
@@ -94,7 +94,7 @@ public class VisitsService {
             logger.info(LogsUtils.logSaved(savedVisit, savedVisit.getId()));
             return Response.succeedResponse(savedVisit);
         } catch (IllegalArgumentException | NoSuchElementException e) {
-            logger.error(LogsUtils.logMissingData(requestedVisit));
+            logger.info(LogsUtils.logException(e, e.getMessage()));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }
@@ -106,14 +106,14 @@ public class VisitsService {
             toUpdate.get().update(newData);
             Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(toUpdate.get().startDate, toUpdate.get().duration, toUpdate.get().office.id, toUpdate.get().vet.id, id);
             if (result.isPresent()) {
-                logger.error(LogsUtils.logTimeUnavailability());
+                logger.info(LogsUtils.logTimeUnavailability());
                 return Response.errorResponse(result.get());
             }
             var updatedVisit = visitsRepository.save(toUpdate.get());
             logger.info(LogsUtils.logUpdated(updatedVisit, updatedVisit.getId()));
             return Response.succeedResponse(toUpdate.get());
         }
-        logger.error(LogsUtils.logNotFoundObject(VisitRecord.class));
+        logger.info(LogsUtils.logNotFoundObject(VisitRecord.class));
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
@@ -124,7 +124,7 @@ public class VisitsService {
             visitsRepository.deleteById(visit.get().getId());
             return Response.succeedResponse(visit.get());
         }
-        logger.error(LogsUtils.logNotFoundObject(VisitRecord.class));
+        logger.info(LogsUtils.logNotFoundObject(VisitRecord.class));
         return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
     }
 
@@ -192,7 +192,7 @@ public class VisitsService {
 
     public Response<List<VetsTimeInterval>> availableTimeSlots(VetsTimeInterval input){
         if (input.begin == null || input.end == null || input.begin.isAfter(input.end)) {
-            logger.error(LogsUtils.logMissingData(input));
+            logger.info(LogsUtils.logMissingData(input));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
         List<Object[]> availableSlots = visitsRepository.getAvailableTimeSlots(input.begin, input.end);
