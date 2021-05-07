@@ -52,6 +52,24 @@ public class VetRecord extends RepresentationModel<VetRecord> {
         return vet;
     }
 
+    public void update(VetData data) {
+        if(data.name != null) {
+            name = data.name;
+        }
+        if(data.surname != null) {
+            surname = data.surname;
+        }
+        if(data.photo != null) {
+            photo = data.photo;
+        }
+        if(data.officeHoursStart != null) {
+            officeHoursStart = data.officeHoursStart;
+        }
+        if(data.officeHoursEnd != null) {
+            officeHoursEnd = data.officeHoursEnd;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

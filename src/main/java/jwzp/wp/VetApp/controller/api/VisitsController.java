@@ -4,14 +4,12 @@ import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
-import jwzp.wp.VetApp.models.values.Status;
 import jwzp.wp.VetApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 

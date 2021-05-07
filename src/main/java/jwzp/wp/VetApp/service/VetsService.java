@@ -47,6 +47,31 @@ public class VetsService {
         }
     }
 
+    public Response<VetRecord> updateVet(int id, VetData newData) {
+        Optional<VetRecord> toUpdate = repository.findById(id);
+
+        if (toUpdate.isPresent()) {
+            toUpdate.get().update(newData);
+            var saved = repository.save(toUpdate.get());
+            logger.info(LogsUtils.logUpdated(saved, saved.id));
+            return Response.succeedResponse(toUpdate.get());
+        }
+        logger.info(LogsUtils.logNotFoundObject(VetRecord.class, id));
+        return Response.errorResponse(ResponseErrorMessage.VET_NOT_FOUND);
+    }
+
+    public Response<VetRecord> deleteVet(int id) {
+        Optional<VetRecord> toDelete = repository.findById(id);
+        if (toDelete.isPresent()) {
+            VetRecord vet = toDelete.get();
+            repository.deleteById(vet.id);
+            logger.info(LogsUtils.logDeleted(vet, vet.id));
+            return Response.succeedResponse(vet);
+        }
+        logger.info(LogsUtils.logNotFoundObject(VetRecord.class, id));
+        return Response.errorResponse(ResponseErrorMessage.VET_NOT_FOUND);
+    }
+
     public boolean ableToCreateFromData(VetData vet) {
         return vet.name != null && vet.surname != null && vet.officeHoursEnd != null && vet.officeHoursStart != null && vet.photo != null;
     }

@@ -57,6 +57,22 @@ public class VetsController {
                 : ResponseToHttp.getFailureResponse(result.getError());
     }
 
+    @PatchMapping(path="/{id}")
+    public ResponseEntity<?> updateVisit(@PathVariable int id, @RequestBody VetData newData) {
+        Response<VetRecord> updated = vetsService.updateVet(id, newData);
+        return updated.succeed()
+                ? ResponseEntity.ok(addLinksToEntity(updated.get()))
+                : ResponseToHttp.getFailureResponse(updated.getError());
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<?> deleteVisit(@PathVariable int id) {
+        Response<VetRecord> result = vetsService.deleteVet(id);
+        return result.succeed()
+                ? ResponseEntity.ok(addLinksToEntity(result.get()))
+                : ResponseToHttp.getFailureResponse(result.getError());
+    }
+
     private VetRecord addLinksToEntity(VetRecord vet) {
         return vet.add(linkTo(VetsController.class).slash(vet.id).withSelfRel());
     }
