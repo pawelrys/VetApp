@@ -2,7 +2,9 @@ package jwzp.wp.VetApp.controller.api;
 
 import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.VetData;
+import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.records.VetRecord;
+import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.service.Response;
 import jwzp.wp.VetApp.service.ResponseErrorMessage;
 import jwzp.wp.VetApp.service.VetsService;
@@ -37,14 +39,14 @@ public class VetsController {
         }
         Link self = linkTo(VetsController.class).withSelfRel();
         CollectionModel<VetRecord> result = CollectionModel.of(vets, self);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok().body(result);
     }
 
     @GetMapping(path="/{id}")
     public ResponseEntity<?> getVet(@PathVariable int id){
         Optional<VetRecord> vet = vetsService.getVet(id);
         return vet.isPresent()
-                ? ResponseEntity.ok(addLinksToEntity(vet.get()))
+                ? ResponseEntity.ok().body(addLinksToEntity(vet.get()))
                 : ResponseToHttp.getFailureResponse(ResponseErrorMessage.VET_NOT_FOUND);
 
     }
@@ -54,6 +56,22 @@ public class VetsController {
         Response<VetRecord> result = vetsService.addVet(vet);
         return result.succeed()
                 ? ResponseEntity.status(HttpStatus.CREATED).body(addLinksToEntity(result.get()))
+                : ResponseToHttp.getFailureResponse(result.getError());
+    }
+
+    @PatchMapping(path="/{id}")
+    public ResponseEntity<?> updateVisit(@PathVariable int id, @RequestBody VetData newData) {
+        Response<VetRecord> updated = vetsService.updateVet(id, newData);
+        return updated.succeed()
+                ? ResponseEntity.ok(addLinksToEntity(updated.get()))
+                : ResponseToHttp.getFailureResponse(updated.getError());
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<?> deleteVisit(@PathVariable int id) {
+        Response<VetRecord> result = vetsService.deleteVet(id);
+        return result.succeed()
+                ? ResponseEntity.ok(addLinksToEntity(result.get()))
                 : ResponseToHttp.getFailureResponse(result.getError());
     }
 

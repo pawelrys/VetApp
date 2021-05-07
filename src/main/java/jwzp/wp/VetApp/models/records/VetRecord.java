@@ -1,5 +1,6 @@
 package jwzp.wp.VetApp.models.records;
 
+import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.dtos.VetData;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -50,6 +51,14 @@ public class VetRecord extends RepresentationModel<VetRecord> {
         vet.officeHoursStart = data.officeHoursStart;
         vet.officeHoursEnd = data.officeHoursEnd;
         return vet;
+    }
+
+    public void update(VetData data) {
+        name = data.name;
+        surname = data.surname;
+        photo = data.photo;
+        officeHoursStart = data.officeHoursStart;
+        officeHoursEnd = data.officeHoursEnd;
     }
 
     @Override

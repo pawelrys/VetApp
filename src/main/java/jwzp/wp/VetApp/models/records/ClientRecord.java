@@ -41,6 +41,11 @@ public class ClientRecord extends RepresentationModel<ClientRecord> {
         return client;
     }
 
+    public void update(ClientData data) {
+        name = data.name;
+        surname = data.surname;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

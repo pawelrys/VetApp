@@ -1,8 +1,11 @@
 package jwzp.wp.VetApp.service;
 
 import jwzp.wp.VetApp.LogsUtils;
+import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.dtos.VetData;
+import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.models.records.VetRecord;
+import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.resources.VetsRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,6 +48,31 @@ public class VetsService {
             logger.info(LogsUtils.logException(e));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
+    }
+
+    public Response<VetRecord> updateVet(int id, VetData newData) {
+        Optional<VetRecord> toUpdate = repository.findById(id);
+
+        if (toUpdate.isPresent()) {
+            toUpdate.get().update(newData);
+            var saved = repository.save(toUpdate.get());
+            logger.info(LogsUtils.logUpdated(saved, saved.id));
+            return Response.succeedResponse(toUpdate.get());
+        }
+        logger.info(LogsUtils.logNotFoundObject(VetRecord.class, id));
+        return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
+    }
+
+    public Response<VetRecord> deleteVet(int id) {
+        Optional<VetRecord> toDelete = repository.findById(id);
+        if (toDelete.isPresent()) {
+            VetRecord vet = toDelete.get();
+            repository.deleteById(vet.id);
+            logger.info(LogsUtils.logDeleted(vet, vet.id));
+            return Response.succeedResponse(vet);
+        }
+        logger.info(LogsUtils.logNotFoundObject(VetRecord.class, id));
+        return Response.errorResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
     }
 
     public boolean ableToCreateFromData(VetData vet) {
