@@ -53,7 +53,7 @@ public class PetsService {
             logger.info(LogsUtils.logSaved(savedPet, savedPet.id));
             return Response.succeedResponse(savedPet);
         } catch (IllegalArgumentException | NoSuchElementException e) {
-            logger.error(e);
+            logger.info(LogsUtils.logException(e));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }

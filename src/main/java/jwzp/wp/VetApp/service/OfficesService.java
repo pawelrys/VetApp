@@ -39,7 +39,7 @@ public class OfficesService {
             return Response.succeedResponse(savedOffice);
 
         } catch (IllegalArgumentException e) {
-            logger.error(e);
+            logger.info(LogsUtils.logException(e));
             return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
         }
     }
