@@ -56,7 +56,7 @@ public class ClientsService {
             return Response.succeedResponse(toUpdate.get());
         }
         logger.info(LogsUtils.logNotFoundObject(ClientRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
+        return Response.errorResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
     }
 
     public Response<ClientRecord> delete(int id) {

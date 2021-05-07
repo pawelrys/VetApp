@@ -56,6 +56,23 @@ public class OfficesController {
                 : ResponseToHttp.getFailureResponse(result.getError());
     }
 
+
+    @PatchMapping(path="/{id}")
+    public ResponseEntity<?> updateOffice(@PathVariable int id, @RequestBody OfficeData newData) {
+        Response<OfficeRecord> updated = officesService.updateOffice(id, newData);
+        return updated.succeed()
+                ? ResponseEntity.ok(addLinksToEntity(updated.get()))
+                : ResponseToHttp.getFailureResponse(updated.getError());
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<?> deleteOffice(@PathVariable int id) {
+        Response<OfficeRecord> result = officesService.delete(id);
+        return result.succeed()
+                ? ResponseEntity.ok(addLinksToEntity(result.get()))
+                : ResponseToHttp.getFailureResponse(result.getError());
+    }
+
     private OfficeRecord addLinksToEntity(OfficeRecord office){
         return office.add(linkTo(OfficesController.class).slash(office.id).withSelfRel());
     }
