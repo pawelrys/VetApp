@@ -187,7 +187,8 @@ public class VisitsService {
 
     private void changeStatusTo(VisitRecord visit, Status status) {
         VisitData data = new VisitData(visit.startDate, visit.duration, visit.pet.id, status, visit.price, visit.office.id, visit.vet.id);
-        updateVisit(visit.getId(), data);
+        visit.update(data);
+        visitsRepository.save(visit);
     }
 
     public Response<List<VetsTimeInterval>> availableTimeSlots(VetsTimeInterval input){
