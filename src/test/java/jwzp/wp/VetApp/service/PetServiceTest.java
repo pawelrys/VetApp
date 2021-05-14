@@ -1,12 +1,14 @@
 package jwzp.wp.VetApp.service;
 
-import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.dtos.PetData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.models.records.PetRecord;
 import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.resources.ClientsRepository;
 import jwzp.wp.VetApp.resources.PetsRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,7 +46,7 @@ public class PetServiceTest {
     @Test
     public void testAddPetMissingData() throws Exception {
         PetData requested = new PetData(null, null, null, null);
-        Response<?> expected = Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+        Response<?> expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         var uut = new PetsService(petsRepository, clientsRepository);
 
         var result = uut.addPet(requested);
@@ -57,7 +59,7 @@ public class PetServiceTest {
     public void testAddPetRepositoryException() throws Exception {
         PetData requested = new PetData("Reksio", LocalDate.parse("2020-01-01"), Animal.Dog, 1);
         ClientRecord client = new ClientRecord(1, "Jan", "Kowalski");
-        Response<PetRecord> expected = Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+        Response<PetRecord> expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         Mockito.when(petsRepository.save(Mockito.any(PetRecord.class))).thenThrow(new IllegalArgumentException());
         Mockito.when(clientsRepository.findById(Mockito.any(int.class))).thenReturn(java.util.Optional.of(client));
         var uut = new PetsService(petsRepository, clientsRepository);

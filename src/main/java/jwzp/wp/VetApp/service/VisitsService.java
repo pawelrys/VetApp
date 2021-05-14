@@ -12,6 +12,9 @@ import jwzp.wp.VetApp.resources.OfficesRepository;
 import jwzp.wp.VetApp.resources.PetsRepository;
 import jwzp.wp.VetApp.resources.VetsRepository;
 import jwzp.wp.VetApp.resources.VisitsRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +74,7 @@ public class VisitsService {
     public Response<VisitRecord> addVisit(VisitData requestedVisit) {
         if (!ableToCreateFromData(requestedVisit)) {
             logger.info(LogsUtils.logMissingData(requestedVisit));
-            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
         Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(requestedVisit.startDate, requestedVisit.duration, requestedVisit.officeId, requestedVisit.vetId);
         if (result.isPresent()) {
@@ -95,7 +98,7 @@ public class VisitsService {
             return Response.succeedResponse(savedVisit);
         } catch (IllegalArgumentException | NoSuchElementException e) {
             logger.info(LogsUtils.logException(e));
-            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
     }
 
@@ -114,7 +117,9 @@ public class VisitsService {
             return Response.succeedResponse(toUpdate.get());
         }
         logger.info(LogsUtils.logNotFoundObject(VisitRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
+        return Response.errorResponse(
+                ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND)
+        );
     }
 
     public Response<VisitRecord> delete(int id) {
@@ -125,15 +130,17 @@ public class VisitsService {
             return Response.succeedResponse(visit.get());
         }
         logger.info(LogsUtils.logNotFoundObject(VisitRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
+        return Response.errorResponse(
+                ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND)
+        );
     }
 
     private Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId, int id) {
         VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
         if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
-            return Optional.of(ResponseErrorMessage.BUSY_VET);
+            return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET));
         }
-        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
         var end = start.plusMinutes(duration.toMinutes());
         var overlappedVisits = visitsRepository.getRegisteredVisitsInTime(start, end, officeId, vetId);
         if(overlappedVisits.size() == 0 || (overlappedVisits.size() == 1 && id == overlappedVisits.get(0).getId())) {
@@ -144,24 +151,24 @@ public class VisitsService {
             record = overlappedVisits.get(1);
         }
         return record.vet.id == vetId
-                ? Optional.of(ResponseErrorMessage.BUSY_VET)
-                : Optional.of(ResponseErrorMessage.BUSY_OFFICE);
+                ? Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET))
+                : Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_OFFICE));
     }
 
     private Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId) {
         VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
         if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
-            return Optional.of(ResponseErrorMessage.BUSY_VET);
+            return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET));
         }
-        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
         var end = start.plusMinutes(duration.toMinutes());
         var overlappedVisits = visitsRepository.getRegisteredVisitsInTime(start, end, officeId, vetId);
         if(overlappedVisits.size() == 0) {
             return Optional.empty();
         }
         return overlappedVisits.get(0).vet.id == vetId
-                ? Optional.of(ResponseErrorMessage.BUSY_VET)
-                : Optional.of(ResponseErrorMessage.BUSY_OFFICE);
+                ? Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET))
+                : Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_OFFICE));
     }
 
     public boolean ableToCreateFromData(VisitData visit) {
@@ -194,7 +201,7 @@ public class VisitsService {
     public Response<List<VetsTimeInterval>> availableTimeSlots(VetsTimeInterval input){
         if (input.begin == null || input.end == null || input.begin.isAfter(input.end)) {
             logger.info(LogsUtils.logMissingData(input));
-            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
         List<Object[]> availableSlots = visitsRepository.getAvailableTimeSlots(input.begin, input.end);
         Map<Pair<LocalDateTime, LocalDateTime>, List<Object[]>> slotsMapped = availableSlots.stream()

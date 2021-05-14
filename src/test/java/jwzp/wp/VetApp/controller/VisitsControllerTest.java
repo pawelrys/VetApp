@@ -6,8 +6,9 @@ import jwzp.wp.VetApp.models.records.*;
 import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
 import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.models.values.Status;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ResponseErrorMessage;
 import jwzp.wp.VetApp.service.VisitsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -137,7 +138,7 @@ public class VisitsControllerTest {
         Mockito.when(visitsService.getVisit(Mockito.any(Integer.class))).thenReturn(Optional.empty());
         var expected = ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ResponseErrorMessage.VISIT_NOT_FOUND.getMessage());
+                .body(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND).getMessage());
         var uut = new VisitsController(visitsService);
 
         var result = uut.getVisit(request);
@@ -195,10 +196,10 @@ public class VisitsControllerTest {
         );
 
         Mockito.when(visitsService.updateVisit(Mockito.any(Integer.class), Mockito.any(VisitData.class)))
-                .thenReturn(Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND));
+                .thenReturn(Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND)));
         var expected = ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ResponseErrorMessage.VISIT_NOT_FOUND.getMessage());
+                .body(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND).getMessage());
         var uut = new VisitsController(visitsService);
 
         var result = uut.updateVisit(requestedId, requestedData);
@@ -250,10 +251,10 @@ public class VisitsControllerTest {
                 vet.id
         );
         Mockito.when(visitsService.addVisit(Mockito.any(VisitData.class)))
-                .thenReturn(Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS));
+                .thenReturn(Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS)));
         var expected = ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(ResponseErrorMessage.WRONG_ARGUMENTS.getMessage());
+                .body(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS).getMessage());
         var uut = new VisitsController(visitsService);
 
         var result = uut.addVisit(requested);
@@ -289,10 +290,10 @@ public class VisitsControllerTest {
     public void testDeleteVisitNotFound(){
         int requested = 1;
         Mockito.when(visitsService.delete(Mockito.any(Integer.class)))
-                .thenReturn(Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND));
+                .thenReturn(Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND)));
         var expected = ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ResponseErrorMessage.VISIT_NOT_FOUND.getMessage());
+                .body(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND).getMessage());
         var uut = new VisitsController(visitsService);
 
         var result = uut.deleteVisit(requested);
@@ -360,10 +361,10 @@ public class VisitsControllerTest {
                 List.of(2, 3)
         );
         Mockito.when(visitsService.availableTimeSlots(Mockito.any(VetsTimeInterval.class)))
-                .thenReturn(Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS));
+                .thenReturn(Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS)));
         var expected = ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(ResponseErrorMessage.WRONG_ARGUMENTS.getMessage()
+                .body(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS).getMessage()
         );
         var uut = new VisitsController(visitsService);
 

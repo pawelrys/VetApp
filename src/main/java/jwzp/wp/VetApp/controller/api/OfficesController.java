@@ -3,9 +3,10 @@ package jwzp.wp.VetApp.controller.api;
 import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.OfficeData;
 import jwzp.wp.VetApp.models.records.OfficeRecord;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.OfficesService;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ResponseErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -45,7 +46,7 @@ public class OfficesController {
         Optional<OfficeRecord> office = officesService.getOffice(id);
         return office.isPresent()
                 ? ResponseEntity.ok(addLinksToEntity(office.get()))
-                : ResponseToHttp.getFailureResponse(ResponseErrorMessage.OFFICE_NOT_FOUND);
+                : ResponseToHttp.getFailureResponse(ErrorMessagesBuilder.simpleError(ErrorType.OFFICE_NOT_FOUND));
     }
 
     @PostMapping

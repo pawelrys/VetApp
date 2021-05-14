@@ -1,6 +1,8 @@
-package jwzp.wp.VetApp.service;
+package jwzp.wp.VetApp.service.ErrorMessages;
 
-public enum ResponseErrorMessage {
+public enum ErrorType {
+    SOMETHING_WENT_WRONG("Something went wrong"),
+
     VISIT_NOT_FOUND("Visit not found"),
 
     VISIT_TIME_UNAVAILABLE("It's too late to make an appointment"),
@@ -19,13 +21,13 @@ public enum ResponseErrorMessage {
 
     WRONG_ARGUMENTS("Wrong arguments provided");
 
-    private final String message;
+    private final String defaultMessage;
 
-    ResponseErrorMessage(String message) {
-        this.message = message;
+    ErrorType(String defaultMessage) {
+        this.defaultMessage = defaultMessage;
     }
 
-    public String getMessage() {
-        return message;
+    public String getDefaultMessage() {
+        return defaultMessage;
     }
 }

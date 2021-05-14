@@ -6,6 +6,8 @@ import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.models.records.PetRecord;
 import jwzp.wp.VetApp.resources.ClientsRepository;
 import jwzp.wp.VetApp.resources.PetsRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +40,7 @@ public class PetsService {
     public Response<PetRecord> addPet(PetData requestedPet) {
         if (!ableToCreateFromData(requestedPet)) {
             logger.info(LogsUtils.logMissingData(requestedPet));
-            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
 
         try {
@@ -54,7 +56,7 @@ public class PetsService {
             return Response.succeedResponse(savedPet);
         } catch (IllegalArgumentException | NoSuchElementException e) {
             logger.info(LogsUtils.logException(e));
-            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
     }
 
@@ -68,7 +70,7 @@ public class PetsService {
             return Response.succeedResponse(toUpdate.get());
         }
         logger.info(LogsUtils.logNotFoundObject(PetRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.PET_NOT_FOUND);
+        return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.PET_NOT_FOUND));
     }
 
     public Response<PetRecord> delete(int id) {
@@ -80,7 +82,7 @@ public class PetsService {
             return Response.succeedResponse(pet);
         }
         logger.info(LogsUtils.logNotFoundObject(PetRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.PET_NOT_FOUND);
+        return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.PET_NOT_FOUND));
     }
 
     public boolean ableToCreateFromData(PetData pet) {

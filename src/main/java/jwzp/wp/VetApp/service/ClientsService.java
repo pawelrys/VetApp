@@ -4,6 +4,8 @@ import jwzp.wp.VetApp.LogsUtils;
 import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.resources.ClientsRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ public class ClientsService {
     public Response<ClientRecord> addClient(ClientData requestedClient) {
         if (!ableToCreateFromData(requestedClient)) {
             logger.info(LogsUtils.logMissingData(requestedClient));
-            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
         ClientRecord client = ClientRecord.createClientRecord(requestedClient);
         try {
@@ -42,7 +44,7 @@ public class ClientsService {
             return Response.succeedResponse(savedClient);
         } catch (IllegalArgumentException e) {
             logger.info(LogsUtils.logException(e));
-            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
     }
 
@@ -56,7 +58,7 @@ public class ClientsService {
             return Response.succeedResponse(toUpdate.get());
         }
         logger.info(LogsUtils.logNotFoundObject(ClientRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
+        return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.CLIENT_NOT_FOUND));
     }
 
     public Response<ClientRecord> delete(int id) {
@@ -68,7 +70,7 @@ public class ClientsService {
             return Response.succeedResponse(client);
         }
         logger.info(LogsUtils.logNotFoundObject(ClientRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
+        return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.CLIENT_NOT_FOUND));
     }
 
     public boolean ableToCreateFromData(ClientData client) {

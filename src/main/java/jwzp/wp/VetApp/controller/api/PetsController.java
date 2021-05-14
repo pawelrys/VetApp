@@ -3,9 +3,10 @@ package jwzp.wp.VetApp.controller.api;
 import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.PetData;
 import jwzp.wp.VetApp.models.records.PetRecord;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.PetsService;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ResponseErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -45,7 +46,7 @@ public class PetsController {
         Optional<PetRecord> pet = petsService.getPet(id);
         return pet.isPresent()
                 ? ResponseEntity.ok(addLinksToEntity(pet.get()))
-                : ResponseToHttp.getFailureResponse(ResponseErrorMessage.PET_NOT_FOUND);
+                : ResponseToHttp.getFailureResponse(ErrorMessagesBuilder.simpleError(ErrorType.PET_NOT_FOUND));
     }
 
     @PostMapping

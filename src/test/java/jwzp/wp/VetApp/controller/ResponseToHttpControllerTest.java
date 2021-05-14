@@ -2,8 +2,10 @@ package jwzp.wp.VetApp.controller;
 
 import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.records.ClientRecord;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,8 +30,8 @@ public class ResponseToHttpControllerTest {
 
     @Test
     public void testGetClientNotFoundHttpResponse() {
-        var response = Response.errorResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
-        var expected = ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseErrorMessage.CLIENT_NOT_FOUND.getMessage());
+        var response = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.CLIENT_NOT_FOUND));
+        var expected = ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorType.CLIENT_NOT_FOUND.getDefaultMessage());
 
         var result = ResponseToHttp.getDefaultHttpResponse(response);
 
@@ -38,8 +40,8 @@ public class ResponseToHttpControllerTest {
 
     @Test
     public void testGetWrongArgumentsHttpResponse() {
-        var response = Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
-        var expected = ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseErrorMessage.WRONG_ARGUMENTS.getMessage());
+        var response = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+        var expected = ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS).getMessage());
 
         var result = ResponseToHttp.getDefaultHttpResponse(response);
 
@@ -48,8 +50,8 @@ public class ResponseToHttpControllerTest {
 
     @Test
     public void testGetVisitTimeUnavailableHttpResponse() {
-        var response = Response.errorResponse(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
-        var expected = ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE.getMessage());
+        var response = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
+        var expected = ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE).getMessage());
 
         var result = ResponseToHttp.getDefaultHttpResponse(response);
 
@@ -58,8 +60,8 @@ public class ResponseToHttpControllerTest {
 
     @Test
     public void testGetVisitTimeUnaHttpResponse() {
-        var response = Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
-        var expected = ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseErrorMessage.VISIT_NOT_FOUND.getMessage());
+        var response = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND));
+        var expected = ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND).getMessage());
 
         var result = ResponseToHttp.getDefaultHttpResponse(response);
 
@@ -68,8 +70,8 @@ public class ResponseToHttpControllerTest {
 
     @Test
     public void testGetDifferentHttpResponse() {
-        var response = Response.errorResponse(ResponseErrorMessage.BUSY_VET);
-        var expected = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseErrorMessage.BUSY_VET.getMessage());
+        var response = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET));
+        var expected = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET).getMessage());
 
         var result = ResponseToHttp.getDefaultHttpResponse(response);
 

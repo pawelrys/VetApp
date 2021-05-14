@@ -1,10 +1,10 @@
 package jwzp.wp.VetApp.service;
 
-import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.dtos.OfficeData;
-import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.models.records.OfficeRecord;
 import jwzp.wp.VetApp.resources.OfficesRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,7 +36,7 @@ public class OfficeServiceTest {
     @Test
     public void testAddOfficeMissingData() throws Exception {
         OfficeData requested = new OfficeData(null);
-        Response<?> expected = Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+        Response<?> expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         var uut = new OfficesService(officesRepository);
 
         var result = uut.addOffice(requested);
@@ -48,7 +48,7 @@ public class OfficeServiceTest {
     @Test
     public void testAddOfficeRepositoryException() throws Exception {
         OfficeData requested = new OfficeData("Pinokio");
-        Response<OfficeRecord> expected = Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+        Response<OfficeRecord> expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         Mockito.when(officesRepository.save(Mockito.any(OfficeRecord.class))).thenThrow(new IllegalArgumentException());
         var uut = new OfficesService(officesRepository);
 

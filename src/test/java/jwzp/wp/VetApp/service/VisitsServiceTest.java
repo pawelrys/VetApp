@@ -6,6 +6,8 @@ import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
 import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.models.values.Status;
 import jwzp.wp.VetApp.resources.*;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -99,7 +101,7 @@ public class VisitsServiceTest {
                 office.id,
                 vet.id
         );
-        var expected = Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+        var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
         var result = uut.addVisit(requested);
@@ -123,7 +125,7 @@ public class VisitsServiceTest {
                 vet.id
         );
         Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
-        var expected = Response.errorResponse(ResponseErrorMessage.VISIT_TIME_UNAVAILABLE);
+        var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
         var result = uut.addVisit(requested);
@@ -148,7 +150,7 @@ public class VisitsServiceTest {
         );
         Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
         Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.empty());
-        var expected = Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+        var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
         var result = uut.addVisit(requested);
@@ -248,7 +250,7 @@ public class VisitsServiceTest {
                 Mockito.any(Integer.class)))
                 .thenReturn(List.of(collidingVisit));
         Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
-        var expected = Response.errorResponse(ResponseErrorMessage.BUSY_VET);
+        var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET));
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
         var result = uut.updateVisit(requestedId, requestedData);
@@ -303,7 +305,7 @@ public class VisitsServiceTest {
                 vet
         );
         Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.empty());
-        var expected = Response.errorResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
+        var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND));
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
         var result = uut.delete(requested);

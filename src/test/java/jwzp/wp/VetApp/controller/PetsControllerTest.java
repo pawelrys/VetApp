@@ -8,9 +8,10 @@ import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.models.records.PetRecord;
 import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.service.ClientsService;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.PetsService;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ResponseErrorMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -104,7 +105,7 @@ public class PetsControllerTest {
     public void testGetPetPetNotFound() {
         int request = 0;
         Mockito.when(petsService.getPet(Mockito.any(Integer.class))).thenReturn(Optional.empty());
-        var expected = ResponseToHttp.getFailureResponse(ResponseErrorMessage.PET_NOT_FOUND);
+        var expected = ResponseToHttp.getFailureResponse(ErrorMessagesBuilder.simpleError(ErrorType.PET_NOT_FOUND));
         var uut = new PetsController(petsService);
 
         var result = uut.getPet(request);
@@ -133,10 +134,10 @@ public class PetsControllerTest {
     public void testAddPetMissedData(){
         PetData requested = new PetData(null, null, null, null);
         Mockito.when(petsService.addPet(Mockito.any(PetData.class)))
-                .thenReturn(Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS));
+                .thenReturn(Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS)));
         var expected = ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(ResponseErrorMessage.WRONG_ARGUMENTS.getMessage());
+                .body(ErrorType.WRONG_ARGUMENTS.getDefaultMessage());
         var uut = new PetsController(petsService);
 
         var result = uut.addPet(requested);
