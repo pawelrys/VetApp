@@ -340,27 +340,27 @@ public class VisitsServiceTest {
                 LocalDateTime.parse("2022-04-26T10:00:00"),
                 List.of(1, 3)
         );
-        List<Object[]> freeSlots = List.of(
-                new Object[] {
-                        Timestamp.valueOf("2022-04-26 09:00:00"),
-                        Timestamp.valueOf("2022-04-26 09:15:00"),
-                        3
-                },
-                new Object[] {
-                        Timestamp.valueOf("2022-04-26 09:15:00"),
-                        Timestamp.valueOf("2022-04-26 09:30:00"),
-                        1
-                },
-                new Object[] {
-                        Timestamp.valueOf("2022-04-26 09:45:00"),
-                        Timestamp.valueOf("2022-04-26 10:00:00"),
-                        1
-                },
-                new Object[] {
-                        Timestamp.valueOf("2022-04-26 09:45:00"),
-                        Timestamp.valueOf("2022-04-26 10:00:00"),
-                        3
-                }
+        List<VetsTimeInterval> freeSlots = List.of(
+                new VetsTimeInterval (
+                        LocalDateTime.parse("2022-04-26T09:00:00"),
+                        LocalDateTime.parse("2022-04-26T09:15:00"),
+                        Collections.singletonList(3)
+                ),
+                new VetsTimeInterval (
+                        LocalDateTime.parse("2022-04-26T09:15:00"),
+                        LocalDateTime.parse("2022-04-26T09:30:00"),
+                        Collections.singletonList(1)
+                ),
+                new VetsTimeInterval (
+                        LocalDateTime.parse("2022-04-26T09:45:00"),
+                        LocalDateTime.parse("2022-04-26T10:00:00"),
+                        Collections.singletonList(1)
+                ),
+                new VetsTimeInterval (
+                        LocalDateTime.parse("2022-04-26T09:45:00"),
+                        LocalDateTime.parse("2022-04-26T10:00:00"),
+                        Collections.singletonList(3)
+                )
         );
         var expected = Response.succeedResponse(List.of(
                 new VetsTimeInterval(

@@ -203,20 +203,16 @@ public class VisitsService {
             logger.info(LogsUtils.logMissingData(input));
             return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
-        List<Object[]> availableSlots = visitsRepository.getAvailableTimeSlots(input.begin, input.end);
-        Map<Pair<LocalDateTime, LocalDateTime>, List<Object[]>> slotsMapped = availableSlots.stream()
-                .filter(t -> input.vetIds.contains((Integer)t[2]))
-                .collect(Collectors.groupingBy(
-                        t -> Pair.of(
-                                ((Timestamp)t[0]).toLocalDateTime(),
-                                ((Timestamp)t[1]).toLocalDateTime()
-                        )
-                ));
+        List<VetsTimeInterval> availableSlots = visitsRepository.getAvailableTimeSlots(input.begin, input.end);
+        Map<Pair<LocalDateTime, LocalDateTime>, List<VetsTimeInterval>> slotsMapped = availableSlots.stream()
+                .filter(t -> input.vetIds.containsAll(t.vetIds))
+                .collect(Collectors.groupingBy((VetsTimeInterval t) -> Pair.of(t.begin, t.end)));
+
         List<VetsTimeInterval> timeSlots = slotsMapped.entrySet().stream()
                 .map(t -> new VetsTimeInterval(
                         t.getKey().getFirst(),
                         t.getKey().getSecond(),
-                        t.getValue().stream().map(v -> (Integer)v[2]).collect(Collectors.toList())
+                        t.getValue().stream().map((VetsTimeInterval v) -> v.vetIds.get(0)).collect(Collectors.toList())
                 ))
                 .sorted(Comparator.comparing(a -> a.begin))
                 .collect(Collectors.toList());
