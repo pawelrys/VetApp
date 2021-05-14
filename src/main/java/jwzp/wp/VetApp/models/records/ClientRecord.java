@@ -14,14 +14,22 @@ public class ClientRecord extends RepresentationModel<ClientRecord> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public final int id;
-    public String name;
-    public String surname;
+    public final String name;
+    public final String surname;
 
     @OneToMany(mappedBy = "owner")
     private final List<PetRecord> pets = new ArrayList<>();
 
     protected ClientRecord(){
         this.id = -1;
+        this.name = "";
+        this.surname = "";
+    }
+
+    private ClientRecord(String name, String surname){
+        this.id = -1;
+        this.name = name;
+        this.surname = surname;
     }
 
     public ClientRecord(
@@ -34,20 +42,8 @@ public class ClientRecord extends RepresentationModel<ClientRecord> {
         this.surname = surname;
     }
 
-    public static ClientRecord createClientRecord(ClientData data){
-        var client = new ClientRecord();
-        client.name = data.name;
-        client.surname = data.surname;
-        return client;
-    }
-
-    public void update(ClientData data) {
-        if (data.name != null) {
-            name = data.name;
-        }
-        if (data.surname != null) {
-            surname = data.surname;
-        }
+    public static ClientRecord createClientRecord(String name, String surname){
+        return new ClientRecord(name, surname);
     }
 
     @Override

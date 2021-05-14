@@ -99,7 +99,7 @@ public class ClientsControllerTest {
     @Test
     public void testAddClientPositive(){
         ClientData requested = new ClientData("Emanuel", "Kant");
-        var client = ClientRecord.createClientRecord(requested);
+        var client = ClientRecord.createClientRecord(requested.name, requested.surname);
         Mockito.when(clientsService.addClient(Mockito.any(ClientData.class))).thenReturn(Response.succeedResponse(client));
         var expected = ResponseEntity.status(HttpStatus.CREATED).body(
                 client.add(linkTo(ClientsController.class).slash(client.id).withSelfRel())

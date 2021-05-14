@@ -14,16 +14,33 @@ public class PetRecord extends RepresentationModel<PetRecord> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public final int id;
-    public String name;
-    public LocalDate birthday;
-    public Animal animal;
+    public final String name;
+    public final LocalDate birthday;
+    public final Animal animal;
 
     @ManyToOne
     @JoinColumn(name = "ownerId")
-    public ClientRecord owner;
+    public final ClientRecord owner;
 
     protected PetRecord(){
         this.id = -1;
+        this.name = "";
+        this.birthday = LocalDate.EPOCH;
+        this.animal = Animal.Dog;
+        this.owner = new ClientRecord();
+    }
+
+    private PetRecord(
+            String name,
+            LocalDate birthday,
+            Animal animal,
+            ClientRecord owner
+    ) {
+        this.id = -1;
+        this.name = name;
+        this.birthday = birthday;
+        this.animal = animal;
+        this.owner = owner;
     }
 
     public PetRecord(
@@ -41,24 +58,7 @@ public class PetRecord extends RepresentationModel<PetRecord> {
     }
 
     public static PetRecord createPetRecord(String name, LocalDate birthday, Animal animal, ClientRecord owner) {
-        var pet = new PetRecord();
-        pet.name = name;
-        pet.birthday = birthday;
-        pet.animal = animal;
-        pet.owner = owner;
-        return pet;
-    }
-
-    public void update(PetData data) {
-        if(data.name != null) {
-            name = data.name;
-        }
-        if(data.birthday != null) {
-            birthday = data.birthday;
-        }
-        if(data.birthday != null) {
-            animal = data.animal;
-        }
+        return new PetRecord(name, birthday, animal, owner);
     }
 
     @Override

@@ -99,7 +99,7 @@ public class OfficesControllerTest {
     @Test
     public void testAddOfficePositive(){
         OfficeData requested = new OfficeData("Pinokio");
-        var Office = OfficeRecord.createOfficeRecord(requested);
+        var Office = OfficeRecord.createOfficeRecord(requested.name);
         Mockito.when(officesService.addOffice(requested)).thenReturn(Response.succeedResponse(Office));
         var expected = ResponseEntity.status(HttpStatus.CREATED).body(
                 Office.add(linkTo(OfficesController.class).slash(Office.id).withSelfRel())

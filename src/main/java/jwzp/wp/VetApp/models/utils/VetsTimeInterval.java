@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class VetsTimeInterval {
-    public LocalDateTime begin;
-    public LocalDateTime end;
-    public List<Integer> vetIds;
+    public final LocalDateTime begin;
+    public final LocalDateTime end;
+    public final List<Integer> vetIds;
 
     public VetsTimeInterval(LocalDateTime begin, LocalDateTime end, List<Integer> vetIds) {
         this.begin = begin;

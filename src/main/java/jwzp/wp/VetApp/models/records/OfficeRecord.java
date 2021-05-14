@@ -16,10 +16,16 @@ public class OfficeRecord extends RepresentationModel<OfficeRecord> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public final int id;
-    public String name;
+    public final String name;
 
     protected OfficeRecord() {
         this.id = -1;
+        this.name = "";
+    }
+
+    private OfficeRecord(String name) {
+        this.id = -1;
+        this.name = name;
     }
 
     public OfficeRecord(
@@ -30,16 +36,8 @@ public class OfficeRecord extends RepresentationModel<OfficeRecord> {
         this.name = name;
     }
 
-    public static OfficeRecord createOfficeRecord(OfficeData data) {
-        var office = new OfficeRecord();
-        office.name = data.name;
-        return office;
-    }
-
-    public void update(OfficeData data) {
-        if (data.name != null) {
-            name = data.name;
-        }
+    public static OfficeRecord createOfficeRecord(String name) {
+        return new OfficeRecord(name);
     }
 
     @Override

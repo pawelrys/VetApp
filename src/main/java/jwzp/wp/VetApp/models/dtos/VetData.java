@@ -5,13 +5,19 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class VetData {
-    public String name;
-    public String surname;
-    public byte[] photo;
-    public LocalTime officeHoursStart;
-    public LocalTime officeHoursEnd;
+    public final String name;
+    public final String surname;
+    public final byte[] photo;
+    public final LocalTime officeHoursStart;
+    public final LocalTime officeHoursEnd;
 
-    public VetData() {}
+    public VetData() {
+        this.name = "";
+        this.surname = "";
+        this.photo = new byte[0];
+        this.officeHoursStart = LocalTime.NOON;
+        this.officeHoursEnd = LocalTime.NOON;
+    }
 
     public VetData(
             String name,
@@ -37,6 +43,6 @@ public class VetData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, surname, photo, officeHoursStart, officeHoursEnd);
+        return Objects.hash(name, surname, Arrays.hashCode(photo), officeHoursStart, officeHoursEnd);
     }
 }

@@ -19,26 +19,52 @@ public class VisitRecord extends RepresentationModel<VisitRecord> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private final int id;
-    public LocalDateTime startDate;
+    public final LocalDateTime startDate;
     @Column(columnDefinition = "interval")
-    public Duration duration;
+    public final Duration duration;
 
     @OneToOne
     @JoinTable(name="pet")
-    public PetRecord pet;
-    public Status status;
-    public BigDecimal price;
+    public final PetRecord pet;
+    public final Status status;
+    public final BigDecimal price;
 
     @OneToOne
     @JoinTable(name = "office")
-    public OfficeRecord office;
+    public final OfficeRecord office;
 
     @OneToOne
     @JoinTable(name = "vet")
-    public VetRecord vet;
+    public final VetRecord vet;
 
     protected VisitRecord(){
         this.id = -1;
+        this.startDate = LocalDateTime.now();
+        this.duration = Duration.ZERO;
+        this.pet = new PetRecord();
+        this.status = Status.CLOSED_AUTOMATICALLY;
+        this.price = BigDecimal.ZERO;
+        this.office = new OfficeRecord();
+        this.vet = new VetRecord();
+    }
+
+    private VisitRecord(
+            LocalDateTime startDate,
+            Duration duration,
+            PetRecord pet,
+            Status status,
+            BigDecimal price,
+            OfficeRecord office,
+            VetRecord vet
+    ) {
+        this.id = -1;
+        this.startDate = startDate;
+        this.duration = duration;
+        this.pet = pet;
+        this.status = status;
+        this.price = price;
+        this.office = office;
+        this.vet = vet;
     }
 
     public VisitRecord(
@@ -61,7 +87,7 @@ public class VisitRecord extends RepresentationModel<VisitRecord> {
         this.vet = vet;
     }
 
-    public static VisitRecord createNewVisit(
+    public static VisitRecord createVisitRecord(
             LocalDateTime startDate,
             Duration duration,
             PetRecord pet,
@@ -69,30 +95,7 @@ public class VisitRecord extends RepresentationModel<VisitRecord> {
             OfficeRecord office,
             VetRecord vet
     ) {
-        VisitRecord newVisit = new VisitRecord();
-        newVisit.startDate = startDate;
-        newVisit.duration = duration;
-        newVisit.pet = pet;
-        newVisit.status = Status.PENDING;
-        newVisit.price = price;
-        newVisit.office = office;
-        newVisit.vet = vet;
-        return newVisit;
-    }
-
-    public void update(VisitData data) {
-        if (data.startDate != null) {
-            this.startDate = data.startDate;
-        }
-        if (data.duration != null) {
-            this.duration = data.duration;
-        }
-        if (data.status != null) {
-            this.status = data.status;
-        }
-        if (data.price != null) {
-            this.price = data.price;
-        }
+        return new VisitRecord(startDate, duration, pet, Status.PENDING, price, office, vet);
     }
 
     @Override

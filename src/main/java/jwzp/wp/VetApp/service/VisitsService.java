@@ -22,6 +22,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Duration;
@@ -85,7 +86,7 @@ public class VisitsService {
             PetRecord pet = petsRepository.findById(requestedVisit.petId).orElseThrow();
             OfficeRecord office = officesRepository.findById(requestedVisit.officeId).orElseThrow();
             VetRecord vet = vetsRepository.findById(requestedVisit.vetId).orElseThrow();
-            VisitRecord visit = VisitRecord.createNewVisit(
+            VisitRecord visit = VisitRecord.createVisitRecord(
                     requestedVisit.startDate,
                     requestedVisit.duration,
                     pet,
@@ -106,15 +107,21 @@ public class VisitsService {
         Optional<VisitRecord> toUpdate = visitsRepository.findById(id);
 
         if (toUpdate.isPresent()) {
-            toUpdate.get().update(newData);
-            Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(toUpdate.get().startDate, toUpdate.get().duration, toUpdate.get().office.id, toUpdate.get().vet.id, id);
-            if (result.isPresent()) {
-                logger.info(LogsUtils.logTimeUnavailability());
-                return Response.errorResponse(result.get());
+            var getNewRecord = createUpdatedVisit(toUpdate.get(), newData);
+            if(getNewRecord.isPresent()) {
+                var newRecord = getNewRecord.get();
+                Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(newRecord.startDate, newRecord.duration, newRecord.office.id, newRecord.vet.id, id);
+                if (result.isPresent()) {
+                    logger.info(LogsUtils.logTimeUnavailability());
+                    return Response.errorResponse(result.get());
+                }
+                var updatedVisit = visitsRepository.save(newRecord);
+                logger.info(LogsUtils.logUpdated(updatedVisit, updatedVisit.getId()));
+                return Response.succeedResponse(updatedVisit);
             }
-            var updatedVisit = visitsRepository.save(toUpdate.get());
-            logger.info(LogsUtils.logUpdated(updatedVisit, updatedVisit.getId()));
-            return Response.succeedResponse(toUpdate.get());
+            //to check
+            logger.info(LogsUtils.logNotFoundObject(VisitRecord.class, id));
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND));
         }
         logger.info(LogsUtils.logNotFoundObject(VisitRecord.class, id));
         return Response.errorResponse(
@@ -194,8 +201,8 @@ public class VisitsService {
 
     private void changeStatusTo(VisitRecord visit, Status status) {
         VisitData data = new VisitData(visit.startDate, visit.duration, visit.pet.id, status, visit.price, visit.office.id, visit.vet.id);
-        visit.update(data);
-        visitsRepository.save(visit);
+        var newRecord = createUpdatedVisit(visit, data);
+        newRecord.ifPresent(visitsRepository::save);
     }
 
     public Response<List<VetsTimeInterval>> availableTimeSlots(
@@ -227,4 +234,19 @@ public class VisitsService {
 
         return Response.succeedResponse(timeSlots);
     }
+    public Optional<VisitRecord> createUpdatedVisit(VisitRecord thisVisit, VisitData data) {
+        LocalDateTime startDate = (data.startDate != null) ? data.startDate : thisVisit.startDate;
+        Duration duration = (data.duration != null) ? data.duration : thisVisit.duration;
+        Optional<PetRecord> petRecord = (data.petId != null) ? petsRepository.findById(data.petId) : Optional.of(thisVisit.pet);
+        Status status = (data.status != null) ? data.status : thisVisit.status;
+        BigDecimal price = (data.price != null) ? data.price : thisVisit.price;
+        Optional<OfficeRecord> officeRecord = (data.officeId != null) ? officesRepository.findById(data.officeId) : Optional.of(thisVisit.office);
+        Optional<VetRecord> vetRecord = (data.vetId != null) ? vetsRepository.findById(data.vetId) : Optional.of(thisVisit.vet);
+        if(petRecord.isPresent() && officeRecord.isPresent() && vetRecord.isPresent()) {
+            return Optional.of(new VisitRecord(thisVisit.getId(), startDate, duration, petRecord.get(), status, price, officeRecord.get(), vetRecord.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
 }

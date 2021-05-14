@@ -4,10 +4,13 @@ package jwzp.wp.VetApp.models.dtos;
 import java.util.Objects;
 
 public class ClientData {
-    public String name;
-    public String surname;
+    public final String name;
+    public final String surname;
 
-    public ClientData() {}
+    public ClientData() {
+        this.name = "";
+        this.surname = "";
+    }
 
     public ClientData(
             String name,

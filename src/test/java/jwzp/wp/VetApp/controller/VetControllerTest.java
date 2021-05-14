@@ -102,7 +102,7 @@ public class VetControllerTest {
     @Test
     public void testAddVetPositive(){
         VetData requested = new VetData("Jan", "Ptak", new byte[0], LocalTime.parse("08:00:00"), LocalTime.parse("18:00:00"));
-        var Vet = VetRecord.createVetRecord(requested);
+        var Vet = VetRecord.createVetRecord(requested.name, requested.surname, requested.photo, requested.officeHoursStart, requested.officeHoursEnd);
         Mockito.when(vetsService.addVet(requested)).thenReturn(Response.succeedResponse(Vet));
         var expected = ResponseEntity.status(HttpStatus.CREATED).body(
                 Vet.add(linkTo(VetsController.class).slash(Vet.id).withSelfRel())

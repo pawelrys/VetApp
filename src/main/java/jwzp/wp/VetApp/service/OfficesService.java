@@ -34,7 +34,7 @@ public class OfficesService {
             logger.info(LogsUtils.logMissingData(requestedOffice));
             return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
-        OfficeRecord office = OfficeRecord.createOfficeRecord(requestedOffice);
+        OfficeRecord office = OfficeRecord.createOfficeRecord(requestedOffice.name);
         try {
             var savedOffice = repository.save(office);
             logger.info(LogsUtils.logSaved(savedOffice, savedOffice.id));
@@ -50,10 +50,10 @@ public class OfficesService {
         Optional<OfficeRecord> toUpdate = repository.findById(id);
 
         if (toUpdate.isPresent()) {
-            toUpdate.get().update(newData);
-            var saved = repository.save(toUpdate.get());
+            var newRecord = createUpdatedOffice(toUpdate.get(), newData);
+            var saved = repository.save(newRecord);
             logger.info(LogsUtils.logUpdated(saved, saved.id));
-            return Response.succeedResponse(toUpdate.get());
+            return Response.succeedResponse(newRecord);
         }
         logger.info(LogsUtils.logNotFoundObject(OfficeRecord.class, id));
         return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.OFFICE_NOT_FOUND));
@@ -77,5 +77,10 @@ public class OfficesService {
 
     public boolean ableToCreateFromData(OfficeData office) {
         return office.name != null;
+    }
+
+    public OfficeRecord createUpdatedOffice(OfficeRecord thisOffice, OfficeData data) {
+        String name = (data.name != null) ? data.name : thisOffice.name;
+        return new OfficeRecord(thisOffice.id, name);
     }
 }
