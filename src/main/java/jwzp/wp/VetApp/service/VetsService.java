@@ -4,6 +4,7 @@ import jwzp.wp.VetApp.LogsUtils;
 import jwzp.wp.VetApp.models.dtos.VetData;
 import jwzp.wp.VetApp.models.records.VetRecord;
 import jwzp.wp.VetApp.resources.VetsRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

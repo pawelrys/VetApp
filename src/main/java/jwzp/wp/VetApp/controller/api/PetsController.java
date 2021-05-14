@@ -5,7 +5,7 @@ import jwzp.wp.VetApp.models.dtos.PetData;
 import jwzp.wp.VetApp.models.records.PetRecord;
 import jwzp.wp.VetApp.service.PetsService;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;

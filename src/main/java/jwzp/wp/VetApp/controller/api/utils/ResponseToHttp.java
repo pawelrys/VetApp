@@ -1,6 +1,6 @@
 package jwzp.wp.VetApp.controller.api.utils;
 
-import jwzp.wp.VetApp.service.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import jwzp.wp.VetApp.service.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

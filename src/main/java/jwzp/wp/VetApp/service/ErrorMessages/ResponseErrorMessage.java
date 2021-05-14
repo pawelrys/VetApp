@@ -1,4 +1,4 @@
-package jwzp.wp.VetApp.service;
+package jwzp.wp.VetApp.service.ErrorMessages;
 
 public enum ResponseErrorMessage {
     VISIT_NOT_FOUND("Visit not found"),

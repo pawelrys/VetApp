@@ -3,6 +3,7 @@ package jwzp.wp.VetApp.service;
 import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.resources.ClientsRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;

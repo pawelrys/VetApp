@@ -6,7 +6,7 @@ import jwzp.wp.VetApp.models.dtos.OfficeData;
 import jwzp.wp.VetApp.models.records.OfficeRecord;
 import jwzp.wp.VetApp.service.OfficesService;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

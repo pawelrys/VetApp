@@ -10,7 +10,7 @@ import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.service.ClientsService;
 import jwzp.wp.VetApp.service.PetsService;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

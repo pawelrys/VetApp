@@ -7,7 +7,7 @@ import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
 import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.models.values.Status;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import jwzp.wp.VetApp.service.VisitsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

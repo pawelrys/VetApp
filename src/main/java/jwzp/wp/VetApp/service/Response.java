@@ -1,5 +1,7 @@
 package jwzp.wp.VetApp.service;
 
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
+
 import java.util.Objects;
 
 public class Response<T> {

@@ -5,6 +5,7 @@ import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
 import jwzp.wp.VetApp.service.*;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;

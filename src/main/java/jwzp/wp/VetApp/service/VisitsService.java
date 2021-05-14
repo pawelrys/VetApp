@@ -12,6 +12,7 @@ import jwzp.wp.VetApp.resources.OfficesRepository;
 import jwzp.wp.VetApp.resources.PetsRepository;
 import jwzp.wp.VetApp.resources.VetsRepository;
 import jwzp.wp.VetApp.resources.VisitsRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

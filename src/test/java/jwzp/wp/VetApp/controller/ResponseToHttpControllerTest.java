@@ -3,7 +3,7 @@ package jwzp.wp.VetApp.controller;
 import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
