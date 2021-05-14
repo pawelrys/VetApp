@@ -198,14 +198,22 @@ public class VisitsService {
         visitsRepository.save(visit);
     }
 
-    public Response<List<VetsTimeInterval>> availableTimeSlots(VetsTimeInterval input){
-        if (input.begin == null || input.end == null || input.begin.isAfter(input.end)) {
-            logger.info(LogsUtils.logMissingData(input));
+    public Response<List<VetsTimeInterval>> availableTimeSlots(
+            LocalDateTime begin,
+            LocalDateTime end,
+            List<Integer> vetIds
+    ) {
+        if (begin == null || end == null) {
+            logger.info(LogsUtils.logMissingData(LocalDateTime.now()));
             return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
-        List<VetsTimeInterval> availableSlots = visitsRepository.getAvailableTimeSlots(input.begin, input.end);
+        if (begin.isAfter(end)) {
+            logger.info("Begin of time interval is later than end");
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+        }
+        List<VetsTimeInterval> availableSlots = visitsRepository.getAvailableTimeSlots(begin, end);
         Map<Pair<LocalDateTime, LocalDateTime>, List<VetsTimeInterval>> slotsMapped = availableSlots.stream()
-                .filter(t -> input.vetIds.containsAll(t.vetIds))
+                .filter(t -> vetIds.containsAll(t.vetIds))
                 .collect(Collectors.groupingBy((VetsTimeInterval t) -> Pair.of(t.begin, t.end)));
 
         List<VetsTimeInterval> timeSlots = slotsMapped.entrySet().stream()

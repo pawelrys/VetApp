@@ -335,11 +335,10 @@ public class VisitsServiceTest {
 
     @Test
     public void testAvailableTimeSlots() {
-        var requested = new VetsTimeInterval(
-                LocalDateTime.parse("2022-04-26T09:00:00"),
-                LocalDateTime.parse("2022-04-26T10:00:00"),
-                List.of(1, 3)
-        );
+        LocalDateTime requestedBeg = LocalDateTime.parse("2022-04-26T09:00:00");
+        LocalDateTime requestedEnd = LocalDateTime.parse("2022-04-26T10:00:00");
+        List<Integer> requestedVetIds = List.of(1, 3);
+
         List<VetsTimeInterval> freeSlots = List.of(
                 new VetsTimeInterval (
                         LocalDateTime.parse("2022-04-26T09:00:00"),
@@ -386,11 +385,11 @@ public class VisitsServiceTest {
 
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
-        var result = uut.availableTimeSlots(requested);
+        var result = uut.availableTimeSlots(requestedBeg, requestedEnd, requestedVetIds);
 
         assertThat(result).isEqualTo(expected);
         Mockito.verify(visitsRepository, Mockito.times(1))
-                .getAvailableTimeSlots(requested.begin, requested.end);
+                .getAvailableTimeSlots(requestedBeg, requestedEnd);
     }
 
     @Test

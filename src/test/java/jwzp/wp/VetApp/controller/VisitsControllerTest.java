@@ -304,11 +304,10 @@ public class VisitsControllerTest {
 
     @Test
     public void testGetAvailableTimeSlotsPositive() {
-        var requested = new VetsTimeInterval(
-                LocalDateTime.parse("2021-08-12T11:30:00"),
-                LocalDateTime.parse("2021-08-12T12:15:00"),
-                List.of(2, 3)
-        );
+        LocalDateTime requestedBeg = LocalDateTime.parse("2021-08-12T11:30:00");
+        LocalDateTime requestedEnd = LocalDateTime.parse("2021-08-12T12:15:00");
+        List<Integer> requestedVetIds = List.of(2, 3);
+
         var intervals = List.of(
                 new VetsTimeInterval(
                         LocalDateTime.parse("2021-08-12T11:30:00"),
@@ -323,44 +322,47 @@ public class VisitsControllerTest {
                         LocalDateTime.parse("2021-08-12T12:15:00"),
                         List.of(2))
         );
-        Mockito.when(visitsService.availableTimeSlots(Mockito.any(VetsTimeInterval.class)))
+
+        Mockito.when(visitsService.availableTimeSlots(
+                Mockito.any(LocalDateTime.class), Mockito.any(LocalDateTime.class), Mockito.any(List.class)))
                 .thenReturn(Response.succeedResponse(intervals));
         var expected = ResponseEntity.ok(intervals);
         var uut = new VisitsController(visitsService);
 
-        var result = uut.getAvailableTimeSlots(requested);
+        var result = uut.getAvailableTimeSlots(requestedBeg, requestedEnd, requestedVetIds);
 
         assert result.equals(expected);
-        Mockito.verify(visitsService, Mockito.times(1)).availableTimeSlots(requested);
+        Mockito.verify(visitsService, Mockito.times(1))
+                .availableTimeSlots(requestedBeg, requestedEnd, requestedVetIds);
     }
 
     @Test
     public void testGetAvailableTimeSlotsNoAvailable() {
-        var requested = new VetsTimeInterval(
-                LocalDateTime.parse("2021-08-12T11:30:00"),
-                LocalDateTime.parse("2021-08-12T12:15:00"),
-                List.of(2, 3)
-        );
+        LocalDateTime requestedBeg = LocalDateTime.parse("2021-08-12T11:30:00");
+        LocalDateTime requestedEnd = LocalDateTime.parse("2021-08-12T12:15:00");
+        List<Integer> requestedVetIds = List.of(2, 3);
+
         List<VetsTimeInterval> intervals = Collections.emptyList();
-        Mockito.when(visitsService.availableTimeSlots(Mockito.any(VetsTimeInterval.class)))
+        Mockito.when(visitsService.availableTimeSlots(
+                Mockito.any(LocalDateTime.class), Mockito.any(LocalDateTime.class), Mockito.any(List.class)))
                 .thenReturn(Response.succeedResponse(intervals));
         var expected = ResponseEntity.ok(intervals);
         var uut = new VisitsController(visitsService);
 
-        var result = uut.getAvailableTimeSlots(requested);
+        var result = uut.getAvailableTimeSlots(requestedBeg, requestedEnd, requestedVetIds);
 
         assert result.equals(expected);
-        Mockito.verify(visitsService, Mockito.times(1)).availableTimeSlots(requested);
+        Mockito.verify(visitsService, Mockito.times(1))
+                .availableTimeSlots(requestedBeg, requestedEnd, requestedVetIds);
     }
 
     @Test
     public void testGetAvailableTimeSlotsMissingData() {
-        var requested = new VetsTimeInterval(
-                LocalDateTime.parse("2021-08-12T11:30:00"),
-                null,
-                List.of(2, 3)
-        );
-        Mockito.when(visitsService.availableTimeSlots(Mockito.any(VetsTimeInterval.class)))
+        LocalDateTime requestedBeg = LocalDateTime.parse("2021-08-12T11:30:00");
+        List<Integer> requestedVetIds = List.of(2, 3);
+
+        Mockito.when(visitsService.availableTimeSlots(
+                Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS)));
         var expected = ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
@@ -368,10 +370,11 @@ public class VisitsControllerTest {
         );
         var uut = new VisitsController(visitsService);
 
-        var result = uut.getAvailableTimeSlots(requested);
+        var result = uut.getAvailableTimeSlots(requestedBeg, null, requestedVetIds);
 
         assert result.equals(expected);
-        Mockito.verify(visitsService, Mockito.times(1)).availableTimeSlots(requested);
+        Mockito.verify(visitsService, Mockito.times(1))
+                .availableTimeSlots(requestedBeg, null, requestedVetIds);
     }
 
     private VisitRecord addLinksToVisitComponents(VisitRecord v){
