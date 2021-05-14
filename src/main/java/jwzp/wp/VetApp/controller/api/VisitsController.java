@@ -8,6 +8,7 @@ import jwzp.wp.VetApp.service.*;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,8 +80,17 @@ public class VisitsController {
     }
 
     @GetMapping(path = "available-time-slots")
-    public ResponseEntity<?> getAvailableTimeSlots(@RequestBody VetsTimeInterval interval){
-        Response<List<VetsTimeInterval>> slots = visitsService.availableTimeSlots(interval);
+    public ResponseEntity<?> getAvailableTimeSlots(
+            @RequestParam("begin")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                    LocalDateTime begin,
+            @RequestParam("end")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                    LocalDateTime end,
+            @RequestParam("vetIds") List<Integer> vetsIds
+    ) {
+        Response<List<VetsTimeInterval>> slots = visitsService.availableTimeSlots(begin, end, vetsIds);
+
         return slots.succeed()
                 ? ResponseEntity.ok(slots.get())
                 : ResponseToHttp.getFailureResponse(slots.getError());

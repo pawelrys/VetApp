@@ -1,6 +1,7 @@
 package jwzp.wp.VetApp.resources;
 
 import jwzp.wp.VetApp.models.records.VisitRecord;
+import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
 import jwzp.wp.VetApp.models.values.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public interface VisitsRepository extends JpaRepository<VisitRecord, Integer> {
@@ -43,7 +46,19 @@ public interface VisitsRepository extends JpaRepository<VisitRecord, Integer> {
             "    where (slots.start, vet_id) not in (select * from to_remove)\n" +
             ")\n" +
             "select * from final;", nativeQuery = true)
-    List<Object[]> getAvailableTimeSlots(LocalDateTime start, LocalDateTime end);
+    List<Object[]> getAvailableTimeSlotsAux(LocalDateTime start, LocalDateTime end);
+
+    default List<VetsTimeInterval> getAvailableTimeSlots(LocalDateTime start, LocalDateTime end){
+        List<Object[]> slots = getAvailableTimeSlotsAux(start, end);
+        return slots.stream().map(t ->
+                new VetsTimeInterval(
+                        ((Timestamp)t[0]).toLocalDateTime(),
+                        ((Timestamp)t[1]).toLocalDateTime(),
+                        Collections.singletonList((Integer)t[2])
+                )
+        ).collect(Collectors.toList());
+    }
+
 
     @Query("select v from visits v where :now > v.startDate + v.duration and :status = v.status")
     List<VisitRecord> getPastVisitsWithStatus(LocalDateTime now, Status status);
