@@ -5,8 +5,9 @@ import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.service.ClientsService;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -86,7 +87,7 @@ public class ClientsControllerTest {
     public void testGetClientClientNotFound() {
         int request = 0;
         Mockito.when(clientsService.getClient(Mockito.any(Integer.class))).thenReturn(Optional.empty());
-        var expected = ResponseToHttp.getFailureResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
+        var expected = ResponseToHttp.getFailureResponse(ErrorMessagesBuilder.simpleError(ErrorType.CLIENT_NOT_FOUND));
         var uut = new ClientsController(clientsService);
 
         var result = uut.getClient(request);
@@ -115,10 +116,10 @@ public class ClientsControllerTest {
     public void testAddClientMissedData(){
         ClientData requested = new ClientData(null, null);
         Mockito.when(clientsService.addClient(Mockito.any(ClientData.class)))
-                .thenReturn(Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS));
+                .thenReturn(Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS)));
         var expected = ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(ResponseErrorMessage.WRONG_ARGUMENTS.getMessage());
+                .body(ErrorType.WRONG_ARGUMENTS.getDefaultMessage());
         var uut = new ClientsController(clientsService);
 
         var result = uut.addClient(requested);

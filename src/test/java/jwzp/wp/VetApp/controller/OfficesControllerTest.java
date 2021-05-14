@@ -4,9 +4,10 @@ import jwzp.wp.VetApp.controller.api.OfficesController;
 import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.OfficeData;
 import jwzp.wp.VetApp.models.records.OfficeRecord;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.OfficesService;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -86,7 +87,7 @@ public class OfficesControllerTest {
     public void testGetOfficeOfficeNotFound() throws Exception {
         int request = 0;
         Mockito.when(officesService.getOffice(request)).thenReturn(Optional.empty());
-        var expected = ResponseToHttp.getFailureResponse(ResponseErrorMessage.OFFICE_NOT_FOUND);
+        var expected = ResponseToHttp.getFailureResponse(ErrorMessagesBuilder.simpleError(ErrorType.OFFICE_NOT_FOUND));
         var uut = new OfficesController(officesService);
 
         var result = uut.getOffice(request);
@@ -115,10 +116,10 @@ public class OfficesControllerTest {
     public void testAddOfficeMissedData(){
         OfficeData requested = new OfficeData(null);
         Mockito.when(officesService.addOffice(requested))
-                .thenReturn(Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS));
+                .thenReturn(Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS)));
         var expected = ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(ResponseErrorMessage.WRONG_ARGUMENTS.getMessage());
+                .body(ErrorType.WRONG_ARGUMENTS.getDefaultMessage());
         var uut = new OfficesController(officesService);
 
         var result = uut.addOffice(requested);

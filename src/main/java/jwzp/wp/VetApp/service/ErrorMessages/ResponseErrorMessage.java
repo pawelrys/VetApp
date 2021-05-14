@@ -1,31 +1,43 @@
 package jwzp.wp.VetApp.service.ErrorMessages;
 
-public enum ResponseErrorMessage {
-    VISIT_NOT_FOUND("Visit not found"),
+import java.util.Objects;
 
-    VISIT_TIME_UNAVAILABLE("It's too late to make an appointment"),
+public class ResponseErrorMessage {
 
-    CLIENT_NOT_FOUND("Client not found"),
+    public final ErrorType error;
+    public final String message;
 
-    PET_NOT_FOUND("Pet not found"),
+    public ResponseErrorMessage(ErrorType error) {
+        this.error = error;
+        this.message = null;
+    }
 
-    VET_NOT_FOUND("Vet not found"),
-
-    OFFICE_NOT_FOUND("Office not found"),
-
-    BUSY_VET("Vet is not available at this time"),
-
-    BUSY_OFFICE("Office is not available at this time"),
-
-    WRONG_ARGUMENTS("Wrong arguments provided");
-
-    private final String message;
-
-    ResponseErrorMessage(String message) {
+    public ResponseErrorMessage(ErrorType error, String message) {
+        this.error = error;
         this.message = message;
     }
 
+    public ErrorType getType() {
+        return error;
+    }
+
     public String getMessage() {
+        if (message == null) {
+            return error.getDefaultMessage();
+        }
         return message;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ResponseErrorMessage that = (ResponseErrorMessage) o;
+        return error == that.error && Objects.equals(message, that.message);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(error, message);
     }
 }

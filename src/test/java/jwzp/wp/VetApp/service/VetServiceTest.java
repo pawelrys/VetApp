@@ -3,7 +3,8 @@ package jwzp.wp.VetApp.service;
 import jwzp.wp.VetApp.models.dtos.VetData;
 import jwzp.wp.VetApp.models.records.VetRecord;
 import jwzp.wp.VetApp.resources.VetsRepository;
-import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,7 +38,7 @@ public class VetServiceTest {
     @Test
     public void testAddVetMissingData() throws Exception {
         VetData requested = new VetData(null, null, null, null, null);
-        Response<?> expected = Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+        Response<?> expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         var uut = new VetsService(vetsRepository);
 
         var result = uut.addVet(requested);
@@ -48,7 +49,7 @@ public class VetServiceTest {
     @Test
     public void testAddVetRepositoryException() throws Exception {
         VetData requested = new VetData("Jan", "Ptak", new byte[0], LocalTime.parse("08:00:00"), LocalTime.parse("18:00:00"));
-        Response<VetRecord> expected = Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+        Response<VetRecord> expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         Mockito.when(vetsRepository.save(Mockito.any(VetRecord.class))).thenThrow(new IllegalArgumentException());
         var uut = new VetsService(vetsRepository);
 

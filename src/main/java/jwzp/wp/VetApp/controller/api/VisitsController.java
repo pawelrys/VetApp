@@ -5,7 +5,8 @@ import jwzp.wp.VetApp.models.records.VisitRecord;
 import jwzp.wp.VetApp.models.dtos.VisitData;
 import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
 import jwzp.wp.VetApp.service.*;
-import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -48,7 +49,7 @@ public class VisitsController {
         if (visit.isPresent()){
             return ResponseEntity.ok(addLinksToEntity(visit.get()));
         } else {
-            return ResponseToHttp.getFailureResponse(ResponseErrorMessage.VISIT_NOT_FOUND);
+            return ResponseToHttp.getFailureResponse(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND));
         }
     }
 

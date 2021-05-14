@@ -4,6 +4,8 @@ import jwzp.wp.VetApp.controller.api.VetsController;
 import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.VetData;
 import jwzp.wp.VetApp.models.records.VetRecord;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.Response;
 import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import jwzp.wp.VetApp.service.VetsService;
@@ -88,7 +90,7 @@ public class VetControllerTest {
         int request = 0;
         VetRecord Vet = new VetRecord(1, "Jan", "Ptak", new byte[0], LocalTime.parse("08:00:00"), LocalTime.parse("18:00:00"));
         Mockito.when(vetsService.getVet(request)).thenReturn(Optional.empty());
-        var expected = ResponseToHttp.getFailureResponse(ResponseErrorMessage.VET_NOT_FOUND);
+        var expected = ResponseToHttp.getFailureResponse(ErrorMessagesBuilder.simpleError(ErrorType.VET_NOT_FOUND));
         var uut = new VetsController(vetsService);
 
         var result = uut.getVet(request);
@@ -117,10 +119,10 @@ public class VetControllerTest {
     public void testAddVetMissedData(){
         VetData requested = new VetData(null, null, null, null, null);
         Mockito.when(vetsService.addVet(requested))
-                .thenReturn(Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS));
+                .thenReturn(Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS)));
         var expected = ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(ResponseErrorMessage.WRONG_ARGUMENTS.getMessage());
+                .body(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS).getMessage());
         var uut = new VetsController(vetsService);
 
         var result = uut.addVet(requested);

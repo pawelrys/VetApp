@@ -47,7 +47,7 @@ public class Response<T> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Response<?> response = (Response<?>) o;
-        return succeed == response.succeed && Objects.equals(content, response.content) && errorMessage == response.errorMessage;
+        return succeed == response.succeed && Objects.equals(content, response.content) && Objects.equals(errorMessage, response.errorMessage);
     }
 
     @Override

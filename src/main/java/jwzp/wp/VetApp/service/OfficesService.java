@@ -4,7 +4,8 @@ import jwzp.wp.VetApp.LogsUtils;
 import jwzp.wp.VetApp.models.dtos.OfficeData;
 import jwzp.wp.VetApp.models.records.OfficeRecord;
 import jwzp.wp.VetApp.resources.OfficesRepository;
-import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class OfficesService {
     public Response<OfficeRecord> addOffice(OfficeData requestedOffice) {
         if(!ableToCreateFromData(requestedOffice)) {
             logger.info(LogsUtils.logMissingData(requestedOffice));
-            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
         OfficeRecord office = OfficeRecord.createOfficeRecord(requestedOffice);
         try {
@@ -41,7 +42,7 @@ public class OfficesService {
 
         } catch (IllegalArgumentException e) {
             logger.info(LogsUtils.logException(e));
-            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
     }
 
@@ -55,7 +56,7 @@ public class OfficesService {
             return Response.succeedResponse(toUpdate.get());
         }
         logger.info(LogsUtils.logNotFoundObject(OfficeRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.OFFICE_NOT_FOUND);
+        return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.OFFICE_NOT_FOUND));
     }
 
     public Response<OfficeRecord> delete(int id) {
@@ -67,7 +68,7 @@ public class OfficesService {
             return Response.succeedResponse(office);
     }
         logger.info(LogsUtils.logNotFoundObject(OfficeRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.OFFICE_NOT_FOUND);
+        return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.OFFICE_NOT_FOUND));
     }
 
     public Optional<OfficeRecord> getOffice(int id) {

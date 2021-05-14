@@ -4,8 +4,9 @@ import jwzp.wp.VetApp.controller.api.utils.ResponseToHttp;
 import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.service.ClientsService;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.Response;
-import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -46,7 +47,7 @@ public class ClientsController {
         Optional<ClientRecord> client = clientsService.getClient(id);
         return client.isPresent()
                 ? ResponseEntity.ok(addLinksToEntity(client.get()))
-                : ResponseToHttp.getFailureResponse(ResponseErrorMessage.CLIENT_NOT_FOUND);
+                : ResponseToHttp.getFailureResponse(ErrorMessagesBuilder.simpleError(ErrorType.CLIENT_NOT_FOUND));
     }
 
     @PostMapping

@@ -4,7 +4,8 @@ import jwzp.wp.VetApp.LogsUtils;
 import jwzp.wp.VetApp.models.dtos.VetData;
 import jwzp.wp.VetApp.models.records.VetRecord;
 import jwzp.wp.VetApp.resources.VetsRepository;
-import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class VetsService {
     public Response<VetRecord> addVet(VetData requestedVet) {
         if (!ableToCreateFromData(requestedVet)) {
             logger.info(LogsUtils.logMissingData(requestedVet));
-            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
         VetRecord vet = VetRecord.createVetRecord(requestedVet);
         try {
@@ -44,7 +45,7 @@ public class VetsService {
             return Response.succeedResponse(savedVet);
         } catch (IllegalArgumentException e) {
             logger.info(LogsUtils.logException(e));
-            return Response.errorResponse(ResponseErrorMessage.WRONG_ARGUMENTS);
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
     }
 
@@ -58,7 +59,7 @@ public class VetsService {
             return Response.succeedResponse(toUpdate.get());
         }
         logger.info(LogsUtils.logNotFoundObject(VetRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.VET_NOT_FOUND);
+        return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VET_NOT_FOUND));
     }
 
     public Response<VetRecord> deleteVet(int id) {
@@ -70,7 +71,7 @@ public class VetsService {
             return Response.succeedResponse(vet);
         }
         logger.info(LogsUtils.logNotFoundObject(VetRecord.class, id));
-        return Response.errorResponse(ResponseErrorMessage.VET_NOT_FOUND);
+        return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VET_NOT_FOUND));
     }
 
     public boolean ableToCreateFromData(VetData vet) {

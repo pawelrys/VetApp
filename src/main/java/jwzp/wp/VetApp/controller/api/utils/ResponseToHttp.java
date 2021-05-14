@@ -1,5 +1,6 @@
 package jwzp.wp.VetApp.controller.api.utils;
 
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import jwzp.wp.VetApp.service.Response;
 import org.springframework.http.HttpStatus;
@@ -7,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 public class ResponseToHttp {
 
-    public static HttpStatus getCode(ResponseErrorMessage errorMessage) {
+    public static HttpStatus getCode(ErrorType errorMessage) {
         switch (errorMessage) {
             case VISIT_NOT_FOUND:
             case CLIENT_NOT_FOUND:
@@ -28,6 +29,6 @@ public class ResponseToHttp {
     }
 
     public static ResponseEntity<?> getFailureResponse(ResponseErrorMessage err) {
-        return ResponseEntity.status(getCode(err)).body(err.getMessage());
+        return ResponseEntity.status(getCode(err.getType())).body(err.getMessage());
     }
 }
