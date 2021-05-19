@@ -67,16 +67,16 @@ public class PetsService {
         Optional<PetRecord> toUpdate = petsRepository.findById(id);
 
         if (toUpdate.isPresent()) {
-            var getNewRecord = createUpdatedPet(toUpdate.get(), newData);
-            if(getNewRecord.isPresent()) {
-                var newRecord = getNewRecord.get();
+            var newRecordOpt = createUpdatedPet(toUpdate.get(), newData);
+            if(newRecordOpt.isPresent()) {
+                var newRecord = newRecordOpt.get();
                 var saved = petsRepository.save(newRecord);
                 logger.info(LogsUtils.logUpdated(saved, saved.id));
                 return Response.succeedResponse(newRecord);
             }
-            logger.info(LogsUtils.logNotFoundObject(PetRecord.class, id));
             //to check
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.PET_NOT_FOUND));
+            logger.info(LogsUtils.logNotFoundObject(PetRecord.class, id));
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
         logger.info(LogsUtils.logNotFoundObject(PetRecord.class, id));
         return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.PET_NOT_FOUND));

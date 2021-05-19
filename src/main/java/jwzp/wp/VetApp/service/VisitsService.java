@@ -107,9 +107,9 @@ public class VisitsService {
         Optional<VisitRecord> toUpdate = visitsRepository.findById(id);
 
         if (toUpdate.isPresent()) {
-            var getNewRecord = createUpdatedVisit(toUpdate.get(), newData);
-            if(getNewRecord.isPresent()) {
-                var newRecord = getNewRecord.get();
+            var newRecordOpt = createUpdatedVisit(toUpdate.get(), newData);
+            if(newRecordOpt.isPresent()) {
+                var newRecord = newRecordOpt.get();
                 Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(newRecord.startDate, newRecord.duration, newRecord.office.id, newRecord.vet.id, id);
                 if (result.isPresent()) {
                     logger.info(LogsUtils.logTimeUnavailability());
@@ -121,7 +121,7 @@ public class VisitsService {
             }
             //to check
             logger.info(LogsUtils.logNotFoundObject(VisitRecord.class, id));
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND));
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
         logger.info(LogsUtils.logNotFoundObject(VisitRecord.class, id));
         return Response.errorResponse(
