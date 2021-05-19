@@ -3,9 +3,11 @@ package jwzp.wp.VetApp.models.dtos;
 import java.util.Objects;
 
 public class OfficeData {
-    public String name;
+    public final String name;
 
-    public OfficeData() {}
+    public OfficeData() {
+        this.name = "";
+    }
 
     public OfficeData(
             String name

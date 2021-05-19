@@ -31,7 +31,7 @@ public class ClientsServiceTest {
         var result = uut.addClient(requested);
 
         assert expected.equals(result);
-        Mockito.verify(clientsRepository, Mockito.times(1)).save(ClientRecord.createClientRecord(requested));
+        Mockito.verify(clientsRepository, Mockito.times(1)).save(ClientRecord.createClientRecord(requested.name, requested.surname));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class ClientsServiceTest {
         var result = uut.addClient(requested);
 
         assert result.equals(expected);
-        Mockito.verify(clientsRepository, Mockito.times(1)).save(ClientRecord.createClientRecord(requested));
+        Mockito.verify(clientsRepository, Mockito.times(1)).save(ClientRecord.createClientRecord(requested.name, requested.surname));
     }
 
     @ParameterizedTest(name="{0}")

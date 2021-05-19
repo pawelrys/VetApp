@@ -14,16 +14,36 @@ public class VetRecord extends RepresentationModel<VetRecord> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public final int id;
-    public String name;
-    public String surname;
-    public byte[] photo;
+    public final String name;
+    public final String surname;
+    public final byte[] photo;
     @Column(name = "officeHoursEnd", columnDefinition = "TIME")
-    public LocalTime officeHoursEnd;
+    public final LocalTime officeHoursEnd;
     @Column(name = "officeHoursStart", columnDefinition = "TIME")
-    public LocalTime officeHoursStart;
+    public final LocalTime officeHoursStart;
 
     public VetRecord() {
         this.id = -1;
+        this.name = "";
+        this.surname = "";
+        this.photo = new byte[0];
+        this.officeHoursStart = LocalTime.NOON;
+        this.officeHoursEnd = LocalTime.NOON;
+    }
+
+    private VetRecord(
+            String name,
+            String surname,
+            byte[] photo,
+            LocalTime officeHoursStart,
+            LocalTime officeHoursEnd
+    ) {
+        this.id = -1;
+        this.name = name;
+        this.surname = surname;
+        this.photo = photo;
+        this.officeHoursStart = officeHoursStart;
+        this.officeHoursEnd = officeHoursEnd;
     }
 
     public VetRecord(
@@ -42,32 +62,8 @@ public class VetRecord extends RepresentationModel<VetRecord> {
         this.officeHoursEnd = officeHoursEnd;
     }
 
-    public static VetRecord createVetRecord(VetData data) {
-        var vet = new VetRecord();
-        vet.name = data.name;
-        vet.surname = data.surname;
-        vet.photo = data.photo;
-        vet.officeHoursStart = data.officeHoursStart;
-        vet.officeHoursEnd = data.officeHoursEnd;
-        return vet;
-    }
-
-    public void update(VetData data) {
-        if(data.name != null) {
-            name = data.name;
-        }
-        if(data.surname != null) {
-            surname = data.surname;
-        }
-        if(data.photo != null) {
-            photo = data.photo;
-        }
-        if(data.officeHoursStart != null) {
-            officeHoursStart = data.officeHoursStart;
-        }
-        if(data.officeHoursEnd != null) {
-            officeHoursEnd = data.officeHoursEnd;
-        }
+    public static VetRecord createVetRecord(String name, String surname, byte[] photo, LocalTime officeHoursStart, LocalTime officeHoursEnd) {
+        return new VetRecord(name, surname, photo, officeHoursStart, officeHoursEnd);
     }
 
     @Override
@@ -80,7 +76,7 @@ public class VetRecord extends RepresentationModel<VetRecord> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, surname, photo, officeHoursStart, officeHoursEnd);
+        return Objects.hash(id, name, surname, Arrays.hashCode(photo), officeHoursStart, officeHoursEnd);
     }
 }
 

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ public class VetsService {
             logger.info(LogsUtils.logMissingData(requestedVet));
             return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
-        VetRecord vet = VetRecord.createVetRecord(requestedVet);
+        VetRecord vet = VetRecord.createVetRecord(requestedVet.name, requestedVet.surname, requestedVet.photo, requestedVet.officeHoursStart, requestedVet.officeHoursEnd);
         try {
             var savedVet = repository.save(vet);
             logger.info(LogsUtils.logSaved(savedVet, savedVet.id));
@@ -53,10 +54,10 @@ public class VetsService {
         Optional<VetRecord> toUpdate = repository.findById(id);
 
         if (toUpdate.isPresent()) {
-            toUpdate.get().update(newData);
-            var saved = repository.save(toUpdate.get());
+            var newRecord = createUpdatedVet(toUpdate.get(), newData);
+            var saved = repository.save(newRecord);
             logger.info(LogsUtils.logUpdated(saved, saved.id));
-            return Response.succeedResponse(toUpdate.get());
+            return Response.succeedResponse(newRecord);
         }
         logger.info(LogsUtils.logNotFoundObject(VetRecord.class, id));
         return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VET_NOT_FOUND));
@@ -76,5 +77,14 @@ public class VetsService {
 
     public boolean ableToCreateFromData(VetData vet) {
         return vet.name != null && vet.surname != null && vet.officeHoursEnd != null && vet.officeHoursStart != null && vet.photo != null;
+    }
+
+    public VetRecord createUpdatedVet(VetRecord thisVet, VetData data) {
+        String name = (data.name != null) ? data.name : thisVet.name;
+        String surname = (data.surname != null) ? data.surname : thisVet.surname;
+        byte[] photo = (data.photo != null) ? data.photo : thisVet.photo;
+        LocalTime officeHoursStart = (data.officeHoursStart != null) ? data.officeHoursStart : thisVet.officeHoursStart;
+        LocalTime officeHoursEnd = (data.officeHoursEnd != null) ? data.officeHoursEnd : thisVet.officeHoursEnd;
+        return new VetRecord(thisVet.id, name, surname, photo, officeHoursStart, officeHoursEnd);
     }
 }

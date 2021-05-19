@@ -30,7 +30,7 @@ public class OfficeServiceTest {
         var result = uut.addOffice(requested);
 
         assert expected.equals(result);
-        Mockito.verify(officesRepository, Mockito.times(1)).save(OfficeRecord.createOfficeRecord(requested));
+        Mockito.verify(officesRepository, Mockito.times(1)).save(OfficeRecord.createOfficeRecord(requested.name));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class OfficeServiceTest {
         var result = uut.addOffice(requested);
 
         assert result.equals(expected);
-        Mockito.verify(officesRepository, Mockito.times(1)).save(OfficeRecord.createOfficeRecord(requested));
+        Mockito.verify(officesRepository, Mockito.times(1)).save(OfficeRecord.createOfficeRecord(requested.name));
     }
 
     @ParameterizedTest(name="{0}")

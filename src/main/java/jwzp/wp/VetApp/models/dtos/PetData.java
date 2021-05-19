@@ -6,12 +6,17 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public class PetData {
-    public String name;
-    public LocalDate birthday;
-    public Animal animal;
-    public Integer ownerId;
+    public final String name;
+    public final LocalDate birthday;
+    public final Animal animal;
+    public final Integer ownerId;
 
-    public PetData() {}
+    public PetData() {
+        this.name = "";
+        this.birthday = LocalDate.EPOCH;
+        this.animal = Animal.Dog;
+        this.ownerId = -1;
+    }
 
     public PetData(
             String name,

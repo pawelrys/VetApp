@@ -37,7 +37,7 @@ public class ClientsService {
             logger.info(LogsUtils.logMissingData(requestedClient));
             return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
-        ClientRecord client = ClientRecord.createClientRecord(requestedClient);
+        ClientRecord client = ClientRecord.createClientRecord(requestedClient.name, requestedClient.surname);
         try {
             var savedClient = repository.save(client);
             logger.info(LogsUtils.logSaved(savedClient, savedClient.id));
@@ -52,10 +52,10 @@ public class ClientsService {
         Optional<ClientRecord> toUpdate = repository.findById(id);
 
         if (toUpdate.isPresent()) {
-            toUpdate.get().update(newData);
-            var saved = repository.save(toUpdate.get());
+            var newRecord = createUpdatedClient(toUpdate.get(), newData);
+            var saved = repository.save(newRecord);
             logger.info(LogsUtils.logUpdated(saved, saved.id));
-            return Response.succeedResponse(toUpdate.get());
+            return Response.succeedResponse(newRecord);
         }
         logger.info(LogsUtils.logNotFoundObject(ClientRecord.class, id));
         return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.CLIENT_NOT_FOUND));
@@ -76,4 +76,10 @@ public class ClientsService {
     public boolean ableToCreateFromData(ClientData client) {
         return client.name != null && client.surname != null;
     }
+    public ClientRecord createUpdatedClient(ClientRecord thisClient, ClientData data) {
+        String name = (data.name != null) ? data.name : thisClient.name;
+        String surname = (data.surname != null) ? data.surname : thisClient.surname;
+        return new ClientRecord(thisClient.id, name, surname);
+    }
+
 }

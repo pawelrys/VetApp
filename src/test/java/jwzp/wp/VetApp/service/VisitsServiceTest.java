@@ -69,7 +69,7 @@ public class VisitsServiceTest {
                 office.id,
                 vet.id
         );
-        var visit = VisitRecord.createNewVisit(
+        var visit = VisitRecord.createVisitRecord(
                 requested.startDate,
                 requested.duration,
                 pet,
@@ -193,6 +193,8 @@ public class VisitsServiceTest {
                 Mockito.any(Integer.class)))
                 .thenReturn(Collections.emptyList());
         Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
+        Mockito.when(officesRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(office));
+        Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(pet));
         var expected = Response.succeedResponse(visitAfterUpdate);
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
@@ -207,7 +209,7 @@ public class VisitsServiceTest {
                 visitAfterUpdate.office.id,
                 visitAfterUpdate.vet.id
         );
-        Mockito.verify(vetsRepository, Mockito.times(1)).findById(vet.id);
+        Mockito.verify(vetsRepository, Mockito.times(2)).findById(vet.id);
     }
 
     @Test
@@ -250,6 +252,8 @@ public class VisitsServiceTest {
                 Mockito.any(Integer.class)))
                 .thenReturn(List.of(collidingVisit));
         Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
+        Mockito.when(officesRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(office));
+        Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(pet));
         var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET));
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
@@ -259,12 +263,12 @@ public class VisitsServiceTest {
         Mockito.verify(visitsRepository, Mockito.times(0)).save(Mockito.any(VisitRecord.class));
         Mockito.verify(visitsRepository, Mockito.times(1)).findById(requestedId);
         Mockito.verify(visitsRepository, Mockito.times(1)).getRegisteredVisitsInTime(
-                visitAfterUpdate.startDate,
-                visitAfterUpdate.startDate.plus(visitAfterUpdate.duration),
-                visitAfterUpdate.office.id,
-                visitAfterUpdate.vet.id
+                requestedData.startDate,
+                requestedData.startDate.plus(requestedData.duration),
+                requestedData.officeId,
+                requestedData.vetId
         );
-        Mockito.verify(vetsRepository, Mockito.times(1)).findById(vet.id);
+        Mockito.verify(vetsRepository, Mockito.times(2)).findById(vet.id);
     }
 
     @Test

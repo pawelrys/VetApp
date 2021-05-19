@@ -32,7 +32,7 @@ public class VetServiceTest {
         var result = uut.addVet(requested);
 
         assert expected.equals(result);
-        Mockito.verify(vetsRepository, Mockito.times(1)).save(VetRecord.createVetRecord(requested));
+        Mockito.verify(vetsRepository, Mockito.times(1)).save(VetRecord.createVetRecord(requested.name, requested.surname, requested.photo, requested.officeHoursStart, requested.officeHoursEnd));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class VetServiceTest {
         var result = uut.addVet(requested);
 
         assert result.equals(expected);
-        Mockito.verify(vetsRepository, Mockito.times(1)).save(VetRecord.createVetRecord(requested));
+        Mockito.verify(vetsRepository, Mockito.times(1)).save(VetRecord.createVetRecord(requested.name, requested.surname, requested.photo, requested.officeHoursStart, requested.officeHoursEnd));
     }
 
     @ParameterizedTest(name="{0}")

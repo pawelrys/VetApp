@@ -4,6 +4,7 @@ import jwzp.wp.VetApp.LogsUtils;
 import jwzp.wp.VetApp.models.dtos.PetData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.models.records.PetRecord;
+import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.resources.ClientsRepository;
 import jwzp.wp.VetApp.resources.PetsRepository;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
@@ -12,6 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -64,10 +67,16 @@ public class PetsService {
         Optional<PetRecord> toUpdate = petsRepository.findById(id);
 
         if (toUpdate.isPresent()) {
-            toUpdate.get().update(newData);
-            var saved = petsRepository.save(toUpdate.get());
-            logger.info(LogsUtils.logUpdated(saved, saved.id));
-            return Response.succeedResponse(toUpdate.get());
+            var newRecordOpt = createUpdatedPet(toUpdate.get(), newData);
+            if(newRecordOpt.isPresent()) {
+                var newRecord = newRecordOpt.get();
+                var saved = petsRepository.save(newRecord);
+                logger.info(LogsUtils.logUpdated(saved, saved.id));
+                return Response.succeedResponse(newRecord);
+            }
+            //to check
+            logger.info(LogsUtils.logNotFoundObject(PetRecord.class, id));
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
         logger.info(LogsUtils.logNotFoundObject(PetRecord.class, id));
         return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.PET_NOT_FOUND));
@@ -87,5 +96,18 @@ public class PetsService {
 
     public boolean ableToCreateFromData(PetData pet) {
         return pet.name != null && pet.ownerId != null && pet.birthday != null && pet.animal != null;
+    }
+
+
+    public Optional<PetRecord> createUpdatedPet(PetRecord thisPet, PetData data) {
+        String name = (data.name != null) ? data.name : thisPet.name;
+        LocalDate birthday = (data.birthday != null) ? data.birthday : thisPet.birthday;
+        Animal animal = (data.animal != null) ? data.animal : thisPet.animal;
+        Optional<ClientRecord> owner = (data.ownerId != null) ? ownersRepository.findById(data.ownerId) : Optional.of(thisPet.owner);
+        if(owner.isPresent()) {
+            return Optional.of(new PetRecord(thisPet.id, name, birthday, animal, owner.get()));
+        } else {
+            return Optional.empty();
+        }
     }
 }

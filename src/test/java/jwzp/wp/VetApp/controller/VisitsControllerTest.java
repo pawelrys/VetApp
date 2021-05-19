@@ -219,7 +219,7 @@ public class VisitsControllerTest {
                 office.id,
                 vet.id
         );
-        var visit = VisitRecord.createNewVisit(
+        var visit = VisitRecord.createVisitRecord(
                 requested.startDate,
                 requested.duration,
                 puszek,
