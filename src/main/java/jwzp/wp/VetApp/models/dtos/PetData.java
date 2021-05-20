@@ -12,10 +12,10 @@ public class PetData {
     public final Integer ownerId;
 
     public PetData() {
-        this.name = "";
-        this.birthday = LocalDate.EPOCH;
-        this.animal = Animal.Dog;
-        this.ownerId = -1;
+        this.name = null;
+        this.birthday = null;
+        this.animal = null;
+        this.ownerId = null;
     }
 
     public PetData(
