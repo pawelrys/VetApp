@@ -52,7 +52,8 @@ public class PetServiceTest {
         errorBuilder.addToMessage("animal");
         errorBuilder.addToMessage("ownerId");
         var error = errorBuilder.build("Missing fields: ");
-        var expected = Response.errorResponse(error);        var uut = new PetsService(petsRepository, clientsRepository);
+        var expected = Response.errorResponse(error);
+        var uut = new PetsService(petsRepository, clientsRepository);
 
         var result = uut.addPet(requested);
 
