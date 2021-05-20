@@ -38,7 +38,7 @@ public class Checker {
         }
         return missingData.isEmpty() ?
                 Optional.empty() :
-                Optional.of(missingData.build("There are missing fields: "));
+                Optional.of(missingData.build("Missing fields: "));
     }
 
 }

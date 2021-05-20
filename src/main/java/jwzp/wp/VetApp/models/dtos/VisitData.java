@@ -21,7 +21,7 @@ public class VisitData {
         this.startDate = null;
         this.duration = null;
         this.petId = null;
-        this.status = null;
+        this.status = Status.PENDING;
         this.price = null;
         this.officeId = null;
         this.vetId = null;
