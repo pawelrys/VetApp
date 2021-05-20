@@ -21,9 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import jwzp.wp.VetApp.service.Utils.Checker;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -73,11 +73,16 @@ public class VisitsService {
     }
 
     public Response<VisitRecord> addVisit(VisitData requestedVisit) {
-        if (!ableToCreateFromData(requestedVisit)) {
-            logger.info(LogsUtils.logMissingData(requestedVisit));
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+        Optional<ResponseErrorMessage> missingDataError = Checker.getMissingData(requestedVisit);
+        if (missingDataError.isPresent()){
+            return Response.errorResponse(missingDataError.get());
         }
-        Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(requestedVisit.startDate, requestedVisit.duration, requestedVisit.officeId, requestedVisit.vetId);
+        Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(
+                requestedVisit.startDate,
+                requestedVisit.duration,
+                requestedVisit.officeId,
+                requestedVisit.vetId
+        );
         if (result.isPresent()) {
             logger.info(LogsUtils.logTimeUnavailability());
             return Response.errorResponse(result.get());
@@ -142,7 +147,13 @@ public class VisitsService {
         );
     }
 
-    private Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId, int id) {
+    private Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(
+            LocalDateTime start,
+            Duration duration,
+            Integer officeId,
+            Integer vetId,
+            int id
+    ) {
         VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
         if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
             return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET));
@@ -162,7 +173,12 @@ public class VisitsService {
                 : Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_OFFICE));
     }
 
-    private Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(LocalDateTime start, Duration duration, Integer officeId, Integer vetId) {
+    private Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(
+            LocalDateTime start,
+            Duration duration,
+            Integer officeId,
+            Integer vetId
+    ) {
         VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
         if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
             return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET));
@@ -176,15 +192,6 @@ public class VisitsService {
         return overlappedVisits.get(0).vet.id == vetId
                 ? Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET))
                 : Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_OFFICE));
-    }
-
-    public boolean ableToCreateFromData(VisitData visit) {
-        return visit.petId != null
-                && visit.duration != null
-                && visit.price != null
-                && visit.startDate != null
-                && visit.officeId != null
-                && visit.vetId != null;
     }
 
     private boolean isTimeToVisitGreaterThan(LocalDateTime start, Duration duration) {

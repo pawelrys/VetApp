@@ -4,8 +4,10 @@ import jwzp.wp.VetApp.LogsUtils;
 import jwzp.wp.VetApp.models.dtos.VetData;
 import jwzp.wp.VetApp.models.records.VetRecord;
 import jwzp.wp.VetApp.resources.VetsRepository;
+import jwzp.wp.VetApp.service.Utils.Checker;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +37,9 @@ public class VetsService {
     }
 
     public Response<VetRecord> addVet(VetData requestedVet) {
-        if (!ableToCreateFromData(requestedVet)) {
-            logger.info(LogsUtils.logMissingData(requestedVet));
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+        Optional<ResponseErrorMessage> missingDataError = Checker.getMissingData(requestedVet);
+        if (missingDataError.isPresent()){
+            return Response.errorResponse(missingDataError.get());
         }
         VetRecord vet = VetRecord.createVetRecord(requestedVet.name, requestedVet.surname, requestedVet.photo, requestedVet.officeHoursStart, requestedVet.officeHoursEnd);
         try {

@@ -6,6 +6,8 @@ import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.resources.ClientsRepository;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.Utils.Checker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +35,9 @@ public class ClientsService {
     }
 
     public Response<ClientRecord> addClient(ClientData requestedClient) {
-        if (!ableToCreateFromData(requestedClient)) {
-            logger.info(LogsUtils.logMissingData(requestedClient));
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+        Optional<ResponseErrorMessage> missingDataError = Checker.getMissingData(requestedClient);
+        if (missingDataError.isPresent()){
+            return Response.errorResponse(missingDataError.get());
         }
         ClientRecord client = ClientRecord.createClientRecord(requestedClient.name, requestedClient.surname);
         try {

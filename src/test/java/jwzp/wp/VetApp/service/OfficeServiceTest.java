@@ -36,8 +36,10 @@ public class OfficeServiceTest {
     @Test
     public void testAddOfficeMissingData() throws Exception {
         OfficeData requested = new OfficeData(null);
-        Response<?> expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
-        var uut = new OfficesService(officesRepository);
+        var errorBuilder = new ErrorMessagesBuilder();
+        errorBuilder.addToMessage("name");
+        var error = errorBuilder.build("Missing fields: ");
+        var expected = Response.errorResponse(error);        var uut = new OfficesService(officesRepository);
 
         var result = uut.addOffice(requested);
 

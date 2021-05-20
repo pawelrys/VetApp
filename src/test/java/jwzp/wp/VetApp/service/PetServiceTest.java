@@ -46,8 +46,13 @@ public class PetServiceTest {
     @Test
     public void testAddPetMissingData() throws Exception {
         PetData requested = new PetData(null, null, null, null);
-        Response<?> expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
-        var uut = new PetsService(petsRepository, clientsRepository);
+        var errorBuilder = new ErrorMessagesBuilder();
+        errorBuilder.addToMessage("name");
+        errorBuilder.addToMessage("birthday");
+        errorBuilder.addToMessage("animal");
+        errorBuilder.addToMessage("ownerId");
+        var error = errorBuilder.build("Missing fields: ");
+        var expected = Response.errorResponse(error);        var uut = new PetsService(petsRepository, clientsRepository);
 
         var result = uut.addPet(requested);
 
