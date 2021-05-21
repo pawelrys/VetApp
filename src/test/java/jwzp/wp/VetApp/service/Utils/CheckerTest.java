@@ -16,7 +16,7 @@ import java.time.LocalTime;
 public class CheckerTest {
 
     @ParameterizedTest(name="{0}")
-    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/ableToCreateFromDataTestVisits.csv", numLinesToSkip = 1)
+    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/missingVisitDataTestInput.csv", numLinesToSkip = 1)
     public void testAbleToCreateFromData(
             String testCaseName,
             LocalDateTime startDate,
@@ -33,7 +33,7 @@ public class CheckerTest {
     }
 
     @ParameterizedTest(name="{0}")
-    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/ableToCreateFromDataTestVet.csv", numLinesToSkip = 1)
+    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/missingVetDataTestInput.csv", numLinesToSkip = 1)
     public void testMissingVetData(String testCaseName, String name, String surname, String photo, LocalTime start, LocalTime end, boolean result) throws Exception {
 
         var requested = new VetData(name, surname, photo == null ? null : photo.getBytes(StandardCharsets.UTF_8), start, end);
@@ -42,7 +42,7 @@ public class CheckerTest {
     }
 
     @ParameterizedTest(name="{0}")
-    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/ableToCreateFromDataTestPet.csv", numLinesToSkip = 1)
+    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/missingPetDataTestInput.csv", numLinesToSkip = 1)
     public void testMissingPetData(String testCaseName, String name, LocalDate birthday, Animal animal, Integer ownerId, Boolean result) throws Exception {
         var requested = new PetData(name, birthday, animal, ownerId);
 
@@ -50,7 +50,7 @@ public class CheckerTest {
     }
 
     @ParameterizedTest(name="{0}")
-    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/ableToCreateFromDataTestInput.csv", numLinesToSkip = 1)
+    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/missingClientDataTestInput.csv", numLinesToSkip = 1)
     public void testMissingClientData(String testCaseName, String name, String surname, boolean result) {
         var requested = new ClientData(name, surname);
 
@@ -58,7 +58,7 @@ public class CheckerTest {
     }
 
     @ParameterizedTest(name="{0}")
-    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/ableToCreateFromDataTestOffice.csv", numLinesToSkip = 1)
+    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/missingOfficeDataTestInput.csv", numLinesToSkip = 1)
     public void testMissingOfficeData(String testCaseName, String name, boolean result) throws Exception {
         var requested = new OfficeData(name);
 
