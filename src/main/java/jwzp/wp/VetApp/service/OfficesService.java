@@ -77,10 +77,6 @@ public class OfficesService {
         return repository.findById(id);
     }
 
-    public boolean ableToCreateFromData(OfficeData office) {
-        return office.name != null;
-    }
-
     public OfficeRecord createUpdatedOffice(OfficeRecord thisOffice, OfficeData data) {
         String name = (data.name != null) ? data.name : thisOffice.name;
         return new OfficeRecord(thisOffice.id, name);

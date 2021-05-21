@@ -63,13 +63,4 @@ public class ClientsServiceTest {
         assert result.equals(expected);
         Mockito.verify(clientsRepository, Mockito.times(1)).save(ClientRecord.createClientRecord(requested.name, requested.surname));
     }
-
-    @ParameterizedTest(name="{0}")
-    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/ableToCreateFromDataTestInput.csv", numLinesToSkip = 1)
-    public void testAbleToCreateFromData(String testCaseName, String name, String surname, boolean result) {
-        var requested = new ClientData(name, surname);
-        var uut = new ClientsService(clientsRepository);
-
-        assert uut.ableToCreateFromData(requested) == result;
-    }
 }

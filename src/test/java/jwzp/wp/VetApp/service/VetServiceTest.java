@@ -66,14 +66,4 @@ public class VetServiceTest {
         assert result.equals(expected);
         Mockito.verify(vetsRepository, Mockito.times(1)).save(VetRecord.createVetRecord(requested.name, requested.surname, requested.photo, requested.officeHoursStart, requested.officeHoursEnd));
     }
-
-    @ParameterizedTest(name="{0}")
-    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/ableToCreateFromDataTestVet.csv", numLinesToSkip = 1)
-    public void testAbleToCreateFromData(String testCaseName, String name, String surname, String photo, LocalTime start, LocalTime end, boolean result) throws Exception {
-
-        var requested = new VetData(name, surname, photo == null ? null : photo.getBytes(StandardCharsets.UTF_8), start, end);
-        var uut = new VetsService(vetsRepository);
-
-        assert uut.ableToCreateFromData(requested) == result;
-    }
 }

@@ -76,12 +76,4 @@ public class PetServiceTest {
         Mockito.verify(petsRepository, Mockito.times(1)).save(PetRecord.createPetRecord(requested.name, requested.birthday, requested.animal, client));
     }
 
-    @ParameterizedTest(name="{0}")
-    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/ableToCreateFromDataTestPet.csv", numLinesToSkip = 1)
-    public void testAbleToCreateFromData(String testCaseName, String name, LocalDate birthday, Animal animal, Integer ownerId, Boolean result) throws Exception {
-        var requested = new PetData(name, birthday, animal, ownerId);
-        var uut = new PetsService(petsRepository, clientsRepository);
-
-        assert uut.ableToCreateFromData(requested) == result;
-    }
 }

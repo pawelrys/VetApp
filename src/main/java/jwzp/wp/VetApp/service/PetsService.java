@@ -95,11 +95,6 @@ public class PetsService {
         return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.PET_NOT_FOUND));
     }
 
-    public boolean ableToCreateFromData(PetData pet) {
-        return pet.name != null && pet.ownerId != null && pet.birthday != null && pet.animal != null;
-    }
-
-
     public Optional<PetRecord> createUpdatedPet(PetRecord thisPet, PetData data) {
         String name = (data.name != null) ? data.name : thisPet.name;
         LocalDate birthday = (data.birthday != null) ? data.birthday : thisPet.birthday;

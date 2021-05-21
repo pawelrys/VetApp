@@ -60,13 +60,4 @@ public class OfficeServiceTest {
         assert result.equals(expected);
         Mockito.verify(officesRepository, Mockito.times(1)).save(OfficeRecord.createOfficeRecord(requested.name));
     }
-
-    @ParameterizedTest(name="{0}")
-    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/ableToCreateFromDataTestOffice.csv", numLinesToSkip = 1)
-    public void testAbleToCreateFromData(String testCaseName, String name, boolean result) throws Exception {
-        var requested = new OfficeData(name);
-        var uut = new OfficesService(officesRepository);
-
-        assert uut.ableToCreateFromData(requested) == result;
-    }
 }
