@@ -174,7 +174,17 @@ public class VisitsServiceTest {
                 office.id,
                 vet.id
         );
-        int requestedId = 5;
+        var visitBeforeUpdate = new VisitRecord(
+                5,
+                LocalDateTime.parse("2021-05-10T08:30:00"),
+                Duration.of(1, ChronoUnit.HOURS),
+                pet,
+                Status.PENDING,
+                BigDecimal.valueOf(300),
+                office,
+                vet
+        );
+        int requestedId = visitBeforeUpdate.getId();
         var visitAfterUpdate = new VisitRecord(
                 requestedId,
                 LocalDateTime.parse("2021-05-10T08:30:00"),
@@ -186,7 +196,7 @@ public class VisitsServiceTest {
                 vet
         );
         Mockito.when(visitsRepository.save(Mockito.any(VisitRecord.class))).thenReturn(visitAfterUpdate);
-        Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(visitAfterUpdate));
+        Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(visitBeforeUpdate));
         Mockito.when(visitsRepository.getRegisteredVisitsInTime(
                 Mockito.any(LocalDateTime.class),
                 Mockito.any(LocalDateTime.class),
@@ -211,6 +221,58 @@ public class VisitsServiceTest {
                 visitAfterUpdate.vet.id
         );
         Mockito.verify(vetsRepository, Mockito.times(2)).findById(vet.id);
+    }
+
+    @Test
+    public void testUpdateVisitNoSuchPet() {
+        var requestedData = new VisitData(
+                null,
+                Duration.of(5, ChronoUnit.MINUTES),
+                pet.id,
+                Status.PENDING,
+                BigDecimal.valueOf(120),
+                office.id,
+                vet.id
+        );
+        var visitBeforeUpdate = new VisitRecord(
+                5,
+                LocalDateTime.parse("2021-05-10T08:30:00"),
+                Duration.of(1, ChronoUnit.HOURS),
+                pet,
+                Status.PENDING,
+                BigDecimal.valueOf(300),
+                office,
+                vet
+        );
+        int requestedId = visitBeforeUpdate.getId();
+        Mockito.when(visitsRepository.save(Mockito.any(VisitRecord.class))).thenReturn(null);
+        Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(visitBeforeUpdate));
+        Mockito.when(visitsRepository.getRegisteredVisitsInTime(
+                Mockito.any(LocalDateTime.class),
+                Mockito.any(LocalDateTime.class),
+                Mockito.any(Integer.class),
+                Mockito.any(Integer.class)))
+                .thenReturn(Collections.emptyList());
+        Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
+        Mockito.when(officesRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(office));
+        Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.empty());
+        var error = new ErrorMessagesBuilder();
+        error.addToMessage(ErrorMessageFormatter.doesNotExists(PetRecord.class, pet.id));
+        var expected = Response.errorResponse(error.build());
+        var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
+
+        var result = uut.updateVisit(requestedId, requestedData);
+
+        assertThat(result).isEqualTo(expected);
+        Mockito.verify(visitsRepository, Mockito.times(0)).save(Mockito.any());
+        Mockito.verify(visitsRepository, Mockito.times(1)).findById(requestedId);
+        Mockito.verify(visitsRepository, Mockito.times(0)).getRegisteredVisitsInTime(
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.any()
+        );
+        Mockito.verify(vetsRepository, Mockito.times(1)).findById(vet.id);
     }
 
     @Test
