@@ -39,7 +39,8 @@ public class OfficeServiceTest {
         var errorBuilder = new ErrorMessagesBuilder();
         errorBuilder.addToMessage("name");
         var error = errorBuilder.build("Missing fields: ");
-        var expected = Response.errorResponse(error);        var uut = new OfficesService(officesRepository);
+        var expected = Response.errorResponse(error);
+        var uut = new OfficesService(officesRepository);
 
         var result = uut.addOffice(requested);
 

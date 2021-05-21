@@ -41,7 +41,8 @@ public class ClientsServiceTest {
         errorBuilder.addToMessage("name");
         errorBuilder.addToMessage("surname");
         var error = errorBuilder.build("Missing fields: ");
-        var expected = Response.errorResponse(error);        var uut = new ClientsService(clientsRepository);
+        var expected = Response.errorResponse(error);
+        var uut = new ClientsService(clientsRepository);
 
         var result = uut.addClient(requested);
 
