@@ -6,13 +6,12 @@ import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
 import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.models.values.Status;
 import jwzp.wp.VetApp.resources.*;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessageFormatter;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvFileSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -101,8 +100,8 @@ public class VisitsServiceTest {
                 vet.id
         );
         var errorBuilder = new ErrorMessagesBuilder();
-        errorBuilder.addToMessage("price");
-        var error = errorBuilder.build("Missing fields: ");
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("price"));
+        var error = errorBuilder.build(ErrorType.WRONG_ARGUMENTS);
         var expected = Response.errorResponse(error);
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 

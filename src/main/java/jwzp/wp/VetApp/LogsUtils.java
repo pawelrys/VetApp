@@ -1,5 +1,7 @@
 package jwzp.wp.VetApp;
 
+import java.lang.reflect.Field;
+
 public class LogsUtils {
 
     static public String logSaved(Object saved, int id) {
@@ -14,8 +16,8 @@ public class LogsUtils {
         return "Updated: " + updated.getClass() + " id: " + id;
     }
 
-    static public String logMissingData(Object obj) {
-        return "Missing data in DTO: " + obj.getClass();
+    static public String logMissingData(Object obj, Field field) {
+        return "Missing data \"" + field.getName() + "\" in " + obj.toString();
     }
 
     static public String logTimeUnavailability() {
