@@ -77,10 +77,6 @@ public class VetsService {
         return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VET_NOT_FOUND));
     }
 
-    public boolean ableToCreateFromData(VetData vet) {
-        return vet.name != null && vet.surname != null && vet.officeHoursEnd != null && vet.officeHoursStart != null && vet.photo != null;
-    }
-
     public VetRecord createUpdatedVet(VetRecord thisVet, VetData data) {
         String name = (data.name != null) ? data.name : thisVet.name;
         String surname = (data.surname != null) ? data.surname : thisVet.surname;

@@ -75,9 +75,6 @@ public class ClientsService {
         return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.CLIENT_NOT_FOUND));
     }
 
-    public boolean ableToCreateFromData(ClientData client) {
-        return client.name != null && client.surname != null;
-    }
     public ClientRecord createUpdatedClient(ClientRecord thisClient, ClientData data) {
         String name = (data.name != null) ? data.name : thisClient.name;
         String surname = (data.surname != null) ? data.surname : thisClient.surname;
