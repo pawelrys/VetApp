@@ -29,6 +29,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class VisitsService {
@@ -249,9 +250,11 @@ public class VisitsService {
                     "Begin of time interval is later than end"
             ));
         }
-        List<VetsTimeInterval> availableSlots = visitsRepository.getAvailableTimeSlots(begin, end);
-        Map<Pair<LocalDateTime, LocalDateTime>, List<VetsTimeInterval>> slotsMapped = availableSlots.stream()
-                .filter(t -> vetIds.containsAll(t.vetIds))
+        Stream<VetsTimeInterval> availableSlots = visitsRepository.getAvailableTimeSlots(begin, end).stream();
+        if (!vetIds.isEmpty()) {
+            availableSlots = availableSlots.filter(t -> vetIds.containsAll(t.vetIds));
+        }
+        Map<Pair<LocalDateTime, LocalDateTime>, List<VetsTimeInterval>> slotsMapped = availableSlots
                 .collect(Collectors.groupingBy((VetsTimeInterval t) -> Pair.of(t.begin, t.end)));
 
         List<VetsTimeInterval> timeSlots = slotsMapped.entrySet().stream()
