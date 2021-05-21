@@ -6,7 +6,7 @@ public class OfficeData {
     public final String name;
 
     public OfficeData() {
-        this.name = "";
+        this.name = null;
     }
 
     public OfficeData(

@@ -18,13 +18,13 @@ public class VisitData {
     public final Integer vetId;
 
     public VisitData() {
-        this.startDate = LocalDateTime.now();
-        this.duration = Duration.ZERO;
-        this.petId = -1;
-        this.status = Status.CLOSED_AUTOMATICALLY;
-        this.price = BigDecimal.ZERO;
-        this.officeId = -1;
-        this.vetId = -1;
+        this.startDate = null;
+        this.duration = null;
+        this.petId = null;
+        this.status = Status.PENDING;
+        this.price = null;
+        this.officeId = null;
+        this.vetId = null;
     }
 
     public VisitData(

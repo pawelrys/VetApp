@@ -12,11 +12,11 @@ public class VetData {
     public final LocalTime officeHoursEnd;
 
     public VetData() {
-        this.name = "";
-        this.surname = "";
-        this.photo = new byte[0];
-        this.officeHoursStart = LocalTime.NOON;
-        this.officeHoursEnd = LocalTime.NOON;
+        this.name = null;
+        this.surname = null;
+        this.photo = null;
+        this.officeHoursStart = null;
+        this.officeHoursEnd = null;
     }
 
     public VetData(

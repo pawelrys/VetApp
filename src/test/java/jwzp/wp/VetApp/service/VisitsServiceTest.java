@@ -18,7 +18,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
@@ -64,7 +63,7 @@ public class VisitsServiceTest {
                 LocalDateTime.parse("2021-04-22T08:30:00"),
                 Duration.of(5, ChronoUnit.MINUTES),
                 pet.id,
-                null,
+                Status.PENDING,
                 BigDecimal.valueOf(20),
                 office.id,
                 vet.id
@@ -96,12 +95,15 @@ public class VisitsServiceTest {
                 LocalDateTime.parse("2021-04-22T08:30:00"),
                 Duration.of(5, ChronoUnit.MINUTES),
                 pet.id,
-                null,
+                Status.PENDING,
                 null,
                 office.id,
                 vet.id
         );
-        var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+        var errorBuilder = new ErrorMessagesBuilder();
+        errorBuilder.addToMessage("price");
+        var error = errorBuilder.build("Missing fields: ");
+        var expected = Response.errorResponse(error);
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
         var result = uut.addVisit(requested);
@@ -119,7 +121,7 @@ public class VisitsServiceTest {
                 LocalDateTime.parse("2021-04-21T15:30:00"),
                 Duration.of(5, ChronoUnit.MINUTES),
                 pet.id,
-                null,
+                Status.PENDING,
                 BigDecimal.valueOf(120),
                 office.id,
                 vet.id
@@ -143,7 +145,7 @@ public class VisitsServiceTest {
                 LocalDateTime.parse("2021-04-23T15:30:00"),
                 Duration.of(5, ChronoUnit.MINUTES),
                 pet.id,
-                null,
+                Status.PENDING,
                 BigDecimal.valueOf(120),
                 office.id,
                 vet.id
@@ -168,7 +170,7 @@ public class VisitsServiceTest {
                 null,
                 Duration.of(5, ChronoUnit.MINUTES),
                 pet.id,
-                null,
+                Status.PENDING,
                 BigDecimal.valueOf(120),
                 office.id,
                 vet.id
@@ -317,24 +319,6 @@ public class VisitsServiceTest {
         assertThat(result).isEqualTo(expected);
         Mockito.verify(visitsRepository, Mockito.times(1)).findById(requested);
         Mockito.verify(visitsRepository, Mockito.times(0)).deleteById(requested);
-    }
-
-    @ParameterizedTest(name="{0}")
-    @CsvFileSource(resources = "/jwzp.wp.VetApp/service/ableToCreateFromDataTestVisits.csv", numLinesToSkip = 1)
-    public void testAbleToCreateFromData(
-            String testCaseName,
-            LocalDateTime startDate,
-            Duration duration,
-            Integer petId,
-            BigDecimal price,
-            Integer officeId,
-            Integer vetId,
-            boolean result
-    ) {
-        var requested = new VisitData(startDate, duration, petId, Status.PENDING, price, officeId, vetId);
-        var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
-
-        assert uut.ableToCreateFromData(requested) == result;
     }
 
     @Test

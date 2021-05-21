@@ -37,10 +37,15 @@ public class ClientsServiceTest {
     @Test
     public void testAddClientMissingData() {
         ClientData requested = new ClientData(null, null);
-        Response<?> expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+        var errorBuilder = new ErrorMessagesBuilder();
+        errorBuilder.addToMessage("name");
+        errorBuilder.addToMessage("surname");
+        var error = errorBuilder.build("Missing fields: ");
+        var expected = Response.errorResponse(error);
         var uut = new ClientsService(clientsRepository);
 
         var result = uut.addClient(requested);
+
 
         assert result.equals(expected);
         Mockito.verify(clientsRepository, Mockito.times(0)).save(Mockito.any());

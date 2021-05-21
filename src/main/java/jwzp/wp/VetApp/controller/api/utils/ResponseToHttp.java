@@ -10,6 +10,8 @@ public class ResponseToHttp {
 
     public static HttpStatus getCode(ErrorType errorMessage) {
         switch (errorMessage) {
+            case INTERNAL_SERVICE_ERROR:
+                return HttpStatus.INTERNAL_SERVER_ERROR;
             case VISIT_NOT_FOUND:
             case CLIENT_NOT_FOUND:
                 return HttpStatus.NOT_FOUND;

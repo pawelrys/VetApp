@@ -6,6 +6,8 @@ import jwzp.wp.VetApp.models.records.OfficeRecord;
 import jwzp.wp.VetApp.resources.OfficesRepository;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
+import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
+import jwzp.wp.VetApp.service.Utils.Checker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +32,9 @@ public class OfficesService {
     }
 
     public Response<OfficeRecord> addOffice(OfficeData requestedOffice) {
-        if(!ableToCreateFromData(requestedOffice)) {
-            logger.info(LogsUtils.logMissingData(requestedOffice));
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+        Optional<ResponseErrorMessage> missingDataError = Checker.getMissingData(requestedOffice);
+        if (missingDataError.isPresent()){
+            return Response.errorResponse(missingDataError.get());
         }
         OfficeRecord office = OfficeRecord.createOfficeRecord(requestedOffice.name);
         try {

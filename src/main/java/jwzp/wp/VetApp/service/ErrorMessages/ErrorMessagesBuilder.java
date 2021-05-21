@@ -1,13 +1,18 @@
 package jwzp.wp.VetApp.service.ErrorMessages;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class ErrorMessagesBuilder {
 
-    private List<String> subMessages;
+    private final List<String> subMessages = new LinkedList<>();
 
     public void addToMessage(String msg){
         subMessages.add(msg);
+    }
+
+    public boolean isEmpty(){
+        return subMessages.isEmpty();
     }
 
     public ResponseErrorMessage build() {

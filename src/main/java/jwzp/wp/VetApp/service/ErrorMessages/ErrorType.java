@@ -19,7 +19,9 @@ public enum ErrorType {
 
     BUSY_OFFICE("Office is not available at this time"),
 
-    WRONG_ARGUMENTS("Wrong arguments provided");
+    WRONG_ARGUMENTS("Wrong arguments provided"),
+
+    INTERNAL_SERVICE_ERROR("Internal service error");
 
     private final String defaultMessage;
 

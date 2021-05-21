@@ -8,8 +8,8 @@ public class ClientData {
     public final String surname;
 
     public ClientData() {
-        this.name = "";
-        this.surname = "";
+        this.name = null;
+        this.surname = null;
     }
 
     public ClientData(

@@ -38,7 +38,15 @@ public class VetServiceTest {
     @Test
     public void testAddVetMissingData() throws Exception {
         VetData requested = new VetData(null, null, null, null, null);
-        Response<?> expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+
+        var errorBuilder = new ErrorMessagesBuilder();
+        errorBuilder.addToMessage("name");
+        errorBuilder.addToMessage("surname");
+        errorBuilder.addToMessage("photo");
+        errorBuilder.addToMessage("officeHoursStart");
+        errorBuilder.addToMessage("officeHoursEnd");
+        var error = errorBuilder.build("Missing fields: ");
+        var expected = Response.errorResponse(error);
         var uut = new VetsService(vetsRepository);
 
         var result = uut.addVet(requested);
