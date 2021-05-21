@@ -115,7 +115,13 @@ public class VisitsService {
             var newRecordOpt = createUpdatedVisit(toUpdate.get(), newData);
             if(newRecordOpt.isPresent()) {
                 var newRecord = newRecordOpt.get();
-                Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(newRecord.startDate, newRecord.duration, newRecord.office.id, newRecord.vet.id, id);
+                Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(
+                        newRecord.startDate,
+                        newRecord.duration,
+                        newRecord.office.id,
+                        newRecord.vet.id,
+                        id
+                );
                 if (result.isPresent()) {
                     logger.info(LogsUtils.logTimeUnavailability());
                     return Response.errorResponse(result.get());
@@ -155,10 +161,12 @@ public class VisitsService {
             int id
     ) {
         VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
-        if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
+        if(vet.officeHoursStart.isAfter(start.toLocalTime())
+                || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
             return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET));
         }
-        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN))
+            return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
         var end = start.plusMinutes(duration.toMinutes());
         var overlappedVisits = visitsRepository.getRegisteredVisitsInTime(start, end, officeId, vetId);
         if(overlappedVisits.size() == 0 || (overlappedVisits.size() == 1 && id == overlappedVisits.get(0).getId())) {
@@ -180,10 +188,12 @@ public class VisitsService {
             Integer vetId
     ) {
         VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
-        if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
+        if(vet.officeHoursStart.isAfter(start.toLocalTime())
+                || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
             return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET));
         }
-        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN))
+            return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
         var end = start.plusMinutes(duration.toMinutes());
         var overlappedVisits = visitsRepository.getRegisteredVisitsInTime(start, end, officeId, vetId);
         if(overlappedVisits.size() == 0) {
@@ -207,7 +217,15 @@ public class VisitsService {
     }
 
     private void changeStatusTo(VisitRecord visit, Status status) {
-        VisitData data = new VisitData(visit.startDate, visit.duration, visit.pet.id, status, visit.price, visit.office.id, visit.vet.id);
+        VisitData data = new VisitData(
+                visit.startDate,
+                visit.duration,
+                visit.pet.id,
+                status,
+                visit.price,
+                visit.office.id,
+                visit.vet.id
+        );
         var newRecord = createUpdatedVisit(visit, data);
         newRecord.ifPresent(visitsRepository::save);
     }
@@ -218,12 +236,18 @@ public class VisitsService {
             List<Integer> vetIds
     ) {
         if (begin == null || end == null) {
-            logger.info(LogsUtils.logMissingData(LocalDateTime.now()));
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+            logger.info("begin or end parameter is not provided");
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(
+                    ErrorType.WRONG_ARGUMENTS,
+                    "begin or end parameter is not provided"
+            ));
         }
         if (begin.isAfter(end)) {
             logger.info("Begin of time interval is later than end");
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(
+                    ErrorType.WRONG_ARGUMENTS,
+                    "Begin of time interval is later than end"
+            ));
         }
         List<VetsTimeInterval> availableSlots = visitsRepository.getAvailableTimeSlots(begin, end);
         Map<Pair<LocalDateTime, LocalDateTime>, List<VetsTimeInterval>> slotsMapped = availableSlots.stream()

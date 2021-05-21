@@ -380,6 +380,42 @@ public class VisitsServiceTest {
     }
 
     @Test
+    public void testAvailableTimeSlotsMissingParameter() {
+        LocalDateTime requestedBeg = LocalDateTime.parse("2022-04-26T09:00:00");
+        LocalDateTime requestedEnd = null;
+        List<Integer> requestedVetIds = List.of(1, 3);
+        var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(
+                ErrorType.WRONG_ARGUMENTS,
+                "begin or end parameter is not provided"
+        ));
+        var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
+
+        var result = uut.availableTimeSlots(requestedBeg, requestedEnd, requestedVetIds);
+
+        assertThat(result).isEqualTo(expected);
+        Mockito.verify(visitsRepository, Mockito.times(0))
+                .getAvailableTimeSlots(requestedBeg, requestedEnd);
+    }
+
+    @Test
+    public void testAvailableTimeSlotsWrongInterval() {
+        LocalDateTime requestedBeg = LocalDateTime.parse("2022-04-26T09:00:00");
+        LocalDateTime requestedEnd = LocalDateTime.parse("2022-04-26T08:30:00");
+        List<Integer> requestedVetIds = List.of(1, 3);
+        var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(
+                ErrorType.WRONG_ARGUMENTS,
+                "Begin of time interval is later than end"
+        ));
+        var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
+
+        var result = uut.availableTimeSlots(requestedBeg, requestedEnd, requestedVetIds);
+
+        assertThat(result).isEqualTo(expected);
+        Mockito.verify(visitsRepository, Mockito.times(0))
+                .getAvailableTimeSlots(requestedBeg, requestedEnd);
+    }
+
+    @Test
     public void testAutomaticallyClosePastVisits(){
         List<VisitRecord> visits = Collections.emptyList();
         Mockito.when(visitsRepository.getPastVisitsWithStatus(Mockito.any(LocalDateTime.class), Mockito.any(Status.class))).thenReturn(visits);
