@@ -126,6 +126,8 @@ public class VisitsServiceTest {
                 vet.id
         );
         Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
+        Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(pet));
+        Mockito.when(officesRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(office));
         var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
@@ -133,9 +135,6 @@ public class VisitsServiceTest {
 
         assertThat(result).isEqualTo(expected);
         Mockito.verify(visitsRepository, Mockito.times(0)).save(Mockito.any(VisitRecord.class));
-        Mockito.verify(petsRepository, Mockito.times(0)).findById(Mockito.any(Integer.class));
-        Mockito.verify(officesRepository, Mockito.times(0)).findById(Mockito.any(Integer.class));
-        Mockito.verify(vetsRepository, Mockito.times(1)).findById(vet.id);
     }
 
     @Test
@@ -149,8 +148,6 @@ public class VisitsServiceTest {
                 office.id,
                 vet.id
         );
-        Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
-        Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.empty());
         var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
@@ -158,9 +155,6 @@ public class VisitsServiceTest {
 
         assertThat(result).isEqualTo(expected);
         Mockito.verify(visitsRepository, Mockito.times(0)).save(Mockito.any(VisitRecord.class));
-        Mockito.verify(petsRepository, Mockito.times(1)).findById(pet.id);
-        Mockito.verify(officesRepository, Mockito.times(0)).findById(Mockito.any(Integer.class));
-        Mockito.verify(vetsRepository, Mockito.times(1)).findById(vet.id);
     }
 
     @Test
@@ -213,14 +207,6 @@ public class VisitsServiceTest {
 
         assertThat(result).isEqualTo(expected);
         Mockito.verify(visitsRepository, Mockito.times(1)).save(visitAfterUpdate);
-        Mockito.verify(visitsRepository, Mockito.times(1)).findById(requestedId);
-        Mockito.verify(visitsRepository, Mockito.times(1)).getRegisteredVisitsInTime(
-                visitAfterUpdate.startDate,
-                visitAfterUpdate.startDate.plus(visitAfterUpdate.duration),
-                visitAfterUpdate.office.id,
-                visitAfterUpdate.vet.id
-        );
-        Mockito.verify(vetsRepository, Mockito.times(2)).findById(vet.id);
     }
 
     @Test
@@ -245,34 +231,19 @@ public class VisitsServiceTest {
                 vet
         );
         int requestedId = visitBeforeUpdate.getId();
-        Mockito.when(visitsRepository.save(Mockito.any(VisitRecord.class))).thenReturn(null);
         Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(visitBeforeUpdate));
-        Mockito.when(visitsRepository.getRegisteredVisitsInTime(
-                Mockito.any(LocalDateTime.class),
-                Mockito.any(LocalDateTime.class),
-                Mockito.any(Integer.class),
-                Mockito.any(Integer.class)))
-                .thenReturn(Collections.emptyList());
         Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
         Mockito.when(officesRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(office));
         Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.empty());
         var error = new ErrorMessagesBuilder();
         error.addToMessage(ErrorMessageFormatter.doesNotExists(PetRecord.class, pet.id));
-        var expected = Response.errorResponse(error.build());
+        var expected = Response.errorResponse(error.build(ErrorType.WRONG_ARGUMENTS));
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
         var result = uut.updateVisit(requestedId, requestedData);
 
         assertThat(result).isEqualTo(expected);
         Mockito.verify(visitsRepository, Mockito.times(0)).save(Mockito.any());
-        Mockito.verify(visitsRepository, Mockito.times(1)).findById(requestedId);
-        Mockito.verify(visitsRepository, Mockito.times(0)).getRegisteredVisitsInTime(
-                Mockito.any(),
-                Mockito.any(),
-                Mockito.any(),
-                Mockito.any()
-        );
-        Mockito.verify(vetsRepository, Mockito.times(1)).findById(vet.id);
     }
 
     @Test
@@ -324,14 +295,6 @@ public class VisitsServiceTest {
 
         assertThat(result).isEqualTo(expected);
         Mockito.verify(visitsRepository, Mockito.times(0)).save(Mockito.any(VisitRecord.class));
-        Mockito.verify(visitsRepository, Mockito.times(1)).findById(requestedId);
-        Mockito.verify(visitsRepository, Mockito.times(1)).getRegisteredVisitsInTime(
-                requestedData.startDate,
-                requestedData.startDate.plus(requestedData.duration),
-                requestedData.officeId,
-                requestedData.vetId
-        );
-        Mockito.verify(vetsRepository, Mockito.times(2)).findById(vet.id);
     }
 
     @Test
@@ -354,7 +317,6 @@ public class VisitsServiceTest {
         var result = uut.delete(requested);
 
         assertThat(result).isEqualTo(expected);
-        Mockito.verify(visitsRepository, Mockito.times(1)).findById(requested);
         Mockito.verify(visitsRepository, Mockito.times(1)).deleteById(requested);
     }
 
@@ -378,7 +340,6 @@ public class VisitsServiceTest {
         var result = uut.delete(requested);
 
         assertThat(result).isEqualTo(expected);
-        Mockito.verify(visitsRepository, Mockito.times(1)).findById(requested);
         Mockito.verify(visitsRepository, Mockito.times(0)).deleteById(requested);
     }
 
