@@ -82,15 +82,31 @@ public class VisitsService {
         // requestedVisit fields can't be null
         // we are checking it in Checker::getMissingData above
         try {
-            PetRecord pet = petsRepository.findById(requestedVisit.petId).orElseThrow();
-            OfficeRecord office = officesRepository.findById(requestedVisit.officeId).orElseThrow();
-            VetRecord vet = vetsRepository.findById(requestedVisit.vetId).orElseThrow();
+            var doesNotExists = new ErrorMessagesBuilder();
+            Optional<PetRecord> petOpt = petsRepository.findById(requestedVisit.petId);
+            if (petOpt.isEmpty()){
+                logger.info(LogsUtils.logNotFoundObject(PetRecord.class, requestedVisit.petId));
+                doesNotExists.addToMessage(ErrorMessageFormatter.doesNotExists(PetRecord.class, requestedVisit.petId));
+            }
+            Optional<OfficeRecord> officeOpt = officesRepository.findById(requestedVisit.officeId);
+            if (officeOpt.isEmpty()){
+                logger.info(LogsUtils.logNotFoundObject(OfficeRecord.class, requestedVisit.officeId));
+                doesNotExists.addToMessage(ErrorMessageFormatter.doesNotExists(OfficeRecord.class, requestedVisit.officeId));
+            }
+            Optional<VetRecord> vetOpt = vetsRepository.findById(requestedVisit.vetId);
+            if (vetOpt.isEmpty()){
+                logger.info(LogsUtils.logNotFoundObject(VetRecord.class, requestedVisit.vetId));
+                doesNotExists.addToMessage(ErrorMessageFormatter.doesNotExists(VetRecord.class, requestedVisit.vetId));
+            }
+            if (!doesNotExists.isEmpty()){
+                return Response.errorResponse(doesNotExists.build(ErrorType.WRONG_ARGUMENTS));
+            }
 
             Optional<ResponseErrorMessage> availabilityProblems = checkProblemsWithTimeAvailability(
                     requestedVisit.startDate,
                     requestedVisit.duration,
-                    office,
-                    vet
+                    officeOpt.get(),
+                    vetOpt.get()
             );
             if (availabilityProblems.isPresent()) {
                 logger.info(LogsUtils.logTimeUnavailability());
@@ -100,17 +116,14 @@ public class VisitsService {
             VisitRecord visit = VisitRecord.createVisitRecord(
                     requestedVisit.startDate,
                     requestedVisit.duration,
-                    pet,
+                    petOpt.get(),
                     requestedVisit.price,
-                    office,
-                    vet
+                    officeOpt.get(),
+                    vetOpt.get()
             );
             var savedVisit = visitsRepository.save(visit);
             logger.info(LogsUtils.logSaved(savedVisit, savedVisit.getId()));
             return Response.succeedResponse(savedVisit);
-        } catch (NoSuchElementException e) {
-            logger.info(LogsUtils.logException(e));
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         } catch (IllegalArgumentException e) {
             logger.error(LogsUtils.logException(e));
             return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.INTERNAL_SERVICE_ERROR));
@@ -290,12 +303,15 @@ public class VisitsService {
             return Optional.of(new VisitRecord(thisVisit.getId(), startDate, duration, petRecord.get(), status, price, officeRecord.get(), vetRecord.get()));
         } else if (errorBuilder != null) {
             if (petRecord.isEmpty()) {
+                logger.info(LogsUtils.logNotFoundObject(PetRecord.class, data.petId));
                 errorBuilder.addToMessage(ErrorMessageFormatter.doesNotExists(PetRecord.class, data.petId));
             }
             if (officeRecord.isEmpty()) {
+                logger.info(LogsUtils.logNotFoundObject(OfficeRecord.class, data.officeId));
                 errorBuilder.addToMessage(ErrorMessageFormatter.doesNotExists(OfficeRecord.class, data.officeId));
             }
             if (vetRecord.isEmpty()) {
+                logger.info(LogsUtils.logNotFoundObject(VetRecord.class, data.vetId));
                 errorBuilder.addToMessage(ErrorMessageFormatter.doesNotExists(VetRecord.class, data.vetId));
             }
         }

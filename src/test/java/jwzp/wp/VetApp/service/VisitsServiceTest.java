@@ -148,7 +148,12 @@ public class VisitsServiceTest {
                 office.id,
                 vet.id
         );
-        var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+        Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
+        Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.empty());
+        Mockito.when(officesRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(office));
+        var error = new ErrorMessagesBuilder();
+        error.addToMessage(ErrorMessageFormatter.doesNotExists(PetRecord.class, pet.id));
+        var expected = Response.errorResponse(error.build(ErrorType.WRONG_ARGUMENTS));
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
         var result = uut.addVisit(requested);
