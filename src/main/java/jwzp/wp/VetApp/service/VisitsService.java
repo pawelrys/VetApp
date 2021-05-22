@@ -301,20 +301,4 @@ public class VisitsService {
         }
         return Optional.empty();
     }
-
-//    public ResponseErrorMessage getMissingReferencesError(VisitData data) {
-//        var errorBuilder = new ErrorMessagesBuilder();
-//        if (data.petId != null) {
-//            Optional<PetRecord> petRecord = petsRepository.findById(data.petId);
-//            if (petRecord.isPresent()){
-//
-//            }
-//        }
-//        Optional<OfficeRecord> officeRecord = (data.officeId != null) ? officesRepository.findById(data.officeId) : Optional.of(thisVisit.office);
-//        Optional<VetRecord> vetRecord = (data.vetId != null) ? vetsRepository.findById(data.vetId) : Optional.of(thisVisit.vet);
-//        if(petRecord.isPresent() && officeRecord.isPresent() && vetRecord.isPresent()) {
-//
-//        }
-//    }
-
 }
