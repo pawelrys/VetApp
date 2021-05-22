@@ -83,18 +83,18 @@ public class VisitsService {
         // we are checking it in Checker::getMissingData above
         try {
             var doesNotExists = new ErrorMessagesBuilder();
-            Optional<PetRecord> petOpt = petsRepository.findById(requestedVisit.petId);
-            if (petOpt.isEmpty()){
+            Optional<PetRecord> pet = petsRepository.findById(requestedVisit.petId);
+            if (pet.isEmpty()){
                 logger.info(LogsUtils.logNotFoundObject(PetRecord.class, requestedVisit.petId));
                 doesNotExists.addToMessage(ErrorMessageFormatter.doesNotExists(PetRecord.class, requestedVisit.petId));
             }
-            Optional<OfficeRecord> officeOpt = officesRepository.findById(requestedVisit.officeId);
-            if (officeOpt.isEmpty()){
+            Optional<OfficeRecord> office = officesRepository.findById(requestedVisit.officeId);
+            if (office.isEmpty()){
                 logger.info(LogsUtils.logNotFoundObject(OfficeRecord.class, requestedVisit.officeId));
                 doesNotExists.addToMessage(ErrorMessageFormatter.doesNotExists(OfficeRecord.class, requestedVisit.officeId));
             }
-            Optional<VetRecord> vetOpt = vetsRepository.findById(requestedVisit.vetId);
-            if (vetOpt.isEmpty()){
+            Optional<VetRecord> vet = vetsRepository.findById(requestedVisit.vetId);
+            if (vet.isEmpty()){
                 logger.info(LogsUtils.logNotFoundObject(VetRecord.class, requestedVisit.vetId));
                 doesNotExists.addToMessage(ErrorMessageFormatter.doesNotExists(VetRecord.class, requestedVisit.vetId));
             }
@@ -105,8 +105,8 @@ public class VisitsService {
             Optional<ResponseErrorMessage> availabilityProblems = checkProblemsWithTimeAvailability(
                     requestedVisit.startDate,
                     requestedVisit.duration,
-                    officeOpt.get(),
-                    vetOpt.get()
+                    office.get(),
+                    vet.get()
             );
             if (availabilityProblems.isPresent()) {
                 logger.info(LogsUtils.logTimeUnavailability());
@@ -116,10 +116,10 @@ public class VisitsService {
             VisitRecord visit = VisitRecord.createVisitRecord(
                     requestedVisit.startDate,
                     requestedVisit.duration,
-                    petOpt.get(),
+                    pet.get(),
                     requestedVisit.price,
-                    officeOpt.get(),
-                    vetOpt.get()
+                    office.get(),
+                    vet.get()
             );
             var savedVisit = visitsRepository.save(visit);
             logger.info(LogsUtils.logSaved(savedVisit, savedVisit.getId()));
