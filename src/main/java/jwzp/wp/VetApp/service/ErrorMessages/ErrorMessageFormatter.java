@@ -11,6 +11,6 @@ public class ErrorMessageFormatter {
     }
 
     static public String doesNotExists(Class type, int id) {
-        return "Object of class " + type.getName() + " with id of " + id + " does not exists";
+        return "Object of class " + type.getSimpleName() + " with id " + id + " does not exists";
     }
 }
