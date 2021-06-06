@@ -1,12 +1,12 @@
 package jwzp.wp.VetApp.models.dtos;
 
-public class User {
+public class UserData {
     private String username;
     private String password;
 
-    public User() {}
+    public UserData() {}
 
-    public User(String username, String password) {
+    public UserData(String username, String password) {
         this.setUsername(username);
         this.setPassword(password);
     }

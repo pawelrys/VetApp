@@ -4,7 +4,7 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import jwzp.wp.VetApp.models.dtos.User;
+import jwzp.wp.VetApp.models.dtos.UserData;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -15,7 +15,7 @@ public class JWTGenerator {
     private final static String secret = "PcIC0WidEfV4vIK4MmoQP9I8R0q4p3TJ";
 
     //Generowanie JWT na podstawie otrzymanych danych
-    public static Optional<?> generateJWT(User user) throws JOSEException {
+    public static Optional<?> generateJWT(UserData user) throws JOSEException {
         JWSSigner signer = new MACSigner(secret.getBytes(StandardCharsets.UTF_8));
         //Sprawdzenie, czy dane logowania sie zgadzają
         //todo

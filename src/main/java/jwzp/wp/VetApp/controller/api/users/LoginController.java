@@ -1,7 +1,7 @@
 package jwzp.wp.VetApp.controller.api.users;
 
 import com.nimbusds.jose.JOSEException;
-import jwzp.wp.VetApp.models.dtos.User;
+import jwzp.wp.VetApp.models.dtos.UserData;
 import jwzp.wp.VetApp.service.Security.*;
 import org.springframework.http.ResponseEntity;
 
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) throws JOSEException {
+    public ResponseEntity<?> login(@RequestBody UserData user) throws JOSEException {
         var result = JWTGenerator.generateJWT(user);
         return result.isPresent()
                 ? ResponseEntity.ok(result.get())
