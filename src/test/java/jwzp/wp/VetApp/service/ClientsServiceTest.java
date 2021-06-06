@@ -3,13 +3,11 @@ package jwzp.wp.VetApp.service;
 import jwzp.wp.VetApp.models.dtos.ClientData;
 import jwzp.wp.VetApp.models.records.ClientRecord;
 import jwzp.wp.VetApp.resources.ClientsRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessageFormatter;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
-import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvFileSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -38,9 +36,9 @@ public class ClientsServiceTest {
     public void testAddClientMissingData() {
         ClientData requested = new ClientData(null, null);
         var errorBuilder = new ErrorMessagesBuilder();
-        errorBuilder.addToMessage("name");
-        errorBuilder.addToMessage("surname");
-        var error = errorBuilder.build("Missing fields: ");
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("name"));
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("surname"));
+        var error = errorBuilder.build(ErrorType.WRONG_ARGUMENTS);
         var expected = Response.errorResponse(error);
         var uut = new ClientsService(clientsRepository);
 

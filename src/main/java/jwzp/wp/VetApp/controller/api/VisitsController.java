@@ -81,13 +81,15 @@ public class VisitsController {
 
     @GetMapping(path = "available-time-slots")
     public ResponseEntity<?> getAvailableTimeSlots(
-            @RequestParam("begin")
+            // required option is set to false because we want to handle validation in service with customized error responses
+            @RequestParam(value = "begin", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                     LocalDateTime begin,
-            @RequestParam("end")
+            @RequestParam(value = "end", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                     LocalDateTime end,
-            @RequestParam("vetIds") List<Integer> vetsIds
+            @RequestParam(value = "vetIds", required = false, defaultValue = "")
+                    List<Integer> vetsIds
     ) {
         Response<List<VetsTimeInterval>> slots = visitsService.availableTimeSlots(begin, end, vetsIds);
 

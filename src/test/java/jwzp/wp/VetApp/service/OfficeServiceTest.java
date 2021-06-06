@@ -3,12 +3,11 @@ package jwzp.wp.VetApp.service;
 import jwzp.wp.VetApp.models.dtos.OfficeData;
 import jwzp.wp.VetApp.models.records.OfficeRecord;
 import jwzp.wp.VetApp.resources.OfficesRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessageFormatter;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvFileSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -37,8 +36,8 @@ public class OfficeServiceTest {
     public void testAddOfficeMissingData() throws Exception {
         OfficeData requested = new OfficeData(null);
         var errorBuilder = new ErrorMessagesBuilder();
-        errorBuilder.addToMessage("name");
-        var error = errorBuilder.build("Missing fields: ");
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("name"));
+        var error = errorBuilder.build(ErrorType.WRONG_ARGUMENTS);
         var expected = Response.errorResponse(error);
         var uut = new OfficesService(officesRepository);
 

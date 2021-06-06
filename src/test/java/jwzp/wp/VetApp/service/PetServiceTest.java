@@ -6,6 +6,7 @@ import jwzp.wp.VetApp.models.records.PetRecord;
 import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.resources.ClientsRepository;
 import jwzp.wp.VetApp.resources.PetsRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessageFormatter;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
@@ -47,11 +48,11 @@ public class PetServiceTest {
     public void testAddPetMissingData() throws Exception {
         PetData requested = new PetData(null, null, null, null);
         var errorBuilder = new ErrorMessagesBuilder();
-        errorBuilder.addToMessage("name");
-        errorBuilder.addToMessage("birthday");
-        errorBuilder.addToMessage("animal");
-        errorBuilder.addToMessage("ownerId");
-        var error = errorBuilder.build("Missing fields: ");
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("name"));
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("birthday"));
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("animal"));
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("ownerId"));
+        var error = errorBuilder.build(ErrorType.WRONG_ARGUMENTS);
         var expected = Response.errorResponse(error);
         var uut = new PetsService(petsRepository, clientsRepository);
 

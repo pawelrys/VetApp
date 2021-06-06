@@ -12,6 +12,7 @@ import jwzp.wp.VetApp.resources.OfficesRepository;
 import jwzp.wp.VetApp.resources.PetsRepository;
 import jwzp.wp.VetApp.resources.VetsRepository;
 import jwzp.wp.VetApp.resources.VisitsRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessageFormatter;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
@@ -29,6 +30,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class VisitsService {
@@ -77,61 +79,85 @@ public class VisitsService {
         if (missingDataError.isPresent()){
             return Response.errorResponse(missingDataError.get());
         }
-        Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(
-                requestedVisit.startDate,
-                requestedVisit.duration,
-                requestedVisit.officeId,
-                requestedVisit.vetId
-        );
-        if (result.isPresent()) {
-            logger.info(LogsUtils.logTimeUnavailability());
-            return Response.errorResponse(result.get());
-        }
+        // requestedVisit fields can't be null
+        // we are checking it in Checker::getMissingData above
         try {
-            PetRecord pet = petsRepository.findById(requestedVisit.petId).orElseThrow();
-            OfficeRecord office = officesRepository.findById(requestedVisit.officeId).orElseThrow();
-            VetRecord vet = vetsRepository.findById(requestedVisit.vetId).orElseThrow();
+            var doesNotExists = new ErrorMessagesBuilder();
+            Optional<PetRecord> pet = petsRepository.findById(requestedVisit.petId);
+            if (pet.isEmpty()){
+                logger.info(LogsUtils.logNotFoundObject(PetRecord.class, requestedVisit.petId));
+                doesNotExists.addToMessage(ErrorMessageFormatter.doesNotExists(PetRecord.class, requestedVisit.petId));
+            }
+            Optional<OfficeRecord> office = officesRepository.findById(requestedVisit.officeId);
+            if (office.isEmpty()){
+                logger.info(LogsUtils.logNotFoundObject(OfficeRecord.class, requestedVisit.officeId));
+                doesNotExists.addToMessage(ErrorMessageFormatter.doesNotExists(OfficeRecord.class, requestedVisit.officeId));
+            }
+            Optional<VetRecord> vet = vetsRepository.findById(requestedVisit.vetId);
+            if (vet.isEmpty()){
+                logger.info(LogsUtils.logNotFoundObject(VetRecord.class, requestedVisit.vetId));
+                doesNotExists.addToMessage(ErrorMessageFormatter.doesNotExists(VetRecord.class, requestedVisit.vetId));
+            }
+            if (!doesNotExists.isEmpty()){
+                return Response.errorResponse(doesNotExists.build(ErrorType.WRONG_ARGUMENTS));
+            }
+
+            Optional<ResponseErrorMessage> availabilityProblems = checkProblemsWithTimeAvailability(
+                    requestedVisit.startDate,
+                    requestedVisit.duration,
+                    office.get(),
+                    vet.get()
+            );
+            if (availabilityProblems.isPresent()) {
+                logger.info(LogsUtils.logTimeUnavailability());
+                return Response.errorResponse(availabilityProblems.get());
+            }
+
             VisitRecord visit = VisitRecord.createVisitRecord(
                     requestedVisit.startDate,
                     requestedVisit.duration,
-                    pet,
+                    pet.get(),
                     requestedVisit.price,
-                    office,
-                    vet
+                    office.get(),
+                    vet.get()
             );
             var savedVisit = visitsRepository.save(visit);
             logger.info(LogsUtils.logSaved(savedVisit, savedVisit.getId()));
             return Response.succeedResponse(savedVisit);
-        } catch (IllegalArgumentException | NoSuchElementException e) {
-            logger.info(LogsUtils.logException(e));
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+        } catch (IllegalArgumentException e) {
+            logger.error(LogsUtils.logException(e));
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.INTERNAL_SERVICE_ERROR));
         }
     }
 
     public Response<VisitRecord> updateVisit(int id, VisitData newData) {
         Optional<VisitRecord> toUpdate = visitsRepository.findById(id);
-
-        if (toUpdate.isPresent()) {
-            var newRecordOpt = createUpdatedVisit(toUpdate.get(), newData);
-            if(newRecordOpt.isPresent()) {
-                var newRecord = newRecordOpt.get();
-                Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(newRecord.startDate, newRecord.duration, newRecord.office.id, newRecord.vet.id, id);
-                if (result.isPresent()) {
-                    logger.info(LogsUtils.logTimeUnavailability());
-                    return Response.errorResponse(result.get());
-                }
-                var updatedVisit = visitsRepository.save(newRecord);
-                logger.info(LogsUtils.logUpdated(updatedVisit, updatedVisit.getId()));
-                return Response.succeedResponse(updatedVisit);
-            }
-            //to check
+        if (toUpdate.isEmpty()) {
             logger.info(LogsUtils.logNotFoundObject(VisitRecord.class, id));
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+            return Response.errorResponse(
+                    ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND)
+            );
         }
-        logger.info(LogsUtils.logNotFoundObject(VisitRecord.class, id));
-        return Response.errorResponse(
-                ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND)
+        var error = new ErrorMessagesBuilder();
+        var newRecordOpt = createUpdatedVisit(toUpdate.get(), newData, error);
+        if(newRecordOpt.isEmpty()) {
+            return Response.errorResponse(error.build(ErrorType.WRONG_ARGUMENTS));
+        }
+        var newRecord = newRecordOpt.get();
+        Optional<ResponseErrorMessage> result = checkProblemsWithTimeAvailability(
+                newRecord.startDate,
+                newRecord.duration,
+                newRecord.office,
+                newRecord.vet,
+                id
         );
+        if (result.isPresent()) {
+            logger.info(LogsUtils.logTimeUnavailability());
+            return Response.errorResponse(result.get());
+        }
+        var updatedVisit = visitsRepository.save(newRecord);
+        logger.info(LogsUtils.logUpdated(updatedVisit, updatedVisit.getId()));
+        return Response.succeedResponse(updatedVisit);
     }
 
     public Response<VisitRecord> delete(int id) {
@@ -147,20 +173,22 @@ public class VisitsService {
         );
     }
 
+    // split it and make descriptions
     private Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(
             LocalDateTime start,
             Duration duration,
-            Integer officeId,
-            Integer vetId,
+            OfficeRecord office,
+            VetRecord vet,
             int id
     ) {
-        VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
-        if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
+        if(vet.officeHoursStart.isAfter(start.toLocalTime())
+                || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
             return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET));
         }
-        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN))
+            return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
         var end = start.plusMinutes(duration.toMinutes());
-        var overlappedVisits = visitsRepository.getRegisteredVisitsInTime(start, end, officeId, vetId);
+        var overlappedVisits = visitsRepository.getRegisteredVisitsInTime(start, end, office.id, vet.id);
         if(overlappedVisits.size() == 0 || (overlappedVisits.size() == 1 && id == overlappedVisits.get(0).getId())) {
             return Optional.empty();
         }
@@ -168,28 +196,29 @@ public class VisitsService {
         if(record.getId() == id) {
             record = overlappedVisits.get(1);
         }
-        return record.vet.id == vetId
+        return record.vet.id == vet.id
                 ? Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET))
                 : Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_OFFICE));
     }
 
-    private Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability(
+    private Optional<ResponseErrorMessage> checkProblemsWithTimeAvailability (
             LocalDateTime start,
             Duration duration,
-            Integer officeId,
-            Integer vetId
+            OfficeRecord office,
+            VetRecord vet
     ) {
-        VetRecord vet = vetsRepository.findById(vetId).orElseThrow();
-        if(vet.officeHoursStart.isAfter(start.toLocalTime()) || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
+        if(vet.officeHoursStart.isAfter(start.toLocalTime())
+                || vet.officeHoursEnd.isBefore(start.toLocalTime().plus(duration))) {
             return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET));
         }
-        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN)) return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
+        if(!isTimeToVisitGreaterThan(start, TIME_TO_VISIT_GREATER_THAN))
+            return Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
         var end = start.plusMinutes(duration.toMinutes());
-        var overlappedVisits = visitsRepository.getRegisteredVisitsInTime(start, end, officeId, vetId);
+        var overlappedVisits = visitsRepository.getRegisteredVisitsInTime(start, end, office.id, vet.id);
         if(overlappedVisits.size() == 0) {
             return Optional.empty();
         }
-        return overlappedVisits.get(0).vet.id == vetId
+        return overlappedVisits.get(0).vet.id == vet.id
                 ? Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_VET))
                 : Optional.of(ErrorMessagesBuilder.simpleError(ErrorType.BUSY_OFFICE));
     }
@@ -207,7 +236,15 @@ public class VisitsService {
     }
 
     private void changeStatusTo(VisitRecord visit, Status status) {
-        VisitData data = new VisitData(visit.startDate, visit.duration, visit.pet.id, status, visit.price, visit.office.id, visit.vet.id);
+        VisitData data = new VisitData(
+                visit.startDate,
+                visit.duration,
+                visit.pet.id,
+                status,
+                visit.price,
+                visit.office.id,
+                visit.vet.id
+        );
         var newRecord = createUpdatedVisit(visit, data);
         newRecord.ifPresent(visitsRepository::save);
     }
@@ -218,16 +255,24 @@ public class VisitsService {
             List<Integer> vetIds
     ) {
         if (begin == null || end == null) {
-            logger.info(LogsUtils.logMissingData(LocalDateTime.now()));
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+            logger.info("begin or end parameter is not provided");
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(
+                    ErrorType.WRONG_ARGUMENTS,
+                    "begin or end parameter is not provided"
+            ));
         }
         if (begin.isAfter(end)) {
             logger.info("Begin of time interval is later than end");
-            return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+            return Response.errorResponse(ErrorMessagesBuilder.simpleError(
+                    ErrorType.WRONG_ARGUMENTS,
+                    "Begin of time interval is later than end"
+            ));
         }
-        List<VetsTimeInterval> availableSlots = visitsRepository.getAvailableTimeSlots(begin, end);
-        Map<Pair<LocalDateTime, LocalDateTime>, List<VetsTimeInterval>> slotsMapped = availableSlots.stream()
-                .filter(t -> vetIds.containsAll(t.vetIds))
+        Stream<VetsTimeInterval> availableSlots = visitsRepository.getAvailableTimeSlots(begin, end).stream();
+        if (!vetIds.isEmpty()) {
+            availableSlots = availableSlots.filter(t -> vetIds.containsAll(t.vetIds));
+        }
+        Map<Pair<LocalDateTime, LocalDateTime>, List<VetsTimeInterval>> slotsMapped = availableSlots
                 .collect(Collectors.groupingBy((VetsTimeInterval t) -> Pair.of(t.begin, t.end)));
 
         List<VetsTimeInterval> timeSlots = slotsMapped.entrySet().stream()
@@ -241,7 +286,12 @@ public class VisitsService {
 
         return Response.succeedResponse(timeSlots);
     }
+
     public Optional<VisitRecord> createUpdatedVisit(VisitRecord thisVisit, VisitData data) {
+        return createUpdatedVisit(thisVisit, data, null);
+    }
+
+    public Optional<VisitRecord> createUpdatedVisit(VisitRecord thisVisit, VisitData data, ErrorMessagesBuilder errorBuilder) {
         LocalDateTime startDate = (data.startDate != null) ? data.startDate : thisVisit.startDate;
         Duration duration = (data.duration != null) ? data.duration : thisVisit.duration;
         Optional<PetRecord> petRecord = (data.petId != null) ? petsRepository.findById(data.petId) : Optional.of(thisVisit.pet);
@@ -251,9 +301,20 @@ public class VisitsService {
         Optional<VetRecord> vetRecord = (data.vetId != null) ? vetsRepository.findById(data.vetId) : Optional.of(thisVisit.vet);
         if(petRecord.isPresent() && officeRecord.isPresent() && vetRecord.isPresent()) {
             return Optional.of(new VisitRecord(thisVisit.getId(), startDate, duration, petRecord.get(), status, price, officeRecord.get(), vetRecord.get()));
-        } else {
-            return Optional.empty();
+        } else if (errorBuilder != null) {
+            if (petRecord.isEmpty()) {
+                logger.info(LogsUtils.logNotFoundObject(PetRecord.class, data.petId));
+                errorBuilder.addToMessage(ErrorMessageFormatter.doesNotExists(PetRecord.class, data.petId));
+            }
+            if (officeRecord.isEmpty()) {
+                logger.info(LogsUtils.logNotFoundObject(OfficeRecord.class, data.officeId));
+                errorBuilder.addToMessage(ErrorMessageFormatter.doesNotExists(OfficeRecord.class, data.officeId));
+            }
+            if (vetRecord.isEmpty()) {
+                logger.info(LogsUtils.logNotFoundObject(VetRecord.class, data.vetId));
+                errorBuilder.addToMessage(ErrorMessageFormatter.doesNotExists(VetRecord.class, data.vetId));
+            }
         }
+        return Optional.empty();
     }
-
 }

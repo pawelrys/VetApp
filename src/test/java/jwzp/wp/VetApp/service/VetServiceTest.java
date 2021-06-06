@@ -3,16 +3,14 @@ package jwzp.wp.VetApp.service;
 import jwzp.wp.VetApp.models.dtos.VetData;
 import jwzp.wp.VetApp.models.records.VetRecord;
 import jwzp.wp.VetApp.resources.VetsRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessageFormatter;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvFileSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
 
 
@@ -40,12 +38,12 @@ public class VetServiceTest {
         VetData requested = new VetData(null, null, null, null, null);
 
         var errorBuilder = new ErrorMessagesBuilder();
-        errorBuilder.addToMessage("name");
-        errorBuilder.addToMessage("surname");
-        errorBuilder.addToMessage("photo");
-        errorBuilder.addToMessage("officeHoursStart");
-        errorBuilder.addToMessage("officeHoursEnd");
-        var error = errorBuilder.build("Missing fields: ");
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("name"));
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("surname"));
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("photo"));
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("officeHoursStart"));
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("officeHoursEnd"));
+        var error = errorBuilder.build(ErrorType.WRONG_ARGUMENTS);
         var expected = Response.errorResponse(error);
         var uut = new VetsService(vetsRepository);
 

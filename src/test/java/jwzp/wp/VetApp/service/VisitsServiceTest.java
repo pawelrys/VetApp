@@ -6,13 +6,12 @@ import jwzp.wp.VetApp.models.utils.VetsTimeInterval;
 import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.models.values.Status;
 import jwzp.wp.VetApp.resources.*;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessageFormatter;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvFileSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -101,8 +100,8 @@ public class VisitsServiceTest {
                 vet.id
         );
         var errorBuilder = new ErrorMessagesBuilder();
-        errorBuilder.addToMessage("price");
-        var error = errorBuilder.build("Missing fields: ");
+        errorBuilder.addToMessage(ErrorMessageFormatter.missingField("price"));
+        var error = errorBuilder.build(ErrorType.WRONG_ARGUMENTS);
         var expected = Response.errorResponse(error);
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
@@ -127,6 +126,8 @@ public class VisitsServiceTest {
                 vet.id
         );
         Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
+        Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(pet));
+        Mockito.when(officesRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(office));
         var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_TIME_UNAVAILABLE));
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
@@ -134,9 +135,6 @@ public class VisitsServiceTest {
 
         assertThat(result).isEqualTo(expected);
         Mockito.verify(visitsRepository, Mockito.times(0)).save(Mockito.any(VisitRecord.class));
-        Mockito.verify(petsRepository, Mockito.times(0)).findById(Mockito.any(Integer.class));
-        Mockito.verify(officesRepository, Mockito.times(0)).findById(Mockito.any(Integer.class));
-        Mockito.verify(vetsRepository, Mockito.times(1)).findById(vet.id);
     }
 
     @Test
@@ -152,16 +150,16 @@ public class VisitsServiceTest {
         );
         Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
         Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.empty());
-        var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
+        Mockito.when(officesRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(office));
+        var error = new ErrorMessagesBuilder();
+        error.addToMessage(ErrorMessageFormatter.doesNotExists(PetRecord.class, pet.id));
+        var expected = Response.errorResponse(error.build(ErrorType.WRONG_ARGUMENTS));
         var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
 
         var result = uut.addVisit(requested);
 
         assertThat(result).isEqualTo(expected);
         Mockito.verify(visitsRepository, Mockito.times(0)).save(Mockito.any(VisitRecord.class));
-        Mockito.verify(petsRepository, Mockito.times(1)).findById(pet.id);
-        Mockito.verify(officesRepository, Mockito.times(0)).findById(Mockito.any(Integer.class));
-        Mockito.verify(vetsRepository, Mockito.times(1)).findById(vet.id);
     }
 
     @Test
@@ -175,7 +173,17 @@ public class VisitsServiceTest {
                 office.id,
                 vet.id
         );
-        int requestedId = 5;
+        var visitBeforeUpdate = new VisitRecord(
+                5,
+                LocalDateTime.parse("2021-05-10T08:30:00"),
+                Duration.of(1, ChronoUnit.HOURS),
+                pet,
+                Status.PENDING,
+                BigDecimal.valueOf(300),
+                office,
+                vet
+        );
+        int requestedId = visitBeforeUpdate.getId();
         var visitAfterUpdate = new VisitRecord(
                 requestedId,
                 LocalDateTime.parse("2021-05-10T08:30:00"),
@@ -187,7 +195,7 @@ public class VisitsServiceTest {
                 vet
         );
         Mockito.when(visitsRepository.save(Mockito.any(VisitRecord.class))).thenReturn(visitAfterUpdate);
-        Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(visitAfterUpdate));
+        Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(visitBeforeUpdate));
         Mockito.when(visitsRepository.getRegisteredVisitsInTime(
                 Mockito.any(LocalDateTime.class),
                 Mockito.any(LocalDateTime.class),
@@ -204,14 +212,43 @@ public class VisitsServiceTest {
 
         assertThat(result).isEqualTo(expected);
         Mockito.verify(visitsRepository, Mockito.times(1)).save(visitAfterUpdate);
-        Mockito.verify(visitsRepository, Mockito.times(1)).findById(requestedId);
-        Mockito.verify(visitsRepository, Mockito.times(1)).getRegisteredVisitsInTime(
-                visitAfterUpdate.startDate,
-                visitAfterUpdate.startDate.plus(visitAfterUpdate.duration),
-                visitAfterUpdate.office.id,
-                visitAfterUpdate.vet.id
+    }
+
+    @Test
+    public void testUpdateVisitNoSuchPet() {
+        var requestedData = new VisitData(
+                null,
+                Duration.of(5, ChronoUnit.MINUTES),
+                pet.id,
+                Status.PENDING,
+                BigDecimal.valueOf(120),
+                office.id,
+                vet.id
         );
-        Mockito.verify(vetsRepository, Mockito.times(2)).findById(vet.id);
+        var visitBeforeUpdate = new VisitRecord(
+                5,
+                LocalDateTime.parse("2021-05-10T08:30:00"),
+                Duration.of(1, ChronoUnit.HOURS),
+                pet,
+                Status.PENDING,
+                BigDecimal.valueOf(300),
+                office,
+                vet
+        );
+        int requestedId = visitBeforeUpdate.getId();
+        Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(visitBeforeUpdate));
+        Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
+        Mockito.when(officesRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(office));
+        Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.empty());
+        var error = new ErrorMessagesBuilder();
+        error.addToMessage(ErrorMessageFormatter.doesNotExists(PetRecord.class, pet.id));
+        var expected = Response.errorResponse(error.build(ErrorType.WRONG_ARGUMENTS));
+        var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
+
+        var result = uut.updateVisit(requestedId, requestedData);
+
+        assertThat(result).isEqualTo(expected);
+        Mockito.verify(visitsRepository, Mockito.times(0)).save(Mockito.any());
     }
 
     @Test
@@ -263,14 +300,6 @@ public class VisitsServiceTest {
 
         assertThat(result).isEqualTo(expected);
         Mockito.verify(visitsRepository, Mockito.times(0)).save(Mockito.any(VisitRecord.class));
-        Mockito.verify(visitsRepository, Mockito.times(1)).findById(requestedId);
-        Mockito.verify(visitsRepository, Mockito.times(1)).getRegisteredVisitsInTime(
-                requestedData.startDate,
-                requestedData.startDate.plus(requestedData.duration),
-                requestedData.officeId,
-                requestedData.vetId
-        );
-        Mockito.verify(vetsRepository, Mockito.times(2)).findById(vet.id);
     }
 
     @Test
@@ -293,7 +322,6 @@ public class VisitsServiceTest {
         var result = uut.delete(requested);
 
         assertThat(result).isEqualTo(expected);
-        Mockito.verify(visitsRepository, Mockito.times(1)).findById(requested);
         Mockito.verify(visitsRepository, Mockito.times(1)).deleteById(requested);
     }
 
@@ -317,7 +345,6 @@ public class VisitsServiceTest {
         var result = uut.delete(requested);
 
         assertThat(result).isEqualTo(expected);
-        Mockito.verify(visitsRepository, Mockito.times(1)).findById(requested);
         Mockito.verify(visitsRepository, Mockito.times(0)).deleteById(requested);
     }
 
@@ -377,6 +404,42 @@ public class VisitsServiceTest {
 
         assertThat(result).isEqualTo(expected);
         Mockito.verify(visitsRepository, Mockito.times(1))
+                .getAvailableTimeSlots(requestedBeg, requestedEnd);
+    }
+
+    @Test
+    public void testAvailableTimeSlotsMissingParameter() {
+        LocalDateTime requestedBeg = LocalDateTime.parse("2022-04-26T09:00:00");
+        LocalDateTime requestedEnd = null;
+        List<Integer> requestedVetIds = List.of(1, 3);
+        var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(
+                ErrorType.WRONG_ARGUMENTS,
+                "begin or end parameter is not provided"
+        ));
+        var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
+
+        var result = uut.availableTimeSlots(requestedBeg, requestedEnd, requestedVetIds);
+
+        assertThat(result).isEqualTo(expected);
+        Mockito.verify(visitsRepository, Mockito.times(0))
+                .getAvailableTimeSlots(requestedBeg, requestedEnd);
+    }
+
+    @Test
+    public void testAvailableTimeSlotsWrongInterval() {
+        LocalDateTime requestedBeg = LocalDateTime.parse("2022-04-26T09:00:00");
+        LocalDateTime requestedEnd = LocalDateTime.parse("2022-04-26T08:30:00");
+        List<Integer> requestedVetIds = List.of(1, 3);
+        var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(
+                ErrorType.WRONG_ARGUMENTS,
+                "Begin of time interval is later than end"
+        ));
+        var uut = new VisitsService(visitsRepository, petsRepository, officesRepository, vetsRepository, clock);
+
+        var result = uut.availableTimeSlots(requestedBeg, requestedEnd, requestedVetIds);
+
+        assertThat(result).isEqualTo(expected);
+        Mockito.verify(visitsRepository, Mockito.times(0))
                 .getAvailableTimeSlots(requestedBeg, requestedEnd);
     }
 

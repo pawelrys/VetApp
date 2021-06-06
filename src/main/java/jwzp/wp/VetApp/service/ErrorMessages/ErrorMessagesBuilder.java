@@ -16,13 +16,13 @@ public class ErrorMessagesBuilder {
     }
 
     public ResponseErrorMessage build() {
-        return build("");
+        return build(ErrorType.SOMETHING_WENT_WRONG);
     }
 
-    public ResponseErrorMessage build(String prefix) {
+    public ResponseErrorMessage build(ErrorType error) {
         return new ResponseErrorMessage(
-                ErrorType.SOMETHING_WENT_WRONG,
-                prefix + String.join(", ", subMessages)
+                error,
+                String.join("\n", subMessages)
         );
     }
 

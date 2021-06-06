@@ -7,6 +7,7 @@ import jwzp.wp.VetApp.models.records.PetRecord;
 import jwzp.wp.VetApp.models.values.Animal;
 import jwzp.wp.VetApp.resources.ClientsRepository;
 import jwzp.wp.VetApp.resources.PetsRepository;
+import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessageFormatter;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -47,18 +47,25 @@ public class PetsService {
         if (missingDataError.isPresent()){
             return Response.errorResponse(missingDataError.get());
         }
+        // requestedPet fields can't be null, we checked it in Checker::getMissingData above
         try {
-            ClientRecord owner = ownersRepository.findById(requestedPet.ownerId).orElseThrow();
+            Optional<ClientRecord> owner = ownersRepository.findById(requestedPet.ownerId);
+            if (owner.isEmpty()){
+                return Response.errorResponse(ErrorMessagesBuilder.simpleError(
+                        ErrorType.WRONG_ARGUMENTS,
+                        ErrorMessageFormatter.doesNotExists(ClientRecord.class, requestedPet.ownerId)
+                ));
+            }
             PetRecord pet = PetRecord.createPetRecord(
                     requestedPet.name,
                     requestedPet.birthday,
                     requestedPet.animal,
-                    owner
+                    owner.get()
             );
             var savedPet = petsRepository.save(pet);
             logger.info(LogsUtils.logSaved(savedPet, savedPet.id));
             return Response.succeedResponse(savedPet);
-        } catch (IllegalArgumentException | NoSuchElementException e) {
+        } catch (IllegalArgumentException e) {
             logger.info(LogsUtils.logException(e));
             return Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS));
         }
