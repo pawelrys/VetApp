@@ -26,6 +26,10 @@ public class UserRecord {
         this.salt = "";
     }
 
+    public static UserRecord createUserRecord(String username, String hashedPassword, String salt){
+        return new UserRecord(username, hashedPassword, salt);
+    }
+
     public String getUsername() {
         return username;
     }
