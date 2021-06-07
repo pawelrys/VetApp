@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "app.security.pepper",
+      "type": "java.lang.String",
+      "description": "Pepper used for hashing users passwords"
+  }
+]
+}

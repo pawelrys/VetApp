@@ -9,6 +9,7 @@ import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import jwzp.wp.VetApp.service.Response;
 import jwzp.wp.VetApp.service.Utils.Checker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -18,15 +19,21 @@ import java.util.Optional;
 public class UsersService {
 
     private final UsersRepository usersRepository;
+    private final String pepper;
 
     @Autowired
-    public UsersService(UsersRepository usersRepository) {
+    public UsersService(
+            UsersRepository usersRepository,
+            @Value("${app.security.paper}") String pepper
+            ) {
         this.usersRepository = usersRepository;
+        this.pepper = pepper;
+
     }
 
     private String hashPassword(String password, String salt) {
 
-        return BCrypt.hashpw(password, salt);
+        return BCrypt.hashpw(password, salt + pepper);
     }
 
     private boolean isPasswordValid(String username, String password) {
@@ -35,7 +42,7 @@ public class UsersService {
             return false;
         }
         var user = userOpt.get();
-        String hashedProvided = BCrypt.hashpw(password, user.getSalt());
+        String hashedProvided = BCrypt.hashpw(password, user.getSalt() + pepper);
         return hashedProvided.equals(user.getHashedPassword());
     }
 
