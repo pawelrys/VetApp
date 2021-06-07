@@ -8,8 +8,8 @@ import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
 import jwzp.wp.VetApp.service.ErrorMessages.ResponseErrorMessage;
 import jwzp.wp.VetApp.service.Response;
 import jwzp.wp.VetApp.service.Utils.Checker;
+import jwzp.wp.VetApp.PasswordsSecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +24,10 @@ public class UsersService {
     @Autowired
     public UsersService(
             UsersRepository usersRepository,
-            @Value("${app.security.paper}") String pepper
+            PasswordsSecurityProperties properties
             ) {
         this.usersRepository = usersRepository;
-        this.pepper = pepper;
+        this.pepper = properties.PEPPER;
 
     }
 
