@@ -2,6 +2,7 @@ package jwzp.wp.VetApp.service.Security;
 
 import jwzp.wp.VetApp.models.dtos.UserData;
 import jwzp.wp.VetApp.models.records.UserRecord;
+import jwzp.wp.VetApp.models.values.Role;
 import jwzp.wp.VetApp.resources.UsersRepository;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorMessagesBuilder;
 import jwzp.wp.VetApp.service.ErrorMessages.ErrorType;
@@ -46,7 +47,7 @@ public class UsersService {
         return hashedProvided.equals(user.getHashedPassword());
     }
 
-    private Response<UserRecord> addUser(UserData userDto) {
+    private Response<UserRecord> addUser(UserData userDto, Role role, int connectedRecordId) {
         Optional<ResponseErrorMessage> missingDataError = Checker.getMissingData(userDto);
         if (missingDataError.isPresent()){
             return Response.errorResponse(missingDataError.get());
@@ -64,7 +65,9 @@ public class UsersService {
         var user = UserRecord.createUserRecord(
                 userDto.getUsername(),
                 hashPassword(userDto.getPassword(), salt),
-                salt
+                salt,
+                role,
+                connectedRecordId
         );
         return Response.succeedResponse(user);
     }
