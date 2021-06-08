@@ -4,30 +4,44 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import jwzp.wp.VetApp.PasswordsSecurityProperties;
 import jwzp.wp.VetApp.models.dtos.UserData;
+import jwzp.wp.VetApp.resources.UsersRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Optional;
 
+@Service
 public class JWTGenerator {
 
     private final static String secret = "PcIC0WidEfV4vIK4MmoQP9I8R0q4p3TJ";
 
-    //Generowanie JWT na podstawie otrzymanych danych
-    public static Optional<?> generateJWT(UserData user) throws JOSEException {
-        JWSSigner signer = new MACSigner(secret.getBytes(StandardCharsets.UTF_8));
-        //Sprawdzenie, czy dane logowania sie zgadzają
-        //todo
-        //Jeżeli nie:
-        //return Optional.empty();
+    private final UsersService usersService;
+    private final String pepper;
 
-        //Zakładam, że odnalezione dane logowania należą do administratora
+    @Autowired
+    public JWTGenerator(
+            UsersService usersService,
+            PasswordsSecurityProperties properties
+    ) {
+        this.usersService = usersService;
+        this.pepper = properties.PEPPER;
+    }
+
+    //Generowanie JWT na podstawie otrzymanych danych
+    public Optional<?> generateJWT(UserData user) throws JOSEException {
+        JWSSigner signer = new MACSigner(secret.getBytes(StandardCharsets.UTF_8));
+
+        var userFromData = usersService.isPasswordValid(user.getUsername(), user.getPassword());
+        if(userFromData.isEmpty()) return Optional.empty();
+
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                //todo uaktualnić dane pobrane z bazy
-                .claim("login", user.getUsername())
-                .claim("password", user.getPassword())
-                .claim("role", "ROLE_ADMIN")
+                .claim("login", userFromData.get().getUsername())
+                .claim("role", userFromData.get().getRole())
+                .claim("id", userFromData.get().getId())
                 //Ważność tokenu to 5 minut VV
                 .expirationTime(new Date(new Date().getTime() + 300 * 1000))
                 .build();

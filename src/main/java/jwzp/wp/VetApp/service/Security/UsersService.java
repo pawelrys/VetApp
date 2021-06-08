@@ -29,25 +29,28 @@ public class UsersService {
             ) {
         this.usersRepository = usersRepository;
         this.pepper = properties.PEPPER;
-
+        if(usersRepository.count() == 0) {
+            addUser(new UserData("admin", "admin"), Role.ROLE_ADMIN, -1);
+        }
     }
 
     private String hashPassword(String password, String salt) {
-
         return BCrypt.hashpw(password, salt + pepper);
     }
 
-    private boolean isPasswordValid(String username, String password) {
+    public Optional<UserRecord> isPasswordValid(String username, String password) {
         Optional<UserRecord> userOpt = usersRepository.findByName(username);
         if (userOpt.isEmpty()){
-            return false;
+            return Optional.empty();
         }
         var user = userOpt.get();
         String hashedProvided = BCrypt.hashpw(password, user.getSalt() + pepper);
-        return hashedProvided.equals(user.getHashedPassword());
+        return hashedProvided.equals(user.getHashedPassword())
+                ? userOpt
+                : Optional.empty();
     }
 
-    private Response<UserRecord> addUser(UserData userDto, Role role, int connectedRecordId) {
+    public Response<UserRecord> addUser(UserData userDto, Role role, int connectedRecordId) {
         Optional<ResponseErrorMessage> missingDataError = Checker.getMissingData(userDto);
         if (missingDataError.isPresent()){
             return Response.errorResponse(missingDataError.get());
@@ -69,6 +72,9 @@ public class UsersService {
                 role,
                 connectedRecordId
         );
+
+        usersRepository.save(user);
+
         return Response.succeedResponse(user);
     }
 
