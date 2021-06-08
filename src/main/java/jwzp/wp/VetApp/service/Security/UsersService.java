@@ -1,6 +1,7 @@
 package jwzp.wp.VetApp.service.Security;
 
-import jwzp.wp.VetApp.models.dtos.UserData;
+import jwzp.wp.VetApp.models.dtos.UserLoginData;
+import jwzp.wp.VetApp.models.dtos.UserRegisterData;
 import jwzp.wp.VetApp.models.records.UserRecord;
 import jwzp.wp.VetApp.models.values.Role;
 import jwzp.wp.VetApp.resources.UsersRepository;
@@ -30,7 +31,7 @@ public class UsersService {
         this.usersRepository = usersRepository;
         this.pepper = properties.PEPPER;
         if(usersRepository.count() == 0) {
-            addUser(new UserData("admin", "admin"), Role.ROLE_ADMIN, -1);
+            addUser(new UserRegisterData("admin", "admin", Role.ROLE_ADMIN, -1));
         }
     }
 
@@ -50,7 +51,7 @@ public class UsersService {
                 : Optional.empty();
     }
 
-    public Response<UserRecord> addUser(UserData userDto, Role role, int connectedRecordId) {
+    public Response<UserRecord> addUser(UserRegisterData userDto) {
         Optional<ResponseErrorMessage> missingDataError = Checker.getMissingData(userDto);
         if (missingDataError.isPresent()){
             return Response.errorResponse(missingDataError.get());
@@ -69,8 +70,8 @@ public class UsersService {
                 userDto.getUsername(),
                 hashPassword(userDto.getPassword(), salt),
                 salt,
-                role,
-                connectedRecordId
+                userDto.getRole(),
+                userDto.getConnectedRecordId()
         );
 
         usersRepository.save(user);

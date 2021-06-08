@@ -5,8 +5,7 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import jwzp.wp.VetApp.PasswordsSecurityProperties;
-import jwzp.wp.VetApp.models.dtos.UserData;
-import jwzp.wp.VetApp.resources.UsersRepository;
+import jwzp.wp.VetApp.models.dtos.UserLoginData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,7 @@ public class JWTGenerator {
     }
 
     //Generowanie JWT na podstawie otrzymanych danych
-    public Optional<?> generateJWT(UserData user) throws JOSEException {
+    public Optional<?> generateJWT(UserLoginData user) throws JOSEException {
         JWSSigner signer = new MACSigner(secret.getBytes(StandardCharsets.UTF_8));
 
         var userFromData = usersService.isPasswordValid(user.getUsername(), user.getPassword());
