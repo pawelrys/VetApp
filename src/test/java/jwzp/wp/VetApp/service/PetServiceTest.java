@@ -38,7 +38,7 @@ public class PetServiceTest {
         Mockito.when(clientsRepository.findById(Mockito.any(int.class))).thenReturn(java.util.Optional.of(client));
         var uut = new PetsService(petsRepository, clientsRepository);
 
-        var result = uut.addPet(requested);
+        var result = uut.addPet(requested, 1);
 
         assert expected.equals(result);
         Mockito.verify(petsRepository, Mockito.times(1)).save(PetRecord.createPetRecord(requested.name, requested.birthday, requested.animal, client));
@@ -56,7 +56,7 @@ public class PetServiceTest {
         var expected = Response.errorResponse(error);
         var uut = new PetsService(petsRepository, clientsRepository);
 
-        var result = uut.addPet(requested);
+        var result = uut.addPet(requested, null);
 
         assert result.equals(expected);
         Mockito.verify(clientsRepository, Mockito.times(0)).save(Mockito.any());
@@ -71,7 +71,7 @@ public class PetServiceTest {
         Mockito.when(clientsRepository.findById(Mockito.any(int.class))).thenReturn(java.util.Optional.of(client));
         var uut = new PetsService(petsRepository, clientsRepository);
 
-        var result = uut.addPet(requested);
+        var result = uut.addPet(requested, 1);
 
         assert result.equals(expected);
         Mockito.verify(petsRepository, Mockito.times(1)).save(PetRecord.createPetRecord(requested.name, requested.birthday, requested.animal, client));

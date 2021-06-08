@@ -38,22 +38,26 @@ public class PetsService {
         return petsRepository.findAll();
     }
 
+    public List<PetRecord> getAllClientPets(int clientId) {
+        return petsRepository.getPetByClient(clientId);
+    }
+
     public Optional<PetRecord> getPet(int id) {
         return petsRepository.findById(id);
     }
 
-    public Response<PetRecord> addPet(PetData requestedPet) {
+    public Response<PetRecord> addPet(PetData requestedPet, Integer ownerId) {
         Optional<ResponseErrorMessage> missingDataError = Checker.getMissingData(requestedPet);
         if (missingDataError.isPresent()){
             return Response.errorResponse(missingDataError.get());
         }
         // requestedPet fields can't be null, we checked it in Checker::getMissingData above
         try {
-            Optional<ClientRecord> owner = ownersRepository.findById(requestedPet.ownerId);
+            Optional<ClientRecord> owner = ownersRepository.findById(ownerId);
             if (owner.isEmpty()){
                 return Response.errorResponse(ErrorMessagesBuilder.simpleError(
                         ErrorType.WRONG_ARGUMENTS,
-                        ErrorMessageFormatter.doesNotExists(ClientRecord.class, requestedPet.ownerId)
+                        ErrorMessageFormatter.doesNotExists(ClientRecord.class, ownerId)
                 ));
             }
             PetRecord pet = PetRecord.createPetRecord(
@@ -106,11 +110,7 @@ public class PetsService {
         String name = (data.name != null) ? data.name : thisPet.name;
         LocalDate birthday = (data.birthday != null) ? data.birthday : thisPet.birthday;
         Animal animal = (data.animal != null) ? data.animal : thisPet.animal;
-        Optional<ClientRecord> owner = (data.ownerId != null) ? ownersRepository.findById(data.ownerId) : Optional.of(thisPet.owner);
-        if(owner.isPresent()) {
-            return Optional.of(new PetRecord(thisPet.id, name, birthday, animal, owner.get()));
-        } else {
-            return Optional.empty();
-        }
+        return Optional.of(new PetRecord(thisPet.id, name, birthday, animal, thisPet.owner));
+
     }
 }
