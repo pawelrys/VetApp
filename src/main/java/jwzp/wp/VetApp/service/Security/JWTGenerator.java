@@ -39,7 +39,7 @@ public class JWTGenerator {
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .claim("login", userFromData.get().getUsername())
-                .claim("role", userFromData.get().getRole())
+                .claim("role", userFromData.get().getRole().toString())
                 .claim("id", userFromData.get().getId())
                 //Ważność tokenu to 5 minut VV
                 .expirationTime(new Date(new Date().getTime() + 300 * 1000))

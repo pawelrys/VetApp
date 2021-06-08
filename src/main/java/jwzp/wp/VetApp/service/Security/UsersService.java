@@ -31,7 +31,7 @@ public class UsersService {
         this.usersRepository = usersRepository;
         this.pepper = properties.PEPPER;
         if(usersRepository.count() == 0) {
-            addUser(new UserRegisterData("admin", "admin", Role.ROLE_ADMIN, -1));
+            addUser(new UserRegisterData("admin", "admin", Role.ROLE_ADMIN, 0));
         }
     }
 

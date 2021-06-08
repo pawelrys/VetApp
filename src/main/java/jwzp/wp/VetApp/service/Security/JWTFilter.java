@@ -50,7 +50,7 @@ public class JWTFilter extends BasicAuthenticationFilter {
             if (isSignatureValid(jwt) && signedJWT != null) {
                 String username = (String) signedJWT.getPayload().toJSONObject().get("login");
                 String role = (String) signedJWT.getPayload().toJSONObject().get("role");
-                String id = (String) signedJWT.getPayload().toJSONObject().get("id");
+                String id =  String.valueOf(signedJWT.getPayload().toJSONObject().get("id"));
 
                 Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Set.of(new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(id));
                 usernamePasswordAuthenticationToken =

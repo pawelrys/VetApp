@@ -3,12 +3,16 @@ package jwzp.wp.VetApp.models.records;
 import jwzp.wp.VetApp.models.values.Role;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 
 @Entity(name="users")
 public class UserRecord {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private final int id;
     private final String username;
     private final String hashedPassword;
