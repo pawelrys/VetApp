@@ -46,18 +46,18 @@ public class PetsService {
         return petsRepository.findById(id);
     }
 
-    public Response<PetRecord> addPet(PetData requestedPet, Integer ownerId) {
+    public Response<PetRecord> addPet(PetData requestedPet) {
         Optional<ResponseErrorMessage> missingDataError = Checker.getMissingData(requestedPet);
         if (missingDataError.isPresent()){
             return Response.errorResponse(missingDataError.get());
         }
         // requestedPet fields can't be null, we checked it in Checker::getMissingData above
         try {
-            Optional<ClientRecord> owner = ownersRepository.findById(ownerId);
+            Optional<ClientRecord> owner = ownersRepository.findById(requestedPet.ownerId);
             if (owner.isEmpty()){
                 return Response.errorResponse(ErrorMessagesBuilder.simpleError(
                         ErrorType.WRONG_ARGUMENTS,
-                        ErrorMessageFormatter.doesNotExists(ClientRecord.class, ownerId)
+                        ErrorMessageFormatter.doesNotExists(ClientRecord.class, requestedPet.ownerId)
                 ));
             }
             PetRecord pet = PetRecord.createPetRecord(
@@ -110,7 +110,11 @@ public class PetsService {
         String name = (data.name != null) ? data.name : thisPet.name;
         LocalDate birthday = (data.birthday != null) ? data.birthday : thisPet.birthday;
         Animal animal = (data.animal != null) ? data.animal : thisPet.animal;
-        return Optional.of(new PetRecord(thisPet.id, name, birthday, animal, thisPet.owner));
-
+        Optional<ClientRecord> owner = (data.ownerId != null) ? ownersRepository.findById(data.ownerId) : Optional.of(thisPet.owner);
+        if(owner.isPresent()) {
+            return Optional.of(new PetRecord(thisPet.id, name, birthday, animal, owner.get()));
+        } else {
+            return Optional.empty();
+        }
     }
 }

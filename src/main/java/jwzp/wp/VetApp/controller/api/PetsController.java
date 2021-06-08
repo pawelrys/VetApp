@@ -19,7 +19,7 @@ import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
-@RequestMapping(path="/api")
+@RequestMapping(path="/api/pets")
 @RestController
 public class PetsController {
 
@@ -30,7 +30,7 @@ public class PetsController {
         this.petsService = petsService;
     }
 
-    @GetMapping(path = "/users/pets")
+    @GetMapping
     public ResponseEntity<?> getAllPets() {
         List<PetRecord> pets = petsService.getAllPets();
         for (PetRecord pet : pets) {
@@ -41,44 +41,44 @@ public class PetsController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(path = "/users/{clientId}/pets")
-    public ResponseEntity<?> getAllClientPets(@PathVariable int clientId) {
-        List<PetRecord> pets = petsService.getAllClientPets(clientId);
-        for (PetRecord pet : pets) {
-            addLinksToEntity(pet);
-        }
-        Link link = linkTo(PetsController.class).withSelfRel();
-        CollectionModel<PetRecord> result = CollectionModel.of(pets, link);
-        return ResponseEntity.ok(result);
-    }
+//    @GetMapping(path = "/users/{clientId}/pets")
+//    public ResponseEntity<?> getAllClientPets(@PathVariable int clientId) {
+//        List<PetRecord> pets = petsService.getAllClientPets(clientId);
+//        for (PetRecord pet : pets) {
+//            addLinksToEntity(pet);
+//        }
+//        Link link = linkTo(PetsController.class).withSelfRel();
+//        CollectionModel<PetRecord> result = CollectionModel.of(pets, link);
+//        return ResponseEntity.ok(result);
+//    }
 
-    @GetMapping(path="/users/{clientId}/pets/{petId}")
-    public ResponseEntity<?> getPet(@PathVariable int petId){
-        Optional<PetRecord> pet = petsService.getPet(petId);
+    @GetMapping(path="/{id}")
+    public ResponseEntity<?> getPet(@PathVariable int id){
+        Optional<PetRecord> pet = petsService.getPet(id);
         return pet.isPresent()
                 ? ResponseEntity.ok(addLinksToEntity(pet.get()))
                 : ResponseToHttp.getFailureResponse(ErrorMessagesBuilder.simpleError(ErrorType.PET_NOT_FOUND));
     }
 
-    @PostMapping(path = "/users/{clientId}/pets")
-    public ResponseEntity<?> addPet(@PathVariable int clientId, @RequestBody PetData pet) {
-        Response<PetRecord> result = petsService.addPet(pet, clientId);
+    @PostMapping
+    public ResponseEntity<?> addPet(@RequestBody PetData pet) {
+        Response<PetRecord> result = petsService.addPet(pet);
         return result.succeed()
                 ? ResponseEntity.status(HttpStatus.CREATED).body(addLinksToEntity(result.get()))
                 : ResponseToHttp.getFailureResponse(result.getError());
     }
 
-    @PatchMapping(path="/users/{clientId}/pets/{petId}")
-    public ResponseEntity<?> updatePet(@PathVariable int petId, @RequestBody PetData newData) {
-        Response<PetRecord> updated = petsService.updatePet(petId, newData);
+    @PatchMapping(path="/{id}")
+    public ResponseEntity<?> updatePet(@PathVariable int id, @RequestBody PetData newData) {
+        Response<PetRecord> updated = petsService.updatePet(id, newData);
         return updated.succeed()
                 ? ResponseEntity.ok(addLinksToEntity(updated.get()))
                 : ResponseToHttp.getFailureResponse(updated.getError());
     }
 
-    @DeleteMapping(path = "/users/{clientId}/pets/{petId}")
-    public ResponseEntity<?> deletePet(@PathVariable int petId) {
-        Response<PetRecord> result = petsService.delete(petId);
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<?> deletePet(@PathVariable int id) {
+        Response<PetRecord> result = petsService.delete(id);
         return result.succeed()
                 ? ResponseEntity.ok(addLinksToEntity(result.get()))
                 : ResponseToHttp.getFailureResponse(result.getError());

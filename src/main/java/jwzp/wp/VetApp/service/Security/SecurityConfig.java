@@ -31,7 +31,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
                 .antMatchers(HttpMethod.GET, "/api/users/pets").hasAnyRole("ADMIN", "VET")
-                .antMatchers(HttpMethod.GET, "/api/users/{clientId}/pets").access("@userSecurity.hasUserId(authentication,#clientId)")
+//                .antMatchers(HttpMethod.GET, "/api/users/{clientId}/pets").access("@userSecurity.hasUserId(authentication,#clientId)")
+                .antMatchers(HttpMethod.GET, "/api/users/{clientId}/pets").access("@userSecurity.check(authentication, request)")
                 .antMatchers(HttpMethod.GET, "/api/users/{clientId}/pets/{petId}").access("@userSecurity.hasUserId(authentication,#clientId)")
                 .antMatchers(HttpMethod.POST, "/api/users/{clientId}/pets").access("@userSecurity.hasUserId(authentication,#clientId)")
                 .antMatchers(HttpMethod.PATCH, "/api/users/{clientId}/pets/{petId}").access("@userSecurity.hasUserId(authentication,#clientId)")

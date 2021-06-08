@@ -118,32 +118,32 @@ public class PetsControllerTest {
     public void testAddPetPositive(){
         PetData requested = new PetData("Reksio", LocalDate.parse("2010-01-01"), Animal.Dog, owner.id);
         var Pet = PetRecord.createPetRecord(requested.name, requested.birthday, requested.animal, owner);
-        Mockito.when(petsService.addPet(Mockito.any(PetData.class), Mockito.any())).thenReturn(Response.succeedResponse(Pet));
+        Mockito.when(petsService.addPet(Mockito.any(PetData.class))).thenReturn(Response.succeedResponse(Pet));
         var expected = ResponseEntity.status(HttpStatus.CREATED).body(
                 Pet.add(linkTo(PetsController.class).slash(Pet.id).withSelfRel())
         );
         var uut = new PetsController(petsService);
 
-        var result = uut.addPet(0, requested);
+        var result = uut.addPet(requested);
 
         assert result.equals(expected);
-        Mockito.verify(petsService, Mockito.times(1)).addPet(requested, owner.id);
+        Mockito.verify(petsService, Mockito.times(1)).addPet(requested);
     }
 
     @Test
     public void testAddPetMissedData(){
         PetData requested = new PetData(null, null, null, null);
-        Mockito.when(petsService.addPet(Mockito.any(PetData.class), Mockito.any()))
+        Mockito.when(petsService.addPet(Mockito.any(PetData.class)))
                 .thenReturn(Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS)));
         var expected = ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
                 .body(ErrorType.WRONG_ARGUMENTS.getDefaultMessage());
         var uut = new PetsController(petsService);
 
-        var result = uut.addPet(0, requested);
+        var result = uut.addPet(requested);
 
         assert result.equals(expected);
-        Mockito.verify(petsService, Mockito.times(1)).addPet(requested, owner.id);
+        Mockito.verify(petsService, Mockito.times(1)).addPet(requested);
     }
 
 
