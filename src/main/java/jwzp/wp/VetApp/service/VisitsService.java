@@ -70,6 +70,14 @@ public class VisitsService {
         return visitsRepository.findAll();
     }
 
+    public List<VisitRecord> getAllVisitsByClient(int clientId) {
+        return visitsRepository.getVisitsByClient(clientId);
+    }
+
+    public List<VisitRecord> getAllVisitsByVet(int vetId) {
+        return visitsRepository.getVisitsByVet(vetId);
+    }
+
     public Optional<VisitRecord> getVisit(int id) {
         return visitsRepository.findById(id);
     }
@@ -317,4 +325,6 @@ public class VisitsService {
         }
         return Optional.empty();
     }
+
+
 }

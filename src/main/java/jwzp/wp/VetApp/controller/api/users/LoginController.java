@@ -28,6 +28,5 @@ public class LoginController {
         return result.isPresent()
                 ? ResponseEntity.ok(result.get())
                 : ResponseEntity.status(401).body("Incorrect login details");
-        //todo
     }
 }

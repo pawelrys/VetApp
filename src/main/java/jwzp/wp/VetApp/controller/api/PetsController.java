@@ -41,20 +41,20 @@ public class PetsController {
         return ResponseEntity.ok(result);
     }
 
-//    @GetMapping(path = "/users/{clientId}/pets")
-//    public ResponseEntity<?> getAllClientPets(@PathVariable int clientId) {
-//        List<PetRecord> pets = petsService.getAllClientPets(clientId);
-//        for (PetRecord pet : pets) {
-//            addLinksToEntity(pet);
-//        }
-//        Link link = linkTo(PetsController.class).withSelfRel();
-//        CollectionModel<PetRecord> result = CollectionModel.of(pets, link);
-//        return ResponseEntity.ok(result);
-//    }
+    @GetMapping(path = "/client/{clientId}")
+    public ResponseEntity<?> getAllClientPets(@PathVariable int clientId) {
+        List<PetRecord> pets = petsService.getAllClientPets(clientId);
+        for (PetRecord pet : pets) {
+            addLinksToEntity(pet);
+        }
+        Link link = linkTo(PetsController.class).withSelfRel();
+        CollectionModel<PetRecord> result = CollectionModel.of(pets, link);
+        return ResponseEntity.ok(result);
+    }
 
-    @GetMapping(path="/{id}")
-    public ResponseEntity<?> getPet(@PathVariable int id){
-        Optional<PetRecord> pet = petsService.getPet(id);
+    @GetMapping(path="/pet/{petId}")
+    public ResponseEntity<?> getPet(@PathVariable int petId){
+        Optional<PetRecord> pet = petsService.getPet(petId);
         return pet.isPresent()
                 ? ResponseEntity.ok(addLinksToEntity(pet.get()))
                 : ResponseToHttp.getFailureResponse(ErrorMessagesBuilder.simpleError(ErrorType.PET_NOT_FOUND));
@@ -68,17 +68,17 @@ public class PetsController {
                 : ResponseToHttp.getFailureResponse(result.getError());
     }
 
-    @PatchMapping(path="/{id}")
-    public ResponseEntity<?> updatePet(@PathVariable int id, @RequestBody PetData newData) {
-        Response<PetRecord> updated = petsService.updatePet(id, newData);
+    @PatchMapping(path="/{petId}")
+    public ResponseEntity<?> updatePet(@PathVariable int petId, @RequestBody PetData newData) {
+        Response<PetRecord> updated = petsService.updatePet(petId, newData);
         return updated.succeed()
                 ? ResponseEntity.ok(addLinksToEntity(updated.get()))
                 : ResponseToHttp.getFailureResponse(updated.getError());
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<?> deletePet(@PathVariable int id) {
-        Response<PetRecord> result = petsService.delete(id);
+    @DeleteMapping(path = "/{petId}")
+    public ResponseEntity<?> deletePet(@PathVariable int petId) {
+        Response<PetRecord> result = petsService.delete(petId);
         return result.succeed()
                 ? ResponseEntity.ok(addLinksToEntity(result.get()))
                 : ResponseToHttp.getFailureResponse(result.getError());

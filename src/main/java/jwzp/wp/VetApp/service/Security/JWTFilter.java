@@ -33,6 +33,7 @@ public class JWTFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        CachedBodyHttpServletRequest cachedBodyHttpServletRequest = new CachedBodyHttpServletRequest(request);
         String header = request.getHeader("Authorization");
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = null;
 
@@ -52,14 +53,14 @@ public class JWTFilter extends BasicAuthenticationFilter {
                 String role = (String) signedJWT.getPayload().toJSONObject().get("role");
                 String id =  String.valueOf(signedJWT.getPayload().toJSONObject().get("id"));
 
-                Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Set.of(new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(id));
+                Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Set.of(new SimpleGrantedAuthority(role));
                 usernamePasswordAuthenticationToken =
-                        new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthorities);
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        new UsernamePasswordAuthenticationToken(username, id, simpleGrantedAuthorities);
+                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(cachedBodyHttpServletRequest));
             }
         }
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-        chain.doFilter(request, response);
+        chain.doFilter(cachedBodyHttpServletRequest, response);
     }
 
     //Sprawdzanie poprawności JWT

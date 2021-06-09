@@ -62,4 +62,10 @@ public interface VisitsRepository extends JpaRepository<VisitRecord, Integer> {
 
     @Query("select v from visits v where :now > v.startDate + v.duration and :status = v.status")
     List<VisitRecord> getPastVisitsWithStatus(LocalDateTime now, Status status);
+
+    @Query("select v from visits v where v.pet.owner.id = :clientId")
+    List<VisitRecord> getVisitsByClient(int clientId);
+
+    @Query("select v from visits v where v.vet.id = :vetId")
+    List<VisitRecord> getVisitsByVet(int vetId);
 }
