@@ -65,7 +65,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 BigDecimal.valueOf(20),
                 office.id,
-                vet.id
+                vet.id,
+                ""
         );
         var visit = VisitRecord.createVisitRecord(
                 requested.startDate,
@@ -73,7 +74,8 @@ public class VisitsServiceTest {
                 pet,
                 requested.price,
                 office,
-                vet
+                vet,
+                ""
         );
         Mockito.when(visitsRepository.save(Mockito.any(VisitRecord.class))).thenReturn(visit);
         Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(pet));
@@ -97,7 +99,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 null,
                 office.id,
-                vet.id
+                vet.id,
+                ""
         );
         var errorBuilder = new ErrorMessagesBuilder();
         errorBuilder.addToMessage(ErrorMessageFormatter.missingField("price"));
@@ -123,7 +126,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 BigDecimal.valueOf(120),
                 office.id,
-                vet.id
+                vet.id,
+                ""
         );
         Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
         Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(pet));
@@ -146,7 +150,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 BigDecimal.valueOf(120),
                 office.id,
-                vet.id
+                vet.id,
+                ""
         );
         Mockito.when(vetsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(vet));
         Mockito.when(petsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.empty());
@@ -171,7 +176,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 BigDecimal.valueOf(120),
                 office.id,
-                vet.id
+                vet.id,
+                ""
         );
         var visitBeforeUpdate = new VisitRecord(
                 5,
@@ -181,7 +187,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 BigDecimal.valueOf(300),
                 office,
-                vet
+                vet,
+                ""
         );
         int requestedId = visitBeforeUpdate.getId();
         var visitAfterUpdate = new VisitRecord(
@@ -192,7 +199,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 requestedData.price,
                 office,
-                vet
+                vet,
+                ""
         );
         Mockito.when(visitsRepository.save(Mockito.any(VisitRecord.class))).thenReturn(visitAfterUpdate);
         Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(visitBeforeUpdate));
@@ -223,7 +231,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 BigDecimal.valueOf(120),
                 office.id,
-                vet.id
+                vet.id,
+                ""
         );
         var visitBeforeUpdate = new VisitRecord(
                 5,
@@ -233,7 +242,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 BigDecimal.valueOf(300),
                 office,
-                vet
+                vet,
+                ""
         );
         int requestedId = visitBeforeUpdate.getId();
         Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(visitBeforeUpdate));
@@ -260,7 +270,8 @@ public class VisitsServiceTest {
                 null,
                 BigDecimal.valueOf(120),
                 office.id,
-                vet.id
+                vet.id,
+                ""
         );
         int requestedId = 5;
         var visitAfterUpdate = new VisitRecord(
@@ -271,7 +282,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 requestedData.price,
                 office,
-                vet
+                vet,
+                ""
         );
         var collidingVisit = new VisitRecord(
                 6,
@@ -281,7 +293,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 requestedData.price,
                 office,
-                vet
+                vet,
+                ""
         );
         Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(visitAfterUpdate));
         Mockito.when(visitsRepository.getRegisteredVisitsInTime(
@@ -313,7 +326,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 BigDecimal.valueOf(300),
                 office,
-                vet
+                vet,
+                ""
         );
         Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(visit));
         var expected = Response.succeedResponse(visit);
@@ -336,7 +350,8 @@ public class VisitsServiceTest {
                 Status.PENDING,
                 BigDecimal.valueOf(300),
                 office,
-                vet
+                vet,
+                ""
         );
         Mockito.when(visitsRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.empty());
         var expected = Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.VISIT_NOT_FOUND));

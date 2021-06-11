@@ -27,7 +27,7 @@ public class CheckerTest {
             Integer vetId,
             boolean result
     ) {
-        var requested = new VisitData(startDate, duration, petId, Status.PENDING, price, officeId, vetId);
+        var requested = new VisitData(startDate, duration, petId, Status.PENDING, price, officeId, vetId, "");
 
         assert Checker.getMissingData(requested).isEmpty() == result;
     }

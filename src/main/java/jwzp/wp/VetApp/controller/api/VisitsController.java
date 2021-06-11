@@ -45,7 +45,7 @@ public class VisitsController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(path = "/{clientId}")
+    @GetMapping(path = "/client/{clientId}")
     public ResponseEntity<?> getAllVisitsByClient(@PathVariable int clientId) {
         //todo
         List<VisitRecord> visits = visitsService.getAllVisitsByClient(clientId);
@@ -57,7 +57,7 @@ public class VisitsController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(path = "/{vetId}")
+    @GetMapping(path = "/vet/{vetId}")
     public ResponseEntity<?> getAllVisitsByVet(@PathVariable int vetId) {
         //todo
         List<VisitRecord> visits = visitsService.getAllVisitsByVet(vetId);

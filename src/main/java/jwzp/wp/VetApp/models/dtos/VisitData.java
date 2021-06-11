@@ -16,6 +16,8 @@ public class VisitData {
     public final BigDecimal price;
     public final Integer officeId;
     public final Integer vetId;
+    public final String description;
+
 
     public VisitData() {
         this.startDate = null;
@@ -25,6 +27,7 @@ public class VisitData {
         this.price = null;
         this.officeId = null;
         this.vetId = null;
+        this.description = "";
     }
 
     public VisitData(
@@ -34,7 +37,8 @@ public class VisitData {
             Status status,
             BigDecimal price,
             Integer officeId,
-            Integer vetId
+            Integer vetId,
+            String description
     ) throws NullPointerException {
         this.startDate = startDate;
         this.duration = duration;
@@ -43,6 +47,7 @@ public class VisitData {
         this.price = price;
         this.officeId = officeId;
         this.vetId = vetId;
+        this.description = description;
     }
 
     @Override
@@ -50,11 +55,11 @@ public class VisitData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VisitData visitData = (VisitData) o;
-        return Objects.equals(startDate, visitData.startDate) && Objects.equals(duration, visitData.duration) && Objects.equals(petId, visitData.petId) && status == visitData.status && Objects.equals(price, visitData.price) && Objects.equals(officeId, visitData.officeId) && Objects.equals(vetId, visitData.vetId);
+        return Objects.equals(startDate, visitData.startDate) && Objects.equals(duration, visitData.duration) && Objects.equals(petId, visitData.petId) && status == visitData.status && Objects.equals(price, visitData.price) && Objects.equals(officeId, visitData.officeId) && Objects.equals(vetId, visitData.vetId) && Objects.equals(description, visitData.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDate, duration, petId, status, price, officeId, vetId);
+        return Objects.hash(startDate, duration, petId, status, price, officeId, vetId, description);
     }
 }

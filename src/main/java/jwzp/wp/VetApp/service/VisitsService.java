@@ -127,7 +127,8 @@ public class VisitsService {
                     pet.get(),
                     requestedVisit.price,
                     office.get(),
-                    vet.get()
+                    vet.get(),
+                    requestedVisit.description
             );
             var savedVisit = visitsRepository.save(visit);
             logger.info(LogsUtils.logSaved(savedVisit, savedVisit.getId()));
@@ -251,7 +252,8 @@ public class VisitsService {
                 status,
                 visit.price,
                 visit.office.id,
-                visit.vet.id
+                visit.vet.id,
+                visit.description
         );
         var newRecord = createUpdatedVisit(visit, data);
         newRecord.ifPresent(visitsRepository::save);
@@ -307,8 +309,9 @@ public class VisitsService {
         BigDecimal price = (data.price != null) ? data.price : thisVisit.price;
         Optional<OfficeRecord> officeRecord = (data.officeId != null) ? officesRepository.findById(data.officeId) : Optional.of(thisVisit.office);
         Optional<VetRecord> vetRecord = (data.vetId != null) ? vetsRepository.findById(data.vetId) : Optional.of(thisVisit.vet);
+        String description = (!data.description.equals("")) ? data.description : thisVisit.description;
         if(petRecord.isPresent() && officeRecord.isPresent() && vetRecord.isPresent()) {
-            return Optional.of(new VisitRecord(thisVisit.getId(), startDate, duration, petRecord.get(), status, price, officeRecord.get(), vetRecord.get()));
+            return Optional.of(new VisitRecord(thisVisit.getId(), startDate, duration, petRecord.get(), status, price, officeRecord.get(), vetRecord.get(), description));
         } else if (errorBuilder != null) {
             if (petRecord.isEmpty()) {
                 logger.info(LogsUtils.logNotFoundObject(PetRecord.class, data.petId));
