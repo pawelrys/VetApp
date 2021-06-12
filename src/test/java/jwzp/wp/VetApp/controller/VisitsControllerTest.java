@@ -65,7 +65,8 @@ public class VisitsControllerTest {
                         Status.PENDING,
                         BigDecimal.valueOf(80),
                         office,
-                        vet
+                        vet,
+                        ""
                 ),
                 new VisitRecord(
                         6,
@@ -75,7 +76,8 @@ public class VisitsControllerTest {
                         Status.PENDING,
                         BigDecimal.valueOf(120),
                         office,
-                        vet
+                        vet,
+                        ""
                 )
         );
         Mockito.when(visitsService.getAllVisits()).thenReturn(visits);
@@ -119,7 +121,8 @@ public class VisitsControllerTest {
                 Status.PENDING,
                 BigDecimal.valueOf(20),
                 office,
-                vet
+                vet,
+                ""
         );
         int request = visit.getId();
         Mockito.when(visitsService.getVisit(Mockito.any(Integer.class))).thenReturn(Optional.of(visit));
@@ -157,7 +160,8 @@ public class VisitsControllerTest {
                 null,
                 BigDecimal.valueOf(80),
                 null,
-                null
+                null,
+                ""
         );
         var visitAfterUpdate = new VisitRecord(
                 requestedId,
@@ -167,7 +171,8 @@ public class VisitsControllerTest {
                 Status.PENDING,
                 requestedData.price,
                 office,
-                vet
+                vet,
+                ""
         );
 
         Mockito.when(visitsService.updateVisit(Mockito.any(Integer.class), Mockito.any(VisitData.class)))
@@ -192,7 +197,8 @@ public class VisitsControllerTest {
                 null,
                 BigDecimal.valueOf(80),
                 null,
-                null
+                null,
+                ""
         );
 
         Mockito.when(visitsService.updateVisit(Mockito.any(Integer.class), Mockito.any(VisitData.class)))
@@ -217,7 +223,8 @@ public class VisitsControllerTest {
                 null,
                 BigDecimal.valueOf(20),
                 office.id,
-                vet.id
+                vet.id,
+                ""
         );
         var visit = VisitRecord.createVisitRecord(
                 requested.startDate,
@@ -225,7 +232,8 @@ public class VisitsControllerTest {
                 puszek,
                 requested.price,
                 office,
-                vet
+                vet,
+                ""
         );
         Mockito.when(visitsService.addVisit(Mockito.any(VisitData.class))).thenReturn(Response.succeedResponse(visit));
         var expected = ResponseEntity
@@ -248,7 +256,8 @@ public class VisitsControllerTest {
                 null,
                 BigDecimal.valueOf(20),
                 office.id,
-                vet.id
+                vet.id,
+                ""
         );
         Mockito.when(visitsService.addVisit(Mockito.any(VisitData.class)))
                 .thenReturn(Response.errorResponse(ErrorMessagesBuilder.simpleError(ErrorType.WRONG_ARGUMENTS)));
@@ -273,7 +282,8 @@ public class VisitsControllerTest {
                 Status.PENDING,
                 BigDecimal.valueOf(20),
                 office,
-                vet
+                vet,
+                ""
         );
         int requested = visit.getId();
         Mockito.when(visitsService.delete(Mockito.any(Integer.class))).thenReturn(Response.succeedResponse(visit));

@@ -45,9 +45,33 @@ public class VisitsController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(path="/{id}")
-    public ResponseEntity<?> getVisit(@PathVariable int id) {
-        Optional<VisitRecord> visit = visitsService.getVisit(id);
+    @GetMapping(path = "/client/{clientId}")
+    public ResponseEntity<?> getAllVisitsByClient(@PathVariable int clientId) {
+        //todo
+        List<VisitRecord> visits = visitsService.getAllVisitsByClient(clientId);
+        for(var visit : visits){
+            addLinksToEntity(visit);
+        }
+        Link self = linkTo(VisitsController.class).withSelfRel();
+        CollectionModel<VisitRecord> result = CollectionModel.of(visits, self);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(path = "/vet/{vetId}")
+    public ResponseEntity<?> getAllVisitsByVet(@PathVariable int vetId) {
+        //todo
+        List<VisitRecord> visits = visitsService.getAllVisitsByVet(vetId);
+        for(var visit : visits){
+            addLinksToEntity(visit);
+        }
+        Link self = linkTo(VisitsController.class).withSelfRel();
+        CollectionModel<VisitRecord> result = CollectionModel.of(visits, self);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(path= "/{visitId}")
+    public ResponseEntity<?> getVisit(@PathVariable int visitId) {
+        Optional<VisitRecord> visit = visitsService.getVisit(visitId);
         if (visit.isPresent()){
             return ResponseEntity.ok(addLinksToEntity(visit.get()));
         } else {
@@ -55,9 +79,9 @@ public class VisitsController {
         }
     }
 
-    @PatchMapping(path="/{id}")
-    public ResponseEntity<?> updateVisit(@PathVariable int id, @RequestBody VisitData newData) {
-        Response<VisitRecord> updated = visitsService.updateVisit(id, newData);
+    @PatchMapping(path= "/{visitId}")
+    public ResponseEntity<?> updateVisit(@PathVariable int visitId, @RequestBody VisitData newData) {
+        Response<VisitRecord> updated = visitsService.updateVisit(visitId, newData);
         return updated.succeed()
                 ? ResponseEntity.ok(addLinksToEntity(updated.get()))
                 : ResponseToHttp.getFailureResponse(updated.getError());
@@ -71,15 +95,15 @@ public class VisitsController {
                 : ResponseToHttp.getFailureResponse(result.getError());
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<?> deleteVisit(@PathVariable int id) {
-        Response<VisitRecord> result = visitsService.delete(id);
+    @DeleteMapping(path = "/{visitId}")
+    public ResponseEntity<?> deleteVisit(@PathVariable int visitId) {
+        Response<VisitRecord> result = visitsService.delete(visitId);
         return result.succeed()
                 ? ResponseEntity.ok(addLinksToEntity(result.get()))
                 : ResponseToHttp.getFailureResponse(result.getError());
     }
 
-    @GetMapping(path = "available-time-slots")
+    @GetMapping(path = "/available-time-slots")
     public ResponseEntity<?> getAvailableTimeSlots(
             // required option is set to false because we want to handle validation in service with customized error responses
             @RequestParam(value = "begin", required = false)

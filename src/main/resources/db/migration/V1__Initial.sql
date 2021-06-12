@@ -68,6 +68,7 @@ CREATE TABLE visits
     price numeric(19,2),
     start_date timestamp without time zone,
     status integer,
+    description character varying(255) COLLATE pg_catalog."default",
     CONSTRAINT visits_pkey PRIMARY KEY (id)
 )
 
@@ -135,3 +136,5 @@ CREATE TABLE vet
 
 ALTER TABLE vet
     OWNER to postgres;
+
+
