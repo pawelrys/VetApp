@@ -3,13 +3,10 @@ package jwzp.wp.VetApp.service.Security;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -46,14 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/visits").access("@userSecurity.checkAccessToVisit(authentication, request)")
                 .antMatchers(HttpMethod.DELETE, "/api/visits/{visitId}").access("@userSecurity.checkAccessToVisit(authentication, #visitId)")
                 .antMatchers(HttpMethod.GET, "/api/visits/available-time-slots").hasAnyRole("CLIENT", "VET", "ADMIN")
-
                 .anyRequest().permitAll()
                 .and()
                 .addFilter(new JWTFilter(authenticationManager()));
     }
-
-//    @Override
-//    public void configure(WebSecurity web) throws Exception {
-//        web.ignoring().antMatchers("/api/login");
-//    }
 }
