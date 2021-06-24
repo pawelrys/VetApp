@@ -1,3 +1,4 @@
-# Final project for the subject of programming for WWW
+# Spring Boot Application - VetApp
 
-Part: Backend
+This is a service for recording visits to the vet 
+
